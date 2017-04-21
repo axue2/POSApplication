@@ -6,10 +6,39 @@ package com.ass3.axue2.posapplication.models;
 
 public class Table {
 
-    private Integer nTableID;
+    private int nTableID;
     private String sTableName;
-    private Integer nInvSum;
-    private Integer nGuests;
+    private int nGuests;
+    private int nInvSum;
+    private String sStatus;
 
 
+    public Table(int id, String name, int guests,
+                 int total, String status) {
+        nTableID = id;
+        sTableName = name;
+        nGuests = guests;
+        nInvSum = total;
+        sStatus = status;
+    }
+
+    public int getnTableID() {return nTableID;}
+
+    public void setnTableID(int nTableID) {this.nTableID = nTableID;}
+
+    public String getsTableName() {return sTableName;}
+
+    public void setsTableName(String sTableName) {this.sTableName = sTableName;}
+
+    public int getnGuests() {return nGuests;}
+
+    public void setnGuests(int nGuests) {this.nGuests = nGuests;}
+
+    public int getnInvSum() {return nInvSum;}
+
+    public void setnInvSum(int nInvSum) {this.nInvSum = nInvSum;}
+
+    public String getsStatus() {return sStatus;}
+
+    public void setsStatus(String sStatus) {this.sStatus = sStatus;}
 }

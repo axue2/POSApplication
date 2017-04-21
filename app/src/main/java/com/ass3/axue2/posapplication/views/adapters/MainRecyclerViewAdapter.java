@@ -3,8 +3,6 @@ package com.ass3.axue2.posapplication.views.adapters;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +18,6 @@ import java.util.List;
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.MyViewHolder> {
 
-    private final TypedValue mTypedValue = new TypedValue();
-    private int mBackground;
     private List<String> mValues;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
@@ -29,25 +25,20 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         public View mView;
         public CardView mCardView;
-        public TextView mTextView;
+        public TextView mNameTextView;
 
 
         public MyViewHolder(View v){
             super(v);
             mView = v;
             mCardView = (CardView) v.findViewById(R.id.main_table_list_cv);
-            mTextView = (TextView) v.findViewById(R.id.main_table_list_cv_text);
+            mNameTextView = (TextView) v.findViewById(R.id.main_table_list_cv_text);
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mTextView.getText();
-        }
+
     }
 
     public MainRecyclerViewAdapter(Context context, List<String> tableList) {
-        //context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
-        //mBackground = mTypedValue.resourceId;
         mValues = tableList;
     }
 
@@ -59,11 +50,9 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position){
-        holder.mTextView.setText(mValues.get(position));
+        holder.mNameTextView.setText(mValues.get(position));
     }
 
     @Override
-    public int getItemCount(){
-        Log.d("RecyclerView Size", String.valueOf(mValues.size()));
-        return mValues.size();}
+    public int getItemCount(){return mValues.size();}
 }

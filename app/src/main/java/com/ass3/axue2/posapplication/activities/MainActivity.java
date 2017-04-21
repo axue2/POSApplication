@@ -25,13 +25,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    private ViewPager mViewPager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("MainActivity","MainActivity started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -39,15 +34,15 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        if (mViewPager != null){
-            Log.d("mViewPager","mViewPager not null");
-            mSectionsPagerAdapter.addFragment(new MainOrdersFragment(), "Orders");
-            mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
-        }
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
+
+        assert mViewPager != null;
+        mSectionsPagerAdapter.addFragment(new MainOrdersFragment(), "Orders");
+        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
+
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -91,29 +86,25 @@ public class MainActivity extends AppCompatActivity {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         private  List<Fragment> mFragments = new ArrayList<>();
         private  List<String> mFragmentTitles = new ArrayList<>();
 
-        public SectionsPagerAdapter(FragmentManager fm) {super(fm);}
+        SectionsPagerAdapter(FragmentManager fm) {super(fm);}
 
-        public void addFragment(Fragment fragment, String title){
+        void addFragment(Fragment fragment, String title){
             mFragments.add(fragment);
             mFragmentTitles.add(title);
-            Log.d("Fragments", String.valueOf(mFragments.size()));
         }
 
         @Override
         public Fragment getItem(int position) {return mFragments.get(position);}
 
         @Override
-        public int getCount() {
-            Log.d("Fragment Size", String.valueOf(mFragments.size()));
-            return mFragments.size();}
+        public int getCount() {return mFragments.size();}
 
         @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitles.get(position);}
+        public CharSequence getPageTitle(int position) {return mFragmentTitles.get(position);}
     }
 }
