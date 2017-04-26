@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ass3.axue2.posapplication.R;
+import com.ass3.axue2.posapplication.models.Table;
 import com.ass3.axue2.posapplication.views.adapters.MainRecyclerViewAdapter;
 
 import java.util.ArrayList;
@@ -24,26 +25,15 @@ public class MainTableFragment extends android.support.v4.app.Fragment {
                 R.layout.fragment_main_table_list, container, false);
         rv.setHasFixedSize(true);
 
-        ArrayList<String> tmpList = new ArrayList<>();
-        tmpList.add("D");
-        tmpList.add("B");
-        tmpList.add("C");
-        tmpList.add("D");
-        tmpList.add("D");
-        tmpList.add("B");
-        tmpList.add("C");
-        tmpList.add("D");
-        tmpList.add("D");
-        tmpList.add("B");
-        tmpList.add("C");
-        tmpList.add("D");
-        tmpList.add("D");
-        tmpList.add("B");
-        tmpList.add("C");
-        tmpList.add("D");
+        ArrayList<Table> tableList = new ArrayList<>();
+        tableList.add(new Table());
+        tableList.add(new Table());
+        tableList.add(new Table());
+        tableList.add(new Table());
+        tableList.add(new Table());
 
         // Setup Adapter
-        MainRecyclerViewAdapter adapter = new MainRecyclerViewAdapter(getActivity(), tmpList);
+        MainRecyclerViewAdapter adapter = new MainRecyclerViewAdapter(getActivity(), tableList);
         rv.setAdapter(adapter);
         // Setup Layout Manager
         LinearLayoutManager llm = new LinearLayoutManager(getContext());

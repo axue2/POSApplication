@@ -22,6 +22,13 @@ public class Table {
         sStatus = status;
     }
 
+    public Table(){
+        nTableID = -1;
+        sTableName = "tmp";
+        nGuests = 1;
+        nInvSum = 1;
+        sStatus = "Open";
+    }
     public int getnTableID() {return nTableID;}
 
     public void setnTableID(int nTableID) {this.nTableID = nTableID;}

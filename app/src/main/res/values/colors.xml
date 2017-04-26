@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="MainTableOpen">#80deea</color>
+    <color name="MainTableInuse">#ffea00</color>
+    <color name="MainTableBooked">#7c4dff</color>
+    <color name="PaymentButtonBackground">#757575</color>
+    <color name="PaymentButtonText">#ffffff</color>
 </resources>
