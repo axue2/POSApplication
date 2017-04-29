@@ -1,8 +1,7 @@
 package com.ass3.axue2.posapplication.activities;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -11,23 +10,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.fragments.MainOrdersFragment;
-import com.ass3.axue2.posapplication.fragments.MainTableFragment;
+import com.ass3.axue2.posapplication.fragments.OrderGroupFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderActivity extends AppCompatActivity {
 
+    public static final String EXTRA_TABLE = "Table Name";
+    public static final String EXTRA_ID = "Table ID";
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -38,8 +34,18 @@ public class OrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        // Find out which table was clicked in previous activity
+        Intent intent = getIntent();
+        final String tableName = intent.getStringExtra(EXTRA_TABLE);
+        final int tableID = intent.getIntExtra(EXTRA_ID, 0);
+
+        Log.d("EXTRA_TABLE VALUE", tableName);
+        Log.d("EXTRA_ID VALUE", String.valueOf(tableID));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle(tableName);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -47,17 +53,14 @@ public class OrderActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
 
+
         assert mViewPager != null;
-        mSectionsPagerAdapter.addFragment(new MainOrdersFragment(), "Current Order");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
+        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Current Order");
+        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 1");
+        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 2");
+        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 3");
+        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 4");
+        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 5");
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
 

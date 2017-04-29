@@ -1,5 +1,7 @@
 package com.ass3.axue2.posapplication.models;
 
+import java.util.ArrayList;
+
 /**
  * Created by anthony on 4/21/2017.
  */
@@ -11,6 +13,7 @@ public class Table {
     private int nGuests;
     private int nInvSum;
     private String sStatus;
+    private ArrayList<Product> mProducts;
 
 
     public Table(int id, String name, int guests,

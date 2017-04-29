@@ -29,7 +29,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-
         public View mView;
         public CardView mCardView;
         public TextView mNameTextView;
@@ -67,38 +66,9 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position){
-        Table currentTable = mTables.get(position);
-
-        // Set Table values on TextViews
-        holder.mNameTextView.setText(mTables.get(position).getsTableName());
-        // Tables that are open should not show addition details
-        if (!mTables.get(position).getsStatus().equals("Open")) {
-            // If table is in-use then payment button should appear
-            if (currentTable.getsStatus().equals("In-use"))
-                holder.mPaymentButton.setVisibility(View.VISIBLE);
-            else
-                holder.mPaymentButton.setVisibility(View.INVISIBLE);
-            // Set TextViews to visible
-            holder.mStatusTextView.setVisibility(View.VISIBLE);
-            holder.mGuestsTextView.setVisibility(View.VISIBLE);
-            holder.mInvoiceTextView.setVisibility(View.VISIBLE);
-
-            // Set values for TextViews
-            holder.mStatusTextView.setText(mTables.get(position).getsStatus());
-            holder.mGuestsTextView.setText(String.valueOf(mTables.get(position).getnGuests()));
-            String invString = "$" + String.valueOf(mTables.get(position).getnInvSum());
-            holder.mInvoiceTextView.setText(invString);
-            // Set CardView color
-            holder.mCardView.setCardBackgroundColor(Color.parseColor("#ffea00"));
-        } else{
-            // Set TextViews to invisible
-            holder.mStatusTextView.setVisibility(View.INVISIBLE);
-            holder.mGuestsTextView.setVisibility(View.INVISIBLE);
-            holder.mInvoiceTextView.setVisibility(View.INVISIBLE);
-            holder.mPaymentButton.setVisibility(View.INVISIBLE);
-            // TODO: Figure out how to dymanically change colors
-            holder.mCardView.setCardBackgroundColor(Color.parseColor("#80deea"));
-        }
+        final Table currentTable = mTables.get(position);
+        // Set values in the CardView
+        setTextViewValues(holder, currentTable);
 
         // OnClickListener for Payment Button Press
         holder.mPaymentButton.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +85,8 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             public void onClick(View v){
                 Context context = v.getContext();
                 Intent intent = new Intent(context, OrderActivity.class);
-
+                intent.putExtra(OrderActivity.EXTRA_TABLE, currentTable.getsTableName());
+                intent.putExtra(OrderActivity.EXTRA_ID, currentTable.getnTableID());
                 context.startActivity(intent);
                 Log.d("Button", "Main CardView Pressed");
             }
@@ -125,4 +96,38 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     @Override
     public int getItemCount(){return mTables.size();}
+
+    private void setTextViewValues(MyViewHolder holder, Table currentTable){
+
+        // Set Table values on TextViews
+        holder.mNameTextView.setText(currentTable.getsTableName());
+        // Tables that are open should not show addition details
+        if (!currentTable.getsStatus().equals("Open")) {
+            // If table is in-use then payment button should appear
+            if (currentTable.getsStatus().equals("In-use"))
+                holder.mPaymentButton.setVisibility(View.VISIBLE);
+            else
+                holder.mPaymentButton.setVisibility(View.INVISIBLE);
+            // Set TextViews to visible
+            holder.mStatusTextView.setVisibility(View.VISIBLE);
+            holder.mGuestsTextView.setVisibility(View.VISIBLE);
+            holder.mInvoiceTextView.setVisibility(View.VISIBLE);
+
+            // Set values for TextViews
+            holder.mStatusTextView.setText(currentTable.getsStatus());
+            holder.mGuestsTextView.setText(String.valueOf(currentTable.getnGuests()));
+            String invString = "$" + String.valueOf(currentTable.getnInvSum());
+            holder.mInvoiceTextView.setText(invString);
+            // Set CardView color
+            holder.mCardView.setCardBackgroundColor(Color.parseColor("#ffea00"));
+        } else{
+            // Set TextViews to invisible
+            holder.mStatusTextView.setVisibility(View.INVISIBLE);
+            holder.mGuestsTextView.setVisibility(View.INVISIBLE);
+            holder.mInvoiceTextView.setVisibility(View.INVISIBLE);
+            holder.mPaymentButton.setVisibility(View.INVISIBLE);
+            // TODO: Figure out how to dymanically change colors
+            holder.mCardView.setCardBackgroundColor(Color.parseColor("#80deea"));
+        }
+    }
 }

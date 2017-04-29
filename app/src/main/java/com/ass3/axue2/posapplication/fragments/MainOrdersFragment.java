@@ -22,7 +22,7 @@ public class MainOrdersFragment extends android.support.v4.app.Fragment {
 
         // Setup RecyclerView
         RecyclerView rv = (RecyclerView) inflater.inflate(
-                R.layout.fragment_main_table_list, container, false);
+                R.layout.fragment_recyclerview, container, false);
         rv.setHasFixedSize(true);
 
         // temporary tables
@@ -32,9 +32,9 @@ public class MainOrdersFragment extends android.support.v4.app.Fragment {
         tableList.add(new Table(3, "Table 3", 5, 12312, "Open"));
         tableList.add(new Table(4, "Table 4", 0, 0, "Open"));
         tableList.add(new Table(5, "Table 5", 0, 0, "Open"));
-        tableList.add(new Table(6, "Table 6", 0, 0, "In-use"));
+        tableList.add(new Table(6, "Table 6", 7, 40, "In-use"));
         tableList.add(new Table(7, "Table 7", 0, 0, "Open"));
-        tableList.add(new Table(8, "Table 8", 0, 0, "In-use"));
+        tableList.add(new Table(8, "Table 8", 2, 90, "In-use"));
         tableList.add(new Table(9, "Table 9", 0, 0, "Open"));
 
         // Setup Adapter

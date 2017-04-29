@@ -22,7 +22,7 @@ public class MainTableFragment extends android.support.v4.app.Fragment {
 
         // Setup RecyclerView
         RecyclerView rv = (RecyclerView) inflater.inflate(
-                R.layout.fragment_main_table_list, container, false);
+                R.layout.fragment_recyclerview, container, false);
         rv.setHasFixedSize(true);
 
         ArrayList<Table> tableList = new ArrayList<>();
