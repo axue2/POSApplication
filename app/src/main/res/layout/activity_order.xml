@@ -43,7 +43,7 @@
         android:layout_height="120dp"
         android:layout_gravity="bottom"
         android:orientation="vertical"
-        android:background="@color/cardview_light_background"
+        android:background="@drawable/border"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,7 +65,7 @@
         </LinearLayout>
 
         <TextView
-            android:layout_width="500dp"
+            android:layout_width="5000dp"
             android:layout_height="18dp" />
 
         <LinearLayout
@@ -89,12 +89,13 @@
                 android:textColor="@color/BLACK"/>
         </LinearLayout>
 
-       <Button
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:background="@color/MainTableBooked"
-           android:text="Confirm Order"
-           android:textColor="@color/PaymentButtonText"/>
+        <Button
+            android:id="@+id/order_confirm_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/MainTableBooked"
+            android:text="Confirm Order"
+            android:textColor="@color/PaymentButtonText" />
     </LinearLayout>
 
 

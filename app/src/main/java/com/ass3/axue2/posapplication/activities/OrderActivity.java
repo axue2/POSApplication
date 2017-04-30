@@ -13,8 +13,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.ass3.axue2.posapplication.R;
+import com.ass3.axue2.posapplication.fragments.OrderCurrentFragment;
 import com.ass3.axue2.posapplication.fragments.OrderGroupFragment;
 
 import java.util.ArrayList;
@@ -28,6 +31,8 @@ public class OrderActivity extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
+
+    private Button mConfirmButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +60,7 @@ public class OrderActivity extends AppCompatActivity {
 
 
         assert mViewPager != null;
-        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Current Order");
+        mSectionsPagerAdapter.addFragment(new OrderCurrentFragment(), "Current Order");
         mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 1");
         mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 2");
         mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 3");
@@ -68,6 +73,18 @@ public class OrderActivity extends AppCompatActivity {
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         tabLayout.setupWithViewPager(mViewPager);
 
+        // Get Button
+        mConfirmButton = (Button) findViewById(R.id.order_confirm_button);
+
+        mConfirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                OrderActivity.this.finish();
+            }
+        });
     }
 
 
