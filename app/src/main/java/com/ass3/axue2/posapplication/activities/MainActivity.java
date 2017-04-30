@@ -19,11 +19,15 @@ import android.view.View;
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.MainOrdersFragment;
 import com.ass3.axue2.posapplication.fragments.MainTableFragment;
+import com.ass3.axue2.posapplication.models.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.Table;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private DatabaseHelper mDBHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,17 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //this.deleteDatabase(mDBHelper.DATABASE_NAME);
+
+        // Get database handler
+        mDBHelper = new DatabaseHelper(getApplicationContext());
+
+        // Check if tables are empty
+        if(mDBHelper.GetAllTables().size() == 0) {
+            mDBHelper.CreateDefaultTables();
+        }
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());

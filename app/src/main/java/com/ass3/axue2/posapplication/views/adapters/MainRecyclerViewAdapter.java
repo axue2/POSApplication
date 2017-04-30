@@ -3,7 +3,6 @@ package com.ass3.axue2.posapplication.views.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -101,6 +100,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
         // Set Table values on TextViews
         holder.mNameTextView.setText(currentTable.getsTableName());
+        Log.d("Table name", currentTable.getsTableName());
         // Tables that are open should not show addition details
         if (!currentTable.getsStatus().equals("Open")) {
             // If table is in-use then payment button should appear

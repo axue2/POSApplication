@@ -1,22 +1,35 @@
 package com.ass3.axue2.posapplication.models;
 
-import java.util.ArrayList;
-
 /**
  * Created by anthony on 4/21/2017.
  */
 
 public class Table {
 
-    private int nTableID;
+    private long nTableID;
     private String sTableName;
     private int nGuests;
     private int nInvSum;
     private String sStatus;
-    private ArrayList<Product> mProducts;
 
+    // Database Constants
+    public static final String TABLE_NAME = "Tables";
+    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_NAME = "NAME";
+    public static final String COLUMN_GUESTS = "NO_GUESTS";
+    public static final String COLUMN_TOTAL = "INVOICE_TOTAL";
+    public static final String COLUMN_STATUS = "STATUS";
 
-    public Table(int id, String name, int guests,
+    // Table Create Statement
+    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+            COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            COLUMN_NAME + " TEXT NOT NULL, " +
+            COLUMN_GUESTS + " INTEGER, " +
+            COLUMN_TOTAL + " INTEGER, " +
+            COLUMN_STATUS + " TEXT NOT NULL" +
+            ")";
+
+    public Table(long id, String name, int guests,
                  int total, String status) {
         nTableID = id;
         sTableName = name;
@@ -32,9 +45,9 @@ public class Table {
         nInvSum = 1;
         sStatus = "Open";
     }
-    public int getnTableID() {return nTableID;}
+    public long getnTableID() {return nTableID;}
 
-    public void setnTableID(int nTableID) {this.nTableID = nTableID;}
+    public void setnTableID(long nTableID) {this.nTableID = nTableID;}
 
     public String getsTableName() {return sTableName;}
 
