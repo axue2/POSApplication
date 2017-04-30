@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         // Get database handler
         mDBHelper = new DatabaseHelper(getApplicationContext());
 
-        // Check if tables are empty
+        // If tables are empty add default values
         if(mDBHelper.GetAllTables().size() == 0) {
             mDBHelper.CreateDefaultTables();
         }

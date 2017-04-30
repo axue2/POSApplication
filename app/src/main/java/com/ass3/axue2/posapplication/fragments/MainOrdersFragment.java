@@ -27,7 +27,7 @@ public class MainOrdersFragment extends android.support.v4.app.Fragment {
         mDBHelper = new DatabaseHelper(getActivity());
 
         // Get Tables
-        ArrayList<Table> tableList = new ArrayList<>(mDBHelper.GetAllTables().values());
+        ArrayList<Table> tableList = new ArrayList<>(mDBHelper.GetInuseTables().values());
 
         // Setup RecyclerView
         RecyclerView rv = (RecyclerView) inflater.inflate(

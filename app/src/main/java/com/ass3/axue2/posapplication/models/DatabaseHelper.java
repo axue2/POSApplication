@@ -25,11 +25,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(Table.CREATE_STATEMENT);
+        db.execSQL(Order.CREATE_STATEMENT);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + Table.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Order.TABLE_NAME);
         onCreate(db);
     }
 
@@ -38,6 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(Table.COLUMN_NAME, table.getsTableName());
         values.put(Table.COLUMN_GUESTS, table.getnGuests());
+        values.put(Table.COLUMN_ORDER_ID, table.getnOrderID());
         values.put(Table.COLUMN_TOTAL, table.getnInvSum());
         values.put(Table.COLUMN_STATUS, table.getsStatus());
         db.insert(Table.TABLE_NAME, null, values);
@@ -55,8 +58,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Table table = new Table(cursor.getLong(0),
                         cursor.getString(1),
                         cursor.getInt(2),
-                        cursor.getInt(3),
-                        cursor.getString(4));
+                        cursor.getLong(3),
+                        cursor.getInt(4),
+                        cursor.getString(5));
+                tables.put(table.getnTableID(), table);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return tables;
+    }
+
+    public HashMap<Long, Table> GetInuseTables(){
+        HashMap<Long, Table> tables = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Table.TABLE_NAME + " WHERE " +
+                        Table.COLUMN_STATUS + " = '" + Table.STATUS_INUSE + "'", null);
+
+        // Add all Tables in db to hashmap
+        if(cursor.moveToFirst()) {
+            do {
+                Table table = new Table(cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getInt(2),
+                        cursor.getLong(3),
+                        cursor.getInt(4),
+                        cursor.getString(5));
                 tables.put(table.getnTableID(), table);
             } while(cursor.moveToNext());
         }
@@ -79,8 +105,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Table table = new Table(cursor.getLong(0),
                 cursor.getString(1),
                 cursor.getInt(2),
-                cursor.getInt(3),
-                cursor.getString(4));
+                cursor.getLong(3),
+                cursor.getInt(4),
+                cursor.getString(5));
         cursor.close();
 
         return table;
@@ -100,6 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(Table.COLUMN_NAME, table.getsTableName());
         values.put(Table.COLUMN_GUESTS, table.getnGuests());
+        values.put(Table.COLUMN_ORDER_ID, table.getnOrderID());
         values.put(Table.COLUMN_TOTAL, table.getnInvSum());
         values.put(Table.COLUMN_STATUS, table.getsStatus());
         // Update values using table id
@@ -107,19 +135,66 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public long AddOrder(Order order){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Order.COLUMN_TABLE_ID, order.getnTableID());
+        values.put(Order.COLUMN_TYPE, order.getsType());
+        values.put(Order.COLUMN_TOTAL, order.getnTotal());
+        values.put(Order.COLUMN_STATUS, order.getsStatus());
+        long id = db.insert(Order.TABLE_NAME, null, values);
+        db.close();
+        return id;
+    }
+
+    public void UpdateOrder(Order order){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(Order.COLUMN_TABLE_ID, order.getnTableID());
+        values.put(Order.COLUMN_TYPE, order.getsType());
+        values.put(Order.COLUMN_STATUS, order.getsStatus());
+        values.put(Order.COLUMN_TOTAL, order.getnTotal());
+        // Update values using table id
+        db.update(Order.TABLE_NAME, values, Order.COLUMN_ID + " = " + order.getnOrderID(), null );
+        db.close();
+    }
+
+    public Order GetOrder(long id){
+        // Access database
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Database query
+        Cursor cursor = db.query(Order.TABLE_NAME, new String[] { Order.COLUMN_ID, Order.COLUMN_TABLE_ID,
+                Order.COLUMN_TYPE, Order.COLUMN_STATUS, Order.COLUMN_TOTAL},
+                Order.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
+        // Checks query
+        if (cursor != null)
+            cursor.moveToFirst();
+        // Creates new monster with query values
+        Order order = new Order(cursor.getLong(0),
+                cursor.getLong(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getInt(4));
+        cursor.close();
+
+        return order;
+    }
+
     public void CreateDefaultTables(){
-        AddTable(new Table(1, "Table 1", -1, -1, "Open"));
-        AddTable(new Table(2, "Table 2", -1, -1, "Open"));
-        AddTable(new Table(3, "Table 3", -1, -1, "Open"));
-        AddTable(new Table(4, "Table 4", -1, -1, "Open"));
-        AddTable(new Table(5, "Table 5", -1, -1, "Open"));
-        AddTable(new Table(6, "Table 6", -1, -1, "Open"));
-        AddTable(new Table(7, "Table 7", -1, -1, "Open"));
-        AddTable(new Table(8, "Table 8", -1, -1, "Open"));
-        AddTable(new Table(9, "Table 9", -1, -1, "Open"));
-        AddTable(new Table(10, "Table 10", -1, -1, "Open"));
-        AddTable(new Table(11, "Table 11", -1, -1, "Open"));
-        AddTable(new Table(12, "Table 12", -1, -1, "Open"));
+        AddTable(new Table("Table 1"));
+        AddTable(new Table("Table 2"));
+        AddTable(new Table("Table 3"));
+        AddTable(new Table("Table 4"));
+        AddTable(new Table("Table 5"));
+        AddTable(new Table("Table 6"));
+        AddTable(new Table("Table 7"));
+        AddTable(new Table("Table 8"));
+        AddTable(new Table("Table 9"));
+        AddTable(new Table("Table 10"));
+        AddTable(new Table("Table 11"));
+        AddTable(new Table("Table 12"));
 
     }
 

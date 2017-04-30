@@ -19,20 +19,29 @@ import android.widget.Button;
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.OrderCurrentFragment;
 import com.ass3.axue2.posapplication.fragments.OrderGroupFragment;
+import com.ass3.axue2.posapplication.models.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.Order;
+import com.ass3.axue2.posapplication.models.Product;
+import com.ass3.axue2.posapplication.models.Table;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderActivity extends AppCompatActivity {
 
-    public static final String EXTRA_TABLE = "Table Name";
-    public static final String EXTRA_ID = "Table ID";
+    public static final String EXTRA_TABLENAME = "Table Name";
+    public static final String EXTRA_TABLEID = "Table ID";
+    public static final String EXTRA_TABLEGUESTS = "Table Guests";
+    public static final String EXTRA_ORDERID = "Order ID";
+    public static final String EXTRA_ORDERTYPE = "Order Type";
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
 
     private Button mConfirmButton;
+
+    private ArrayList<Product> mProducts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +50,16 @@ public class OrderActivity extends AppCompatActivity {
 
         // Find out which table was clicked in previous activity
         Intent intent = getIntent();
-        final String tableName = intent.getStringExtra(EXTRA_TABLE);
-        final int tableID = intent.getIntExtra(EXTRA_ID, 0);
+        final String tableName = intent.getStringExtra(EXTRA_TABLENAME);
+        final long tableID = intent.getLongExtra(EXTRA_TABLEID, 0);
+        final int tableGuests = intent.getIntExtra(EXTRA_TABLEGUESTS, 0);
+        final long orderID = intent.getLongExtra(EXTRA_ORDERID, 0);
+        final String orderType = intent.getStringExtra(EXTRA_ORDERTYPE);
 
-        Log.d("EXTRA_TABLE VALUE", tableName);
-        Log.d("EXTRA_ID VALUE", String.valueOf(tableID));
+        Log.d("EXTRA_TABLENAME VALUE", tableName);
+        Log.d("EXTRA_TABLEID VALUE", String.valueOf(tableID));
+
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -61,6 +75,7 @@ public class OrderActivity extends AppCompatActivity {
 
         assert mViewPager != null;
         mSectionsPagerAdapter.addFragment(new OrderCurrentFragment(), "Current Order");
+        // TODO: Figure out how to make each fragment show a different group
         mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 1");
         mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 2");
         mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 3");
@@ -79,7 +94,24 @@ public class OrderActivity extends AppCompatActivity {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("OnclickListener", "Click Successful");
                 Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+                // If status is not In-use create new order
+                if(orderID <= 0){
+                    Log.d("OrderID", "Less than 0");
+                    DatabaseHelper db =  new DatabaseHelper(getApplicationContext());
+                    // TODO: Calculate total invoice
+                    Order order = new Order(tableID, orderType, Order.STATUS_UNPAID, 0);
+                    long newID = db.AddOrder(order);
+                    Log.d("newID", String.valueOf(newID));
+                    // Set Table with new Order
+                    Table table = new Table(tableID, tableName, tableGuests, newID, 0, Table.STATUS_INUSE);
+                    db.UpdateTable(table);
+                }
+                else{
+
+                }
+                // Add Products to order
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 OrderActivity.this.finish();

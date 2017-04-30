@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.OrderActivity;
+import com.ass3.axue2.posapplication.models.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.Order;
 import com.ass3.axue2.posapplication.models.Table;
 
 import java.util.List;
@@ -74,6 +76,17 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View v) {
                 Log.d("Button", "Payment Button Press");
+                //TODO: Payment functionality
+                DatabaseHelper db = new DatabaseHelper(v.getContext());
+                Table newTable = new Table(currentTable.getnTableID(), currentTable.getsTableName(),
+                        currentTable.getnGuests(), -1, currentTable.getnInvSum(),
+                        Table.STATUS_OPEN);
+                Order currentOrder = db.GetOrder(currentTable.getnOrderID());
+                Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
+                        currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
+
+                db.UpdateTable(newTable);
+                db.UpdateOrder(newOrder);
             }
         });
 
@@ -83,9 +96,14 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View v){
                 Context context = v.getContext();
+
                 Intent intent = new Intent(context, OrderActivity.class);
-                intent.putExtra(OrderActivity.EXTRA_TABLE, currentTable.getsTableName());
-                intent.putExtra(OrderActivity.EXTRA_ID, currentTable.getnTableID());
+                intent.putExtra(OrderActivity.EXTRA_TABLENAME, currentTable.getsTableName());
+                intent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, currentTable.getnGuests());
+                intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_EAT_IN);
+                intent.putExtra(OrderActivity.EXTRA_TABLEID, currentTable.getnTableID());
+                intent.putExtra(OrderActivity.EXTRA_ORDERID, currentTable.getnOrderID());
+
                 context.startActivity(intent);
                 Log.d("Button", "Main CardView Pressed");
             }
@@ -102,9 +120,9 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         holder.mNameTextView.setText(currentTable.getsTableName());
         Log.d("Table name", currentTable.getsTableName());
         // Tables that are open should not show addition details
-        if (!currentTable.getsStatus().equals("Open")) {
+        if (!currentTable.getsStatus().equals(Table.STATUS_OPEN)) {
             // If table is in-use then payment button should appear
-            if (currentTable.getsStatus().equals("In-use"))
+            if (currentTable.getsStatus().equals(Table.STATUS_INUSE))
                 holder.mPaymentButton.setVisibility(View.VISIBLE);
             else
                 holder.mPaymentButton.setVisibility(View.INVISIBLE);
