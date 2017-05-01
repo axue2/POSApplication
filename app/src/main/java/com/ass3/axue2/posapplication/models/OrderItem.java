@@ -35,23 +35,32 @@ public class OrderItem {
             COLUMN_QUANTITY + " INTEGER" +
             ")";
 
-    OrderItem(long orderItemID, long orderID, long tableID, long productID, double price, int quantity){
+    public OrderItem(long orderItemID, long orderID, long tableID, long productID, String name,
+              double price, int quantity){
         nOrderItemID = orderItemID;
         nOrderID = orderID;
         nTableID = tableID;
         nProductID = productID;
+        sProductName = name;
         nPrice = price;
         nQuantity = quantity;
     }
 
-    OrderItem(long orderID, long tableID, long productID, double price, int quantity){
+    public OrderItem(long orderID, long tableID, long productID, String name,
+              double price, int quantity){
         nOrderItemID = -1;
         nOrderID = orderID;
         nTableID = tableID;
         nProductID = productID;
+        sProductName = name;
         nPrice = price;
         nQuantity = quantity;
     }
+
+    public void increaseQuantityByOne(){setnQuantity(this.nQuantity + 1);}
+
+    public void decreaseQuantityByOne(){setnQuantity(this.nQuantity - 1);}
+
     public long getnOrderItemID() {
         return nOrderItemID;
     }

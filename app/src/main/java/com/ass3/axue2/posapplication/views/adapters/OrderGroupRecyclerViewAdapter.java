@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
+import com.ass3.axue2.posapplication.activities.OrderActivity;
+import com.ass3.axue2.posapplication.models.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.Product;
 
 import java.util.List;
@@ -20,6 +22,8 @@ import java.util.List;
 public class OrderGroupRecyclerViewAdapter extends RecyclerView.Adapter<OrderGroupRecyclerViewAdapter.MyViewHolder> {
 
     private List<Product> mProducts;
+
+    private Context mContext;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
@@ -39,11 +43,14 @@ public class OrderGroupRecyclerViewAdapter extends RecyclerView.Adapter<OrderGro
     }
 
     public OrderGroupRecyclerViewAdapter(Context context, List<Product> productList) {
+        mContext = context;
         mProducts = productList;
     }
 
     @Override
     public OrderGroupRecyclerViewAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+
+
         // Select CardView to be used
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_order_add_product_item, parent, false);
         return new MyViewHolder(v);
@@ -60,6 +67,9 @@ public class OrderGroupRecyclerViewAdapter extends RecyclerView.Adapter<OrderGro
             @Override
             public void onClick(View v){
 
+                if(mContext instanceof OrderActivity){
+                    ((OrderActivity) mContext).AddOrderItem(currentProduct);
+                }
 
             }
         });

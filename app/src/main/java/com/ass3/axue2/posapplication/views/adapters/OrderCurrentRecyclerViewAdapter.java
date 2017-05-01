@@ -3,12 +3,15 @@ package com.ass3.axue2.posapplication.views.adapters;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
+import com.ass3.axue2.posapplication.activities.OrderActivity;
+import com.ass3.axue2.posapplication.models.OrderItem;
 import com.ass3.axue2.posapplication.models.Product;
 
 import java.util.List;
@@ -19,7 +22,9 @@ import java.util.List;
 
 public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderCurrentRecyclerViewAdapter.MyViewHolder> {
 
-    private List<Product> mProducts;
+    private List<OrderItem> mOrderItems;
+
+    private Context mContext;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
@@ -27,6 +32,7 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
         public CardView mCardView;
         public TextView mNameTextView;
         public TextView mPriceTextView;
+
 
 
         public MyViewHolder(View v){
@@ -38,8 +44,9 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
         }
     }
 
-    public OrderCurrentRecyclerViewAdapter(Context context, List<Product> productList) {
-        mProducts = productList;
+    public OrderCurrentRecyclerViewAdapter(Context context, List<OrderItem> orderItems) {
+        mContext = context;
+        mOrderItems = orderItems;
     }
 
     @Override
@@ -51,9 +58,9 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position){
-        final Product currentProduct = mProducts.get(position);
+        final OrderItem orderItem = mOrderItems.get(position);
         // Set values in the CardView
-        setTextViewValues(holder, currentProduct);
+        setTextViewValues(holder, orderItem);
 
         // OnClickListener for CardView Press
         holder.mView.setOnClickListener(new View.OnClickListener(){
@@ -67,15 +74,24 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
     }
 
     @Override
-    public int getItemCount(){return mProducts.size();}
+    public int getItemCount(){return mOrderItems.size();}
 
-    private void setTextViewValues(MyViewHolder holder, Product product){
+    private void setTextViewValues(MyViewHolder holder, OrderItem item){
 
-        holder.mNameTextView.setText(product.getsProductName());
-        String price = "$" + String.valueOf(product.getnPrice());
+        holder.mNameTextView.setText(item.getsProductName());
+        String price = "$" + String.valueOf(item.getnPrice());
         holder.mPriceTextView.setText(price);
 
     }
 
+    public void update(){
+        if(mContext instanceof OrderActivity){
+            mOrderItems.clear();
+            mOrderItems.addAll(((OrderActivity) mContext).getmOrderItems());
+            Log.d("OrderItems updated", String.valueOf(mOrderItems.size()));
+            //mOrderItems = ((OrderActivity) mContext).getmOrderItems();
+            notifyDataSetChanged();
+        }
+    }
 
 }

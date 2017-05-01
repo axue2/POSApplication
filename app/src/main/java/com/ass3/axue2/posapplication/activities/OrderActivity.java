@@ -23,6 +23,7 @@ import com.ass3.axue2.posapplication.models.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.Group;
 import com.ass3.axue2.posapplication.models.Order;
 import com.ass3.axue2.posapplication.models.OrderItem;
+import com.ass3.axue2.posapplication.models.Product;
 import com.ass3.axue2.posapplication.models.Table;
 
 import java.util.ArrayList;
@@ -36,13 +37,16 @@ public class OrderActivity extends AppCompatActivity {
     public static final String EXTRA_ORDERID = "Order ID";
     public static final String EXTRA_ORDERTYPE = "Order Type";
 
+    private long nTableID;
+    private long nOrderID;
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
 
     private Button mConfirmButton;
 
-    private ArrayList<OrderItem> mOrderItems;
+    private ArrayList<OrderItem> mOrderItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +56,13 @@ public class OrderActivity extends AppCompatActivity {
         // Find out which table was clicked in previous activity
         Intent intent = getIntent();
         final String tableName = intent.getStringExtra(EXTRA_TABLENAME);
-        final long tableID = intent.getLongExtra(EXTRA_TABLEID, 0);
+        nTableID = intent.getLongExtra(EXTRA_TABLEID, 0);
         final int tableGuests = intent.getIntExtra(EXTRA_TABLEGUESTS, 0);
-        final long orderID = intent.getLongExtra(EXTRA_ORDERID, 0);
+        nOrderID = intent.getLongExtra(EXTRA_ORDERID, 0);
         final String orderType = intent.getStringExtra(EXTRA_ORDERTYPE);
 
         Log.d("EXTRA_TABLENAME VALUE", tableName);
-        Log.d("EXTRA_TABLEID VALUE", String.valueOf(tableID));
+        Log.d("EXTRA_TABLEID VALUE", String.valueOf(nTableID));
 
         DatabaseHelper db = new DatabaseHelper(getApplicationContext());
         
@@ -75,7 +79,6 @@ public class OrderActivity extends AppCompatActivity {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-
 
         assert mViewPager != null;
         mSectionsPagerAdapter.addFragment(new OrderCurrentFragment(), "Current Order");
@@ -108,15 +111,15 @@ public class OrderActivity extends AppCompatActivity {
                 Log.d("OnclickListener", "Click Successful");
                 Intent intent = new Intent(OrderActivity.this, MainActivity.class);
                 // If status is not In-use create new order
-                if(orderID <= 0){
+                if(nOrderID <= 0){
                     Log.d("OrderID", "Less than 0");
                     DatabaseHelper db =  new DatabaseHelper(getApplicationContext());
                     // TODO: Calculate total invoice
-                    Order order = new Order(tableID, orderType, Order.STATUS_UNPAID, 0);
+                    Order order = new Order(nTableID, orderType, Order.STATUS_UNPAID, 0);
                     long newID = db.AddOrder(order);
                     Log.d("newID", String.valueOf(newID));
                     // Set Table with new Order
-                    Table table = new Table(tableID, tableName, tableGuests, newID, 0, Table.STATUS_INUSE);
+                    Table table = new Table(nTableID, tableName, tableGuests, newID, 0, Table.STATUS_INUSE);
                     db.UpdateTable(table);
                 }
                 else{
@@ -177,5 +180,44 @@ public class OrderActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {return mFragmentTitles.get(position);}
+    }
+
+    public void AddOrderItem(Product product){
+
+        boolean found = false;
+
+        // Convert product into an OrderItem
+        OrderItem item = new OrderItem(nOrderID, nTableID, product.getnProductID(),
+                product.getsProductName(), product.getnPrice(), 1);
+        // Check if OrderItem is currently in the list
+        for (OrderItem checkItem : mOrderItems) {
+            // If found in OrderItems then increase quantity by one
+            if(checkItem.getnProductID() == item.getnProductID()){
+                checkItem.setnQuantity(checkItem.getnQuantity() + 1);
+                Log.d("Current Quantity", String.valueOf(checkItem.getnQuantity()));
+                updateCurrentFragment();
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            // if OrderItem could not be found add one into OrderItems
+            mOrderItems.add(item);
+            updateCurrentFragment();
+            Log.d("Current Number of items", String.valueOf(mOrderItems.size()));
+        }
+    }
+
+    public ArrayList<OrderItem> getmOrderItems() {
+        return mOrderItems;
+    }
+
+    public void updateCurrentFragment(){
+        // OrderCurrentFragment MUST BE FIRST FRAGMENT
+        Fragment fragment = mSectionsPagerAdapter.getItem(0);
+        if (fragment instanceof OrderCurrentFragment){
+            ((OrderCurrentFragment) fragment).updateRecyclerView();
+        }
     }
 }
