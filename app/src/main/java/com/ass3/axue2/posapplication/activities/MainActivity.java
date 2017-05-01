@@ -43,9 +43,14 @@ public class MainActivity extends AppCompatActivity {
         mDBHelper = new DatabaseHelper(getApplicationContext());
 
         // If tables are empty add default values
-        if(mDBHelper.GetAllTables().size() == 0) {
+        if(mDBHelper.GetAllTables().size() == 0)
             mDBHelper.CreateDefaultTables();
-        }
+
+        if(mDBHelper.GetAllGroups().size() == 0)
+            mDBHelper.CreateDefaultGroups();
+
+        if(mDBHelper.GetProducts(1).size() == 0)
+            mDBHelper.CreateDefaultProducts();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.

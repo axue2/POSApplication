@@ -9,47 +9,44 @@ import java.util.List;
 
 public class Group {
 
+    // Database Constants
+    public static final String TABLE_NAME = "Groups";
+    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_NAME = "NAME";
 
+    // Order Create Statement
+    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+            COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            COLUMN_NAME + " TEXT NOT NULL" +
+            ")";
 
-    private int nGroupID;
+    private long nGroupID;
     private String sGroupName;
     private ArrayList<Product> mProducts;
 
-    public Group(int id, String name, ArrayList<Product> products){
+    public Group(long id, String name, ArrayList<Product> products){
         nGroupID = id;
         sGroupName = name;
         mProducts = products;
 
     }
 
-    public ArrayList<Product> testProducts(ArrayList<Product> products){
-        Product product = new Product(1, "Salt and Pepper Calamari", 14, 0);
-        products.add(product);
-        product = new Product(2, "Margherita Pizza", 16, 0);
-        products.add(product);
-        product = new Product(3, "Prosciutto Pizza", 21, 0);
-        products.add(product);
-        product = new Product(4, "Lamb Pizza", 19, 0);
-        products.add(product);
-        product = new Product(5, "Nutella Calzone", 11, 0);
-        products.add(product);
-        product = new Product(6, "Napoletana Pizza", 16, 0);
-        products.add(product);
-        product = new Product(7, "Vegan Pizza", 16, 0);
-        products.add(product);
-        product = new Product(8, "Capricciosa Pizza", 17, 0);
-        products.add(product);
-        product = new Product(9, "Chorizo Pizza", 18, 0);
-        products.add(product);
-
-        return products;
+    public Group(long id, String name){
+        nGroupID = id;
+        sGroupName = name;
     }
 
-    public int getnGroupID() {
+    public Group(String name){
+        nGroupID = -1;
+        sGroupName = name;
+    }
+
+
+    public long getnGroupID() {
         return nGroupID;
     }
 
-    public void setnGroupID(int nGroupID) {
+    public void setnGroupID(long nGroupID) {
         this.nGroupID = nGroupID;
     }
 

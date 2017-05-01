@@ -20,8 +20,9 @@ import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.OrderCurrentFragment;
 import com.ass3.axue2.posapplication.fragments.OrderGroupFragment;
 import com.ass3.axue2.posapplication.models.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.Group;
 import com.ass3.axue2.posapplication.models.Order;
-import com.ass3.axue2.posapplication.models.Product;
+import com.ass3.axue2.posapplication.models.OrderItem;
 import com.ass3.axue2.posapplication.models.Table;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class OrderActivity extends AppCompatActivity {
 
     private Button mConfirmButton;
 
-    private ArrayList<Product> mProducts;
+    private ArrayList<OrderItem> mOrderItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +60,11 @@ public class OrderActivity extends AppCompatActivity {
         Log.d("EXTRA_TABLENAME VALUE", tableName);
         Log.d("EXTRA_TABLEID VALUE", String.valueOf(tableID));
 
-
-
+        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+        
+        // Get all the Groups
+        ArrayList<Group> groups = new ArrayList<>(db.GetAllGroups().values());
+        
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(tableName);
@@ -75,12 +79,19 @@ public class OrderActivity extends AppCompatActivity {
 
         assert mViewPager != null;
         mSectionsPagerAdapter.addFragment(new OrderCurrentFragment(), "Current Order");
-        // TODO: Figure out how to make each fragment show a different group
-        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 1");
-        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 2");
-        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 3");
-        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 4");
-        mSectionsPagerAdapter.addFragment(new OrderGroupFragment(), "Group 5");
+
+        // Create a new tab for each group
+        for (Group group : groups) {
+            OrderGroupFragment f = new OrderGroupFragment();
+
+            // Put GroupID in fragment
+            Bundle args = new Bundle();
+            args.putLong(OrderGroupFragment.BUNDLE_ITEM_GROUPID, group.getnGroupID());
+            f.setArguments(args);
+
+            mSectionsPagerAdapter.addFragment(f, group.getsGroupName());
+        }
+
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
