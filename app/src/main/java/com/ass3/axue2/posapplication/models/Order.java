@@ -10,7 +10,7 @@ public class Order {
     private long nTableID;
     private String sType;
     private String sStatus;
-    private int nTotal;
+    private double nTotal;
 
     // Database Constants
     public static final String TABLE_NAME = "Orders";
@@ -36,10 +36,10 @@ public class Order {
             COLUMN_TABLE_ID + " INTEGER NOT NULL, " +
             COLUMN_TYPE + " TEXT NOT NULL, " +
             COLUMN_STATUS + " TEXT NOT NULL, " +
-            COLUMN_TOTAL + " INTEGER" +
+            COLUMN_TOTAL + " REAL" +
             ")";
 
-    public Order(long orderID, long tableID, String type, String status, int total){
+    public Order(long orderID, long tableID, String type, String status, double total){
         nOrderID = orderID;
         nTableID = tableID;
         sType = type;
@@ -47,7 +47,7 @@ public class Order {
         nTotal = total;
     }
 
-    public Order(long tableID, String type, String status, int total){
+    public Order(long tableID, String type, String status, double total){
         nOrderID = -1;
         nTableID = tableID;
         sType = type;
@@ -87,11 +87,11 @@ public class Order {
         this.sStatus = sStatus;
     }
 
-    public int getnTotal() {
+    public double getnTotal() {
         return nTotal;
     }
 
-    public void setnTotal(int nTotal) {
+    public void setnTotal(double nTotal) {
         this.nTotal = nTotal;
     }
 }

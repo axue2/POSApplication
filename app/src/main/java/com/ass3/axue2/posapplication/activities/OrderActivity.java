@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.OrderCurrentFragment;
@@ -39,12 +40,20 @@ public class OrderActivity extends AppCompatActivity {
 
     private long nTableID;
     private long nOrderID;
+    private long nQuantity = 0;
+    private double nSubtotal = 0;
+    private String sType;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
 
+    private DatabaseHelper mDBHelper;
+
     private Button mConfirmButton;
+    private TextView mOrderNumberTextView;
+    private TextView mOrderQuantityTextView;
+    private TextView mOrderSubtotalTextView;
 
     private ArrayList<OrderItem> mOrderItems = new ArrayList<>();
 
@@ -52,6 +61,7 @@ public class OrderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
+
 
         // Find out which table was clicked in previous activity
         Intent intent = getIntent();
@@ -64,10 +74,18 @@ public class OrderActivity extends AppCompatActivity {
         Log.d("EXTRA_TABLENAME VALUE", tableName);
         Log.d("EXTRA_TABLEID VALUE", String.valueOf(nTableID));
 
-        DatabaseHelper db = new DatabaseHelper(getApplicationContext());
-        
+        mDBHelper = new DatabaseHelper(getApplicationContext());
+
+        // Get all OrderItems
+        mOrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
+        // Get total quantity of OrderItems
+        for (OrderItem orderItem:mOrderItems) {
+            nQuantity += orderItem.getnQuantity();
+            nSubtotal += (orderItem.getnPrice() * orderItem.getnQuantity());
+        }
+
         // Get all the Groups
-        ArrayList<Group> groups = new ArrayList<>(db.GetAllGroups().values());
+        ArrayList<Group> groups = new ArrayList<>(mDBHelper.GetAllGroups().values());
         
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,6 +120,12 @@ public class OrderActivity extends AppCompatActivity {
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         tabLayout.setupWithViewPager(mViewPager);
 
+        // Setup TextView
+        mOrderNumberTextView = (TextView) findViewById(R.id.order_number);
+        mOrderQuantityTextView = (TextView) findViewById(R.id.order_quantity);
+        mOrderSubtotalTextView = (TextView) findViewById(R.id.order_subtotal);
+        setTextViewValues();
+
         // Get Button
         mConfirmButton = (Button) findViewById(R.id.order_confirm_button);
 
@@ -113,19 +137,29 @@ public class OrderActivity extends AppCompatActivity {
                 // If status is not In-use create new order
                 if(nOrderID <= 0){
                     Log.d("OrderID", "Less than 0");
-                    DatabaseHelper db =  new DatabaseHelper(getApplicationContext());
+                    mDBHelper =  new DatabaseHelper(getApplicationContext());
                     // TODO: Calculate total invoice
-                    Order order = new Order(nTableID, orderType, Order.STATUS_UNPAID, 0);
-                    long newID = db.AddOrder(order);
-                    Log.d("newID", String.valueOf(newID));
+                    Order order = new Order(nTableID, orderType, Order.STATUS_UNPAID, nSubtotal);
+                    nOrderID = mDBHelper.AddOrder(order);
+
+                    Log.d("newID", String.valueOf(nOrderID));
                     // Set Table with new Order
-                    Table table = new Table(nTableID, tableName, tableGuests, newID, 0, Table.STATUS_INUSE);
-                    db.UpdateTable(table);
+                    Table table = new Table(nTableID, tableName, tableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
+                    mDBHelper.UpdateTable(table);
                 }
                 else{
+                    // Update subtotal for Order
+                    Order order = new Order(nTableID, orderType, Order.STATUS_UNPAID, nSubtotal);
+                    mDBHelper.UpdateOrder(order);
+                }
+
+                // Add OrderItems to db
+                for (OrderItem orderItem: mOrderItems) {
+                    orderItem.setnOrderID(nOrderID);
+                    mDBHelper.AddOrderItem(orderItem);
 
                 }
-                // Add Products to order
+
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 OrderActivity.this.finish();
@@ -186,6 +220,11 @@ public class OrderActivity extends AppCompatActivity {
 
         boolean found = false;
 
+        // Update Activity
+        nQuantity += 1;
+        nSubtotal += product.getnPrice();
+        setTextViewValues();
+
         // Convert product into an OrderItem
         OrderItem item = new OrderItem(nOrderID, nTableID, product.getnProductID(),
                 product.getsProductName(), product.getnPrice(), 1);
@@ -220,4 +259,16 @@ public class OrderActivity extends AppCompatActivity {
             ((OrderCurrentFragment) fragment).updateRecyclerView();
         }
     }
+
+    private void setTextViewValues(){
+        if (nOrderID > 0){
+            mOrderNumberTextView.setText(String.valueOf(nOrderID));
+        }else{
+            mOrderNumberTextView.setText("Unconfirmed");
+        }
+
+        mOrderQuantityTextView.setText(String.valueOf(nQuantity));
+        mOrderSubtotalTextView.setText(String.valueOf("$" + nSubtotal));
+    }
+
 }

@@ -10,7 +10,7 @@ public class Table {
     private String sTableName;
     private int nGuests;
     private long nOrderID;
-    private int nInvSum;
+    private double nInvSum;
     private String sStatus;
 
     // Database Constants
@@ -34,12 +34,12 @@ public class Table {
             COLUMN_NAME + " TEXT NOT NULL, " +
             COLUMN_GUESTS + " INTEGER, " +
             COLUMN_ORDER_ID + " INTEGER, " +
-            COLUMN_TOTAL + " INTEGER, " +
+            COLUMN_TOTAL + " REAL, " +
             COLUMN_STATUS + " TEXT NOT NULL" +
             ")";
 
     public Table(long id, String name, int guests, long orderID,
-                 int total, String status) {
+                 double total, String status) {
         nTableID = id;
         sTableName = name;
         nGuests = guests;
@@ -76,9 +76,9 @@ public class Table {
 
     public void setnGuests(int nGuests) {this.nGuests = nGuests;}
 
-    public int getnInvSum() {return nInvSum;}
+    public double getnInvSum() {return nInvSum;}
 
-    public void setnInvSum(int nInvSum) {this.nInvSum = nInvSum;}
+    public void setnInvSum(double nInvSum) {this.nInvSum = nInvSum;}
 
     public String getsStatus() {return sStatus;}
 

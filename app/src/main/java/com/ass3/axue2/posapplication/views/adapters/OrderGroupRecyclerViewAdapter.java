@@ -3,6 +3,7 @@ package com.ass3.axue2.posapplication.views.adapters;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +69,9 @@ public class OrderGroupRecyclerViewAdapter extends RecyclerView.Adapter<OrderGro
             public void onClick(View v){
 
                 if(mContext instanceof OrderActivity){
+                    Log.d("AddOrderItem started", currentProduct.getsProductName());
                     ((OrderActivity) mContext).AddOrderItem(currentProduct);
+                    Log.d("AddOrderItem finished", "");
                 }
 
             }

@@ -30,7 +30,7 @@ public class OrderItem {
             COLUMN_ORDER_ID + " INTEGER NOT NULL, " +
             COLUMN_TABLE_ID + " INTEGER NOT NULL, " +
             COLUMN_PRODUCT_ID + " INTEGER NOT NULL, " +
-            COLUMN_PRODUCT_NAME + "TEXT NOT NULL, " +
+            COLUMN_PRODUCT_NAME + " TEXT NOT NULL, " +
             COLUMN_PRODUCT_PRICE + " REAL, " +
             COLUMN_QUANTITY + " INTEGER" +
             ")";

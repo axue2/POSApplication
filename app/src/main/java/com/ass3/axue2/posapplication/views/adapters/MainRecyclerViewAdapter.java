@@ -37,7 +37,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         public TextView mGuestsTextView;
         public TextView mInvoiceTextView;
         public Button mPaymentButton;
-        public int nID;
 
 
         public MyViewHolder(View v){

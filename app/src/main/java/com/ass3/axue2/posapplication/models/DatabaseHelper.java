@@ -237,6 +237,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public HashMap<Long, OrderItem> GetOrderItems(long orderID){
+        HashMap<Long, OrderItem> orderItems = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + OrderItem.TABLE_NAME + " WHERE " +
+                OrderItem.COLUMN_ORDER_ID + " = '" + orderID + "'", null);
+
+        // Add all OrderItems in db to hashmap
+        if(cursor.moveToFirst()) {
+            do {
+                OrderItem orderItem = new OrderItem(cursor.getLong(0),
+                        cursor.getLong(1),
+                        cursor.getLong(2),
+                        cursor.getLong(3),
+                        cursor.getString(4),
+                        cursor.getDouble(5),
+                        cursor.getInt(6)
+                );
+                orderItems.put(orderItem.getnOrderItemID(), orderItem);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return orderItems;
+    }
+
     public void AddGroup(Group group){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -273,6 +297,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return id;
     }
+
+
 
     public void CreateDefaultTables(){
         AddTable(new Table("Table 1"));
@@ -338,13 +364,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         AddProduct(new Product(4, "Orange Blossom Polenta Cake", 10.5));
         AddProduct(new Product(4, "Amalfi Lemon Meringue Cheesecake", 14));
 
-        AddProduct(new Product(5, "Rossini", 9.9));
-        AddProduct(new Product(5, "Belini", 9.9));
+        AddProduct(new Product(5, "Rossini", 9.95));
+        AddProduct(new Product(5, "Belini", 9.95));
         AddProduct(new Product(5, "Aperol Spritz", 11));
         AddProduct(new Product(5, "Grande Reserve", 16.5));
-        AddProduct(new Product(5, "Special Mojito", 16));
-        AddProduct(new Product(5, "Ginger Martini", 9.9));
-        AddProduct(new Product(5, "Espresso Martini", 9.9));
+        AddProduct(new Product(5, "Special Mojito", 16.34));
+        AddProduct(new Product(5, "Ginger Martini", 9.96));
+        AddProduct(new Product(5, "Espresso Martini", 9.99));
         AddProduct(new Product(5, "Vanilla & Lemon Martini", 16));
         AddProduct(new Product(5, "Soft Drink", 3));
         AddProduct(new Product(5, "Fresh Juice", 5));
