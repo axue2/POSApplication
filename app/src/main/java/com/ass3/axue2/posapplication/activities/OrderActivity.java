@@ -138,25 +138,32 @@ public class OrderActivity extends AppCompatActivity {
                 if(nOrderID <= 0){
                     Log.d("OrderID", "Less than 0");
                     mDBHelper =  new DatabaseHelper(getApplicationContext());
-                    // TODO: Calculate total invoice
+
                     Order order = new Order(nTableID, orderType, Order.STATUS_UNPAID, nSubtotal);
                     nOrderID = mDBHelper.AddOrder(order);
 
                     Log.d("newID", String.valueOf(nOrderID));
-                    // Set Table with new Order
-                    Table table = new Table(nTableID, tableName, tableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
-                    mDBHelper.UpdateTable(table);
+
                 }
                 else{
                     // Update subtotal for Order
                     Order order = new Order(nTableID, orderType, Order.STATUS_UNPAID, nSubtotal);
                     mDBHelper.UpdateOrder(order);
                 }
+                // Update Table details
+                Table table = new Table(nTableID, tableName, tableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
+                mDBHelper.UpdateTable(table);
 
-                // Add OrderItems to db
+                // Adds/Updates OrderItems to db
+                // TODO: check if order is already in database
                 for (OrderItem orderItem: mOrderItems) {
                     orderItem.setnOrderID(nOrderID);
-                    mDBHelper.AddOrderItem(orderItem);
+                    if (orderItem.getnOrderItemID() > 0) {
+
+                        mDBHelper.UpdateOrderItem(orderItem);
+                    } else{
+                        mDBHelper.AddOrderItem(orderItem);
+                    }
 
                 }
 
@@ -216,22 +223,19 @@ public class OrderActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {return mFragmentTitles.get(position);}
     }
 
-    public void AddOrderItem(Product product){
+    public void AddOrderItem(OrderItem orderItem){
 
         boolean found = false;
 
         // Update Activity
         nQuantity += 1;
-        nSubtotal += product.getnPrice();
+        nSubtotal += orderItem.getnPrice();
         setTextViewValues();
 
-        // Convert product into an OrderItem
-        OrderItem item = new OrderItem(nOrderID, nTableID, product.getnProductID(),
-                product.getsProductName(), product.getnPrice(), 1);
         // Check if OrderItem is currently in the list
         for (OrderItem checkItem : mOrderItems) {
             // If found in OrderItems then increase quantity by one
-            if(checkItem.getnProductID() == item.getnProductID()){
+            if(checkItem.getnProductID() == orderItem.getnProductID()){
                 checkItem.setnQuantity(checkItem.getnQuantity() + 1);
                 Log.d("Current Quantity", String.valueOf(checkItem.getnQuantity()));
                 updateCurrentFragment();
@@ -242,10 +246,16 @@ public class OrderActivity extends AppCompatActivity {
 
         if (!found) {
             // if OrderItem could not be found add one into OrderItems
-            mOrderItems.add(item);
+            mOrderItems.add(orderItem);
             updateCurrentFragment();
             Log.d("Current Number of items", String.valueOf(mOrderItems.size()));
         }
+    }
+
+    public OrderItem ConvertProductToOrderItem(Product product){
+        // Convert product into an OrderItem
+        return new OrderItem(nOrderID, nTableID, product.getnProductID(),
+                product.getsProductName(), product.getnPrice(), 1);
     }
 
     public ArrayList<OrderItem> getmOrderItems() {
@@ -269,6 +279,25 @@ public class OrderActivity extends AppCompatActivity {
 
         mOrderQuantityTextView.setText(String.valueOf(nQuantity));
         mOrderSubtotalTextView.setText(String.valueOf("$" + nSubtotal));
+    }
+
+    public void RemoveOrderItem(OrderItem orderItem){
+
+        if(nQuantity > 0 && orderItem.getnQuantity() > 0 && nSubtotal >= orderItem.getnPrice()){
+            nQuantity -= 1;
+            nSubtotal -= orderItem.getnPrice();
+
+            for (OrderItem checkItem : mOrderItems) {
+                // If found in OrderItems then decrease quantity by one
+                if (checkItem.getnProductID() == orderItem.getnProductID()) {
+                    checkItem.setnQuantity(checkItem.getnQuantity() - 1);
+                    Log.d("Current Quantity", String.valueOf(checkItem.getnQuantity()));
+                    updateCurrentFragment();
+                    break;
+                }
+            }
+        }
+        setTextViewValues();
     }
 
 }

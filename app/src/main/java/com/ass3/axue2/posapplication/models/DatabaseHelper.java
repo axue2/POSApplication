@@ -233,7 +233,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(OrderItem.COLUMN_PRODUCT_PRICE, orderItem.getnPrice());
         values.put(OrderItem.COLUMN_QUANTITY, orderItem.getnQuantity());
         // Update values using table id
-        db.update(Order.TABLE_NAME, values, Order.COLUMN_ID + " = " + orderItem.getnOrderItemID(), null );
+        db.update(OrderItem.TABLE_NAME, values, OrderItem.COLUMN_ID + " = " + orderItem.getnOrderItemID(), null );
         db.close();
     }
 

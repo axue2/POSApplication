@@ -7,12 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.OrderActivity;
 import com.ass3.axue2.posapplication.models.OrderItem;
-import com.ass3.axue2.posapplication.models.Product;
 
 import java.util.List;
 
@@ -28,10 +28,14 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        public View mView;
-        public CardView mCardView;
-        public TextView mNameTextView;
-        public TextView mPriceTextView;
+        private View mView;
+        private CardView mCardView;
+        private TextView mNameTextView;
+        private TextView mPriceTextView;
+        private TextView mQuantityTextView;
+        private TextView mSubtotalTextView;
+        private Button mMinusButton;
+        private Button mPlusButton;
 
 
 
@@ -41,6 +45,10 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
             mCardView = (CardView) v.findViewById(R.id.order_current_list_cv);
             mNameTextView = (TextView) v.findViewById(R.id.order_current_product_name);
             mPriceTextView = (TextView) v.findViewById(R.id.order_current_product_price);
+            mQuantityTextView = (TextView) v.findViewById(R.id.order_current_product_quantity);
+            mSubtotalTextView = (TextView) v.findViewById(R.id.order_current_product_subtotal);
+            mMinusButton = (Button) v.findViewById(R.id.order_current_minus_button);
+            mPlusButton = (Button) v.findViewById(R.id.order_current_plus_button);
         }
     }
 
@@ -57,17 +65,28 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position){
+    public void onBindViewHolder(final MyViewHolder holder, int position){
         final OrderItem orderItem = mOrderItems.get(position);
         // Set values in the CardView
         setTextViewValues(holder, orderItem);
 
-        // OnClickListener for CardView Press
-        holder.mView.setOnClickListener(new View.OnClickListener(){
+        holder.mMinusButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
+                if(orderItem.getnQuantity() > 0) {
+                    if (mContext instanceof OrderActivity) {
+                        ((OrderActivity) mContext).RemoveOrderItem(orderItem);
+                    }
+                }
+            }
+        });
 
-
+        holder.mPlusButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(mContext instanceof OrderActivity){
+                    ((OrderActivity) mContext).AddOrderItem(orderItem);
+                }
             }
         });
 
@@ -81,6 +100,10 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
         holder.mNameTextView.setText(item.getsProductName());
         String price = "$" + String.valueOf(item.getnPrice());
         holder.mPriceTextView.setText(price);
+        String quantity = "x" + item.getnQuantity();
+        holder.mQuantityTextView.setText(quantity);
+        String subtotal = "$" + String.valueOf(item.getnQuantity() * item.getnPrice());
+        holder.mSubtotalTextView.setText(subtotal);
 
     }
 

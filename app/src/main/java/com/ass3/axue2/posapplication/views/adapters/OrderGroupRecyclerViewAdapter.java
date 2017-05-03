@@ -70,7 +70,7 @@ public class OrderGroupRecyclerViewAdapter extends RecyclerView.Adapter<OrderGro
 
                 if(mContext instanceof OrderActivity){
                     Log.d("AddOrderItem started", currentProduct.getsProductName());
-                    ((OrderActivity) mContext).AddOrderItem(currentProduct);
+                    ((OrderActivity) mContext).AddOrderItem(((OrderActivity) mContext).ConvertProductToOrderItem(currentProduct));
                     Log.d("AddOrderItem finished", "");
                 }
 
