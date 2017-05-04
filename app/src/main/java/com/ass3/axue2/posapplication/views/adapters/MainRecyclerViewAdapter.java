@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.OrderActivity;
+import com.ass3.axue2.posapplication.activities.PaymentActivity;
 import com.ass3.axue2.posapplication.models.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.Order;
 import com.ass3.axue2.posapplication.models.Table;
@@ -76,16 +77,17 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             public void onClick(View v) {
                 Log.d("Button", "Payment Button Press");
                 //TODO: Payment functionality
-                DatabaseHelper db = new DatabaseHelper(v.getContext());
-                Table newTable = new Table(currentTable.getnTableID(), currentTable.getsTableName(),
-                        currentTable.getnGuests(), -1, currentTable.getnInvSum(),
-                        Table.STATUS_OPEN);
-                Order currentOrder = db.GetOrder(currentTable.getnOrderID());
-                Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
-                        currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
 
-                db.UpdateTable(newTable);
-                db.UpdateOrder(newOrder);
+
+                Context context = v.getContext();
+
+                Intent intent = new Intent(context, PaymentActivity.class);
+                intent.putExtra(PaymentActivity.EXTRA_SUBTOTAL, currentTable.getnInvSum());
+                intent.putExtra(PaymentActivity.EXTRA_ORDERID, currentTable.getnOrderID());
+                intent.putExtra(PaymentActivity.EXTRA_TABLEID, currentTable.getnTableID());
+                intent.putExtra(PaymentActivity.EXTRA_TABLENAME, currentTable.getsTableName());
+
+                context.startActivity(intent);
             }
         });
 

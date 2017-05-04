@@ -22,7 +22,8 @@
         <activity
             android:name=".activities.OrderActivity"
             android:label="@string/title_activity_order"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.PaymentActivity"></activity>
     </application>
 
 </manifest>
