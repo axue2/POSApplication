@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ass3.axue2.posapplication.activities.DeliveryDetailsActivity"
+>
+
+    <TextView
+        android:id="@+id/delivery_details_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name:"
+        android:textColor="@color/BLACK"
+        android:textSize="18sp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="Address:"
+        android:textColor="@color/BLACK"
+        android:textSize="18sp"
+        android:layout_below="@+id/editText2"
+        android:layout_alignEnd="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:text="Postcode:"
+        android:textColor="@color/BLACK"
+        android:textSize="18sp"
+        android:layout_below="@+id/editText6"
+        android:layout_alignEnd="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Phone:"
+        android:textColor="@color/BLACK"
+        android:textSize="18sp"
+        android:layout_below="@+id/textView5"
+        android:layout_alignStart="@+id/delivery_details_name" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:text="Delivery Fee:"
+        android:textColor="@color/BLACK"
+        android:textSize="18sp"
+        android:layout_below="@+id/editText8"
+        android:layout_alignEnd="@+id/textView6" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/delivery_details_name"
+        android:layout_alignBottom="@+id/delivery_details_name"
+        android:layout_alignParentEnd="true"
+        android:ems="10"
+        android:hint="Customer Name"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/editText7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView5"
+        android:layout_alignBottom="@+id/textView5"
+        android:layout_alignParentEnd="true"
+        android:ems="10"
+        android:hint="Post Code"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/editText8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView6"
+        android:layout_alignBottom="@+id/textView6"
+        android:layout_alignParentEnd="true"
+        android:ems="10"
+        android:hint="Phone Number"
+        android:inputType="phone" />
+
+    <EditText
+        android:id="@+id/editText9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView7"
+        android:layout_alignBottom="@+id/textView7"
+        android:layout_alignParentEnd="true"
+        android:ems="10"
+        android:hint="Delivery Fee"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView4"
+        android:layout_alignBottom="@+id/textView4"
+        android:layout_alignParentEnd="true"
+        android:ems="10"
+        android:hint="Address Line 1"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/editText4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/editText3"
+        android:layout_marginTop="12dp"
+        android:ems="10"
+        android:hint="Address Line 2"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/editText6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/editText4"
+        android:layout_marginTop="12dp"
+        android:ems="10"
+        android:hint="Address Line 3"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/delivery_details_confirm_button"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_toEndOf="@+id/textView7"
+        android:background="@color/DeliveryDetailsConfirmButton"
+        android:text="Confirm Delivery Details"
+        android:textColor="@color/WHITE" />
+
+</RelativeLayout>

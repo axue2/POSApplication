@@ -1,5 +1,7 @@
 package com.ass3.axue2.posapplication.activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,11 +17,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.MainOrdersFragment;
 import com.ass3.axue2.posapplication.fragments.MainTableFragment;
 import com.ass3.axue2.posapplication.models.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.Order;
 import com.ass3.axue2.posapplication.models.Table;
 
 import java.util.ArrayList;
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle("Delivery Details");
 
         //this.deleteDatabase(mDBHelper.DATABASE_NAME);
 
@@ -69,11 +74,48 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fabTakeaway = (FloatingActionButton) findViewById(R.id.fab_takeaway);
+        FloatingActionButton fabDelivery = (FloatingActionButton) findViewById(R.id.fab_delivery);
+        final LinearLayout takeawayLayout = (LinearLayout) findViewById(R.id.main_takeaway_layout);
+        final LinearLayout deliveryLayout = (LinearLayout) findViewById(R.id.main_delivery_layout);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if(takeawayLayout.getVisibility() == View.VISIBLE &&
+                        deliveryLayout.getVisibility() == View.VISIBLE){
+                    takeawayLayout.setVisibility(View.GONE);
+                    deliveryLayout.setVisibility(View.GONE);
+                } else{
+                    takeawayLayout.setVisibility(View.VISIBLE);
+                    deliveryLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        fabTakeaway.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(view.getContext(), OrderActivity.class);
+                intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_TAKEAWAY);
+                intent.putExtra(OrderActivity.EXTRA_TABLENAME, "");
+                intent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
+
+                intent.putExtra(OrderActivity.EXTRA_TABLEID, -1);
+                intent.putExtra(OrderActivity.EXTRA_ORDERID, -1);
+
+                startActivity(intent);
+
+            }
+        });
+
+        fabDelivery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(view.getContext(), DeliveryDetailsActivity.class);
+
+                startActivity(intent);
             }
         });
 

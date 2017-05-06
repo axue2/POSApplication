@@ -76,8 +76,6 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
             @Override
             public void onClick(View v) {
                 Log.d("Button", "Payment Button Press");
-                //TODO: Payment functionality
-
 
                 Context context = v.getContext();
 
