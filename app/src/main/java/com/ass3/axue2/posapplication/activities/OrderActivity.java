@@ -1,6 +1,7 @@
 package com.ass3.axue2.posapplication.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -134,6 +135,7 @@ public class OrderActivity extends AppCompatActivity {
             mConfirmButton.setText(R.string.order_confirm_order);
         } else {
             mConfirmButton.setText(R.string.order_payment);
+            mConfirmButton.setBackgroundColor(Color.RED);
         }
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override

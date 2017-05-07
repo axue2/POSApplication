@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,8 +8,8 @@
         android:layout_width="120dp"
         android:layout_height="40dp"
         android:paddingTop="10dp"
-        android:paddingLeft="10dp"
-        android:text="Amount Due:"
+
+        android:text="@string/payment_amount"
         android:gravity="end"
         android:textSize="18sp" />
 
@@ -19,10 +18,9 @@
         android:layout_width="120dp"
         android:layout_height="40dp"
         android:paddingTop="10dp"
-        android:paddingLeft="10dp"
         android:layout_below="@+id/payment_amount_due"
         android:gravity="end"
-        android:text="Paid:"
+        android:text="@string/payment_paid"
         android:textSize="18sp" />
 
     <TextView
@@ -30,10 +28,9 @@
         android:layout_width="120dp"
         android:layout_height="40dp"
         android:paddingTop="10dp"
-        android:paddingLeft="10dp"
         android:gravity="end"
         android:layout_below="@+id/payment_paid"
-        android:text="Change"
+        android:text="@string/payment_change"
         android:textSize="18sp" />
 
     <TextView
@@ -45,7 +42,7 @@
         android:layout_above="@+id/payment_paid"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/payment_amount_due"
-        android:text="$9999.99"
+        android:text="@string/payment_placeholder"
         android:textSize="18sp"/>
 
     <TextView
@@ -57,7 +54,7 @@
         android:layout_above="@+id/payment_change"
         android:layout_below="@+id/payment_amount_due"
         android:layout_toEndOf="@+id/payment_paid"
-        android:text="$9999.99"
+        android:text="@string/payment_placeholder"
         android:textSize="18sp"/>
 
     <TextView
@@ -70,10 +67,8 @@
         android:layout_above="@+id/payment_numberpad_8"
         android:layout_below="@+id/payment_paid"
         android:layout_toEndOf="@+id/payment_paid"
-        android:text="$9999.99"
+        android:text="@string/payment_placeholder"
         android:textSize="18sp"/>
-
-
 
     <Button
         android:id="@+id/payment_numberpad_0"
@@ -83,7 +78,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/payment_numberpad_1"
         android:background="@color/colorPrimary"
-        android:text="0"
+        android:text="@string/payment_0"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -95,7 +90,7 @@
         android:layout_below="@+id/payment_numberpad_2"
         android:layout_toEndOf="@+id/payment_numberpad_1"
         android:background="@color/colorPrimary"
-        android:text="00"
+        android:text="@string/payment_00"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -107,7 +102,7 @@
         android:layout_below="@+id/payment_numberpad_3"
         android:layout_toEndOf="@+id/payment_numberpad_00"
         android:background="@color/colorPrimary"
-        android:text="."
+        android:text="@string/decimal"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -118,7 +113,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/payment_numberpad_4"
         android:background="@color/colorPrimary"
-        android:text="1"
+        android:text="@string/payment_1"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -129,18 +124,7 @@
         android:layout_below="@+id/payment_numberpad_5"
         android:layout_toEndOf="@+id/payment_numberpad_1"
         android:background="@color/colorPrimary"
-        android:text="2"
-        android:textColor="@color/WHITE"
-        android:textSize="40sp" />
-
-    <Button
-        android:id="@+id/payment_numberpad_4"
-        android:layout_width="95dp"
-        android:layout_height="95dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/payment_numberpad_7"
-        android:background="@color/colorPrimary"
-        android:text="4"
+        android:text="@string/payment_2"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -151,7 +135,18 @@
         android:layout_below="@+id/payment_numberpad_6"
         android:layout_toEndOf="@+id/payment_numberpad_2"
         android:background="@color/colorPrimary"
-        android:text="3"
+        android:text="@string/payment_3"
+        android:textColor="@color/WHITE"
+        android:textSize="40sp" />
+
+    <Button
+        android:id="@+id/payment_numberpad_4"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/payment_numberpad_7"
+        android:background="@color/colorPrimary"
+        android:text="@string/payment_4"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -162,7 +157,7 @@
         android:layout_below="@+id/payment_numberpad_8"
         android:layout_toEndOf="@+id/payment_numberpad_1"
         android:background="@color/colorPrimary"
-        android:text="5"
+        android:text="@string/payment_5"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -173,7 +168,7 @@
         android:layout_below="@+id/payment_numberpad_9"
         android:layout_toEndOf="@+id/payment_numberpad_5"
         android:background="@color/colorPrimary"
-        android:text="6"
+        android:text="@string/payment_6"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -183,7 +178,7 @@
         android:layout_width="95dp"
         android:layout_height="95dp"
         android:background="@color/colorPrimary"
-        android:text="7"
+        android:text="@string/payment_7"
         android:textColor="@color/WHITE"
         android:textSize="40sp"
         android:layout_below="@+id/payment_change"
@@ -196,7 +191,7 @@
         android:layout_below="@+id/payment_change"
         android:layout_toEndOf="@+id/payment_numberpad_7"
         android:background="@color/colorPrimary"
-        android:text="8"
+        android:text="@string/payment_8"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -207,7 +202,7 @@
         android:layout_below="@+id/payment_change"
         android:layout_toEndOf="@+id/payment_numberpad_8"
         android:background="@color/colorPrimary"
-        android:text="9"
+        android:text="@string/payment_9"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -219,7 +214,7 @@
         android:layout_below="@+id/payment_change"
         android:layout_toEndOf="@+id/payment_numberpad_9"
         android:background="@color/colorPrimary"
-        android:text="bs"
+        android:text="@string/payment_back"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
 
@@ -231,7 +226,7 @@
         android:layout_below="@+id/payment_numberpad_back"
         android:layout_toEndOf="@+id/payment_numberpad_6"
         android:background="@color/colorPrimary"
-        android:text="Clear"
+        android:text="@string/payment_clear"
         android:textColor="@color/WHITE"
         android:textSize="30sp" />
 
@@ -244,11 +239,8 @@
         android:layout_below="@+id/payment_numberpad_clear"
         android:layout_toEndOf="@+id/payment_numberpad_3"
         android:background="@color/colorAccent"
-        android:text="Pay"
+        android:text="@string/payment_pay"
         android:textColor="@color/WHITE"
         android:textSize="40sp" />
-
-
-
 
 </RelativeLayout>

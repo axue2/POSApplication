@@ -52,15 +52,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Order: "
+                android:text="@string/order_order"
                 android:textSize="18sp"
                 android:textColor="@color/BLACK"
-                android:layout_marginRight="10dp"/>
+                android:layout_marginEnd="10dp"/>
             <TextView
                 android:id="@+id/order_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Order"
+                android:text="@string/order_order_placeholder"
                 android:textSize="18sp"
                 android:textColor="@color/BLACK"/>
 
@@ -68,7 +68,7 @@
                 android:id="@+id/textView"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:gravity="end"
                 android:text=""
                 android:textSize="18sp" />
         </LinearLayout>
@@ -84,15 +84,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quantity:"
+                android:text="@string/order_quantity"
                 android:textSize="18sp"
                 android:textColor="@color/BLACK"
-                android:layout_marginRight="10dp"/>
+                android:layout_marginEnd="10dp"/>
             <TextView
                 android:id="@+id/order_quantity"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="9999"
+                android:text="@string/order_quantity_placeholder"
                 android:textSize="18sp"
                 android:textColor="@color/BLACK" />
             <TextView
@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textStyle="bold"
-                android:text="Subtotal:"
+                android:text="@string/order_subtotal"
                 android:textSize="18sp"
                 android:textColor="@color/BLACK"/>
             <TextView
@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textStyle="bold"
-                android:text="$9999.99"
+                android:text="@string/order_subtotal_placeholder"
                 android:textSize="18sp"
                 android:textColor="@color/BLACK"/>
         </LinearLayout>
@@ -119,7 +119,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/OrderConfirmButton"
-            android:text="Confirm Order"
+            android:text="@string/order_confirm_button"
             android:textColor="@color/PaymentButtonText" />
     </LinearLayout>
 

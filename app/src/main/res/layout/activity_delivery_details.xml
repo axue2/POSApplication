@@ -10,7 +10,7 @@
         android:id="@+id/delivery_details_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name:"
+        android:text="@string/delivery_details_name"
         android:textColor="@color/BLACK"
         android:textSize="18sp"
         android:layout_marginStart="60dp"
@@ -20,124 +20,124 @@
         />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/delivery_details_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:text="Address:"
+        android:text="@string/delivery_details_address"
         android:textColor="@color/BLACK"
         android:textSize="18sp"
-        android:layout_below="@+id/editText2"
-        android:layout_alignEnd="@+id/textView6" />
+        android:layout_below="@+id/delivery_details_name_edit"
+        android:layout_alignEnd="@+id/delivery_details_phone" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/delivery_details_postcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
-        android:text="Postcode:"
+        android:text="@string/delivery_details_postcode"
         android:textColor="@color/BLACK"
         android:textSize="18sp"
-        android:layout_below="@+id/editText6"
-        android:layout_alignEnd="@+id/textView4" />
+        android:layout_below="@+id/delivery_details_address_3_edit"
+        android:layout_alignEnd="@+id/delivery_details_address" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/delivery_details_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Phone:"
+        android:text="@string/delivery_details_phone"
         android:textColor="@color/BLACK"
         android:textSize="18sp"
-        android:layout_below="@+id/textView5"
+        android:layout_below="@+id/delivery_details_postcode"
         android:layout_alignStart="@+id/delivery_details_name" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/delivery_details_fee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="26dp"
-        android:text="Delivery Fee:"
+        android:text="@string/delivery_details_fee"
         android:textColor="@color/BLACK"
         android:textSize="18sp"
-        android:layout_below="@+id/editText8"
-        android:layout_alignEnd="@+id/textView6" />
+        android:layout_below="@+id/delivery_details_phone_edit"
+        android:layout_alignEnd="@+id/delivery_details_phone" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/delivery_details_name_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/delivery_details_name"
         android:layout_alignBottom="@+id/delivery_details_name"
         android:layout_alignParentEnd="true"
         android:ems="10"
-        android:hint="Customer Name"
+        android:hint="@string/delivery_details_name_hint"
         android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/editText7"
+        android:id="@+id/delivery_details_postcode_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView5"
-        android:layout_alignBottom="@+id/textView5"
+        android:layout_alignBaseline="@+id/delivery_details_postcode"
+        android:layout_alignBottom="@+id/delivery_details_postcode"
         android:layout_alignParentEnd="true"
         android:ems="10"
-        android:hint="Post Code"
+        android:hint="@string/delivery_details_postcode_hint"
         android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/editText8"
+        android:id="@+id/delivery_details_phone_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView6"
-        android:layout_alignBottom="@+id/textView6"
+        android:layout_alignBaseline="@+id/delivery_details_phone"
+        android:layout_alignBottom="@+id/delivery_details_phone"
         android:layout_alignParentEnd="true"
         android:ems="10"
-        android:hint="Phone Number"
+        android:hint="@string/delivery_details_phone_hint"
         android:inputType="phone" />
 
     <EditText
-        android:id="@+id/editText9"
+        android:id="@+id/delivery_details_fee_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView7"
-        android:layout_alignBottom="@+id/textView7"
+        android:layout_alignBaseline="@+id/delivery_details_fee"
+        android:layout_alignBottom="@+id/delivery_details_fee"
         android:layout_alignParentEnd="true"
         android:ems="10"
-        android:hint="Delivery Fee"
+        android:hint="@string/delivery_details_fee_hint"
         android:inputType="number" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/delivery_details_address_1_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView4"
-        android:layout_alignBottom="@+id/textView4"
+        android:layout_alignBaseline="@+id/delivery_details_address"
+        android:layout_alignBottom="@+id/delivery_details_address"
         android:layout_alignParentEnd="true"
         android:ems="10"
-        android:hint="Address Line 1"
+        android:hint="@string/delivery_details_address_1_hint"
         android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/delivery_details_address_2_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/editText3"
+        android:layout_below="@+id/delivery_details_address_1_edit"
         android:layout_marginTop="12dp"
         android:ems="10"
-        android:hint="Address Line 2"
+        android:hint="@string/delivery_details_address_2_hint"
         android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/editText6"
+        android:id="@+id/delivery_details_address_3_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/editText4"
+        android:layout_below="@+id/delivery_details_address_2_edit"
         android:layout_marginTop="12dp"
         android:ems="10"
-        android:hint="Address Line 3"
+        android:hint="@string/delivery_details_address_3_hint"
         android:inputType="textPersonName" />
 
     <Button
@@ -146,9 +146,9 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_toEndOf="@+id/textView7"
+        android:layout_toEndOf="@+id/delivery_details_fee"
         android:background="@color/DeliveryDetailsConfirmButton"
-        android:text="Confirm Delivery Details"
+        android:text="@string/delivery_details_address_confirm"
         android:textColor="@color/WHITE" />
 
 </RelativeLayout>

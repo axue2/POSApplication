@@ -5,17 +5,18 @@ import java.util.List;
 
 /**
  * Created by anthony on 4/29/2017.
+ *
  */
 
 public class Group {
 
     // Database Constants
-    public static final String TABLE_NAME = "Groups";
-    public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_NAME = "NAME";
+    static final String TABLE_NAME = "Groups";
+    static final String COLUMN_ID = "_id";
+    static final String COLUMN_NAME = "NAME";
 
     // Order Create Statement
-    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+    static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             COLUMN_NAME + " TEXT NOT NULL" +
             ")";

@@ -11,13 +11,13 @@ import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.OrderActivity;
-import com.ass3.axue2.posapplication.models.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.Product;
 
 import java.util.List;
 
 /**
  * Created by anthony on 4/21/2017.
+ *
  */
 
 public class OrderGroupRecyclerViewAdapter extends RecyclerView.Adapter<OrderGroupRecyclerViewAdapter.MyViewHolder> {
@@ -28,10 +28,10 @@ public class OrderGroupRecyclerViewAdapter extends RecyclerView.Adapter<OrderGro
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        public View mView;
-        public CardView mCardView;
-        public TextView mNameTextView;
-        public TextView mPriceTextView;
+        private View mView;
+        private CardView mCardView;
+        private TextView mNameTextView;
+        private TextView mPriceTextView;
 
 
         public MyViewHolder(View v){

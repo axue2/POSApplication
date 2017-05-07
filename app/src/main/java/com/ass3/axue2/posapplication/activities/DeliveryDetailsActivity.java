@@ -24,6 +24,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: Add Delivery Details table
                 Context context = v.getContext();
 
                 Intent intent = new Intent(context, OrderActivity.class);

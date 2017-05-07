@@ -60,7 +60,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Takeaway"
+            android:text="@string/main_fab_takeaway"
             android:textSize="18sp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
@@ -91,7 +91,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delivery"
+            android:text="@string/main_fab_delivery"
             android:textSize="18sp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
