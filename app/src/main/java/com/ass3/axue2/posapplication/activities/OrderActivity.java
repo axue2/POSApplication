@@ -50,7 +50,6 @@ public class OrderActivity extends AppCompatActivity {
 
     private DatabaseHelper mDBHelper;
 
-    private Button mConfirmButton;
     private TextView mOrderNumberTextView;
     private TextView mOrderQuantityTextView;
     private TextView mOrderSubtotalTextView;
@@ -65,11 +64,13 @@ public class OrderActivity extends AppCompatActivity {
 
         // Find out which table was clicked in previous activity
         Intent intent = getIntent();
+
         final String tableName = intent.getStringExtra(EXTRA_TABLENAME);
         nTableID = intent.getLongExtra(EXTRA_TABLEID, 0);
         final int tableGuests = intent.getIntExtra(EXTRA_TABLEGUESTS, 0);
         nOrderID = intent.getLongExtra(EXTRA_ORDERID, 0);
-        final String orderType = intent.getStringExtra(EXTRA_ORDERTYPE);
+        sType = intent.getStringExtra(EXTRA_ORDERTYPE);
+
 
         Log.d("EXTRA_TABLENAME VALUE", tableName);
         Log.d("EXTRA_TABLEID VALUE", String.valueOf(nTableID));
@@ -127,8 +128,13 @@ public class OrderActivity extends AppCompatActivity {
         setTextViewValues();
 
         // Get Button
-        mConfirmButton = (Button) findViewById(R.id.order_confirm_button);
+        Button mConfirmButton = (Button) findViewById(R.id.order_confirm_button);
 
+        if(this.sType.equals(Order.TYPE_EAT_IN) || this.sType.equals(Order.TYPE_DELIVERY)) {
+            mConfirmButton.setText(R.string.order_confirm_order);
+        } else {
+            mConfirmButton.setText(R.string.order_payment);
+        }
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,7 +145,7 @@ public class OrderActivity extends AppCompatActivity {
                     Log.d("OrderID", "Less than 0");
                     mDBHelper =  new DatabaseHelper(getApplicationContext());
 
-                    Order order = new Order(nTableID, orderType, Order.STATUS_UNPAID, nSubtotal);
+                    Order order = new Order(nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
                     nOrderID = mDBHelper.AddOrder(order);
 
                     Log.d("newID", String.valueOf(nOrderID));
@@ -147,19 +153,18 @@ public class OrderActivity extends AppCompatActivity {
                 }
                 else{
                     // Update subtotal for Order
-                    Order order = new Order(nTableID, orderType, Order.STATUS_UNPAID, nSubtotal);
+                    Order order = new Order(nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
                     mDBHelper.UpdateOrder(order);
                 }
-                // Update Table details
-                Table table = new Table(nTableID, tableName, tableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
-                mDBHelper.UpdateTable(table);
-
+                // Update Table details if its an eat-in order
+                if(sType.equals(Order.TYPE_EAT_IN)) {
+                    Table table = new Table(nTableID, tableName, tableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
+                    mDBHelper.UpdateTable(table);
+                }
                 // Adds/Updates OrderItems to db
-                // TODO: check if order is already in database
                 for (OrderItem orderItem: mOrderItems) {
                     orderItem.setnOrderID(nOrderID);
                     if (orderItem.getnOrderItemID() > 0) {
-
                         mDBHelper.UpdateOrderItem(orderItem);
                     } else{
                         mDBHelper.AddOrderItem(orderItem);

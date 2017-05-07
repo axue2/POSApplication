@@ -28,7 +28,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(context, OrderActivity.class);
                 intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_EAT_IN);
-                intent.putExtra(OrderActivity.EXTRA_TABLENAME, "");
+                intent.putExtra(OrderActivity.EXTRA_TABLENAME, "Delivery");
                 intent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
                 intent.putExtra(OrderActivity.EXTRA_TABLEID, 0);
                 intent.putExtra(OrderActivity.EXTRA_ORDERID, 0);

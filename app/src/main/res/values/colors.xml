@@ -11,6 +11,7 @@
     <color name="PaymentButtonBackground">#757575</color>
     <color name="PaymentButtonText">#ffffff</color>
     <color name="DeliveryDetailsConfirmButton">#f57c00</color>
+    <color name="OrderConfirmButton">#7c4dff</color>
     <color name="fab_takeaway">#f57c00</color>
     <color name="fab_delivery">#00c853</color>
 </resources>
