@@ -22,6 +22,9 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     public static final String EXTRA_ORDERID = "OrderID";
     public static final String EXTRA_TABLEID = "TableID";
     public static final String EXTRA_TABLENAME = "TableName";
+    public static final String EXTRA_ORDERTYPE = "OrderType";
+
+    private DatabaseHelper mDBHelper;
 
     private TextView mSubtotalTextView;
     private TextView mPaidTextView;
@@ -34,9 +37,10 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     private boolean bDecimalUsed = false;
     private boolean bDecimalActive = false;
 
-    private long nTableID;
-    private long nOrderID;
-    private String sTableName;
+    private long nTableID = 0;
+    private long nOrderID = 0;
+    private String sTableName = "";
+    private String sType;
 
 
 
@@ -47,12 +51,18 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
         // Get Intent
         Intent intent = getIntent();
-        sTableName = intent.getStringExtra(EXTRA_TABLENAME);
-        nTableID = intent.getLongExtra(EXTRA_TABLEID, 0);
-        nOrderID = intent.getLongExtra(EXTRA_ORDERID, 0);
+        sType = intent.getStringExtra(EXTRA_ORDERTYPE);
         nSubtotal = intent.getDoubleExtra(EXTRA_SUBTOTAL, 0);
+        if (sType.equals(Order.TYPE_EAT_IN)) {
+            sTableName = intent.getStringExtra(EXTRA_TABLENAME);
+            nTableID = intent.getLongExtra(EXTRA_TABLEID, 0);
+            nOrderID = intent.getLongExtra(EXTRA_ORDERID, 0);
+            setTitle(getString(R.string.payment_title) + sTableName);
+        } else if (sType.equals(Order.TYPE_TAKEAWAY)){
+            setTitle(getString(R.string.payment_title) + sType);
+        }
 
-        setTitle("Payment for " + sTableName);
+        mDBHelper = new DatabaseHelper(getApplicationContext());
 
         // Setup TextView
         mSubtotalTextView = (TextView) findViewById(R.id.payment_subtotal);
@@ -140,7 +150,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.payment_numberpad_decimal:
                 if(!bDecimalUsed){
                     bDecimalActive = true;
-                    mPaidTextView.setText(sPaid + ".");
+                    String newString = sPaid + getString(R.string.decimal);
+                    mPaidTextView.setText(newString);
                 }
                 break;
             case R.id.payment_numberpad_back:
@@ -165,14 +176,14 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                                 double paid = Double.parseDouble(sPaid);
                                 nChange = (nSubtotal - paid) * -1;
-                                mPaidTextView.setText(sPaid + ".");
+
                                 mChangeTextView.setText(String.valueOf(nChange));
 
                             }else{
                                 sPaid = "";
                                 nChange = 0;
-
-                                mPaidTextView.setText(sPaid + ".");
+                                String newString = sPaid + getString(R.string.decimal);
+                                mPaidTextView.setText(newString);
                                 mChangeTextView.setText(String.valueOf(nChange));
                             }
                         }else{
@@ -207,25 +218,34 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                 // Amount paid must be at least the subtotal
                 if(nChange >= 0) {
-                    DatabaseHelper db = new DatabaseHelper(v.getContext());
 
-                    // Setup Table data as refreshed
-                    Table newTable = new Table(nTableID, sTableName,
-                            0, -1, 0, Table.STATUS_OPEN);
-                    // Setup Order data with status now PAID
-                    Order currentOrder = db.GetOrder(nOrderID);
-                    Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
-                            currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
-                    // Update db
-                    db.UpdateTable(newTable);
-                    db.UpdateOrder(newOrder);
+                    if (sType.equals(Order.TYPE_TAKEAWAY)){
+                        // Create a new takeaway order
+                        Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
+                        mDBHelper.AddOrder(currentOrder);
+                    }
+                    // Assumes that if not takeaway order then it is a table order
+                    // May be rewritten if additional order types use this payment activity
+                    else{
+                        // Setup Order data with status now PAID
+                        Order currentOrder = mDBHelper.GetOrder(nOrderID);
+                        Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
+                                currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
 
+                        // Setup Table data as refreshed
+                        Table newTable = new Table(nTableID, sTableName,
+                                0, -1, 0, Table.STATUS_OPEN);
+
+                        // Update db
+                        mDBHelper.UpdateTable(newTable);
+                        mDBHelper.UpdateOrder(newOrder);
+
+                    }
                     // Return to MainActivity
                     Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     PaymentActivity.this.finish();
-
                 }
                 break;
             default:

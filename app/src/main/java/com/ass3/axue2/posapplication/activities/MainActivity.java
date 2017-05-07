@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+
+        //TODO: Add animations to floating action buttons
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         FloatingActionButton fabTakeaway = (FloatingActionButton) findViewById(R.id.fab_takeaway);
         FloatingActionButton fabDelivery = (FloatingActionButton) findViewById(R.id.fab_delivery);
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(view.getContext(), OrderActivity.class);
                 intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_TAKEAWAY);
-                intent.putExtra(OrderActivity.EXTRA_TABLENAME, "");
+                intent.putExtra(OrderActivity.EXTRA_TABLENAME, Order.TYPE_TAKEAWAY);
                 intent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
 
                 intent.putExtra(OrderActivity.EXTRA_TABLEID, -1);

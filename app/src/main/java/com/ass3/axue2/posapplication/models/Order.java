@@ -55,6 +55,14 @@ public class Order {
         nTotal = total;
     }
 
+    public Order(String type, String status, double total){
+        nOrderID = -1;
+        nTableID = -1;
+        sType = type;
+        sStatus = status;
+        nTotal = total;
+    }
+
     public long getnOrderID() {
         return nOrderID;
     }

@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.OrderActivity;
 import com.ass3.axue2.posapplication.activities.PaymentActivity;
-import com.ass3.axue2.posapplication.models.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.Order;
 import com.ass3.axue2.posapplication.models.Table;
 
@@ -23,6 +22,7 @@ import java.util.List;
 
 /**
  * Created by anthony on 4/21/2017.
+ *
  */
 
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.MyViewHolder> {
@@ -31,13 +31,13 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        public View mView;
-        public CardView mCardView;
-        public TextView mNameTextView;
-        public TextView mStatusTextView;
-        public TextView mGuestsTextView;
-        public TextView mInvoiceTextView;
-        public Button mPaymentButton;
+        private View mView;
+        private CardView mCardView;
+        private TextView mNameTextView;
+        private TextView mStatusTextView;
+        private TextView mGuestsTextView;
+        private TextView mInvoiceTextView;
+        private Button mPaymentButton;
 
 
         public MyViewHolder(View v){
@@ -84,6 +84,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 intent.putExtra(PaymentActivity.EXTRA_ORDERID, currentTable.getnOrderID());
                 intent.putExtra(PaymentActivity.EXTRA_TABLEID, currentTable.getnTableID());
                 intent.putExtra(PaymentActivity.EXTRA_TABLENAME, currentTable.getsTableName());
+                intent.putExtra(PaymentActivity.EXTRA_ORDERTYPE, Order.TYPE_EAT_IN);
 
                 context.startActivity(intent);
             }

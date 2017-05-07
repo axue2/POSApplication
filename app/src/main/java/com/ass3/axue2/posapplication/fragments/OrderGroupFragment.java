@@ -36,7 +36,7 @@ public class OrderGroupFragment extends android.support.v4.app.Fragment {
         // Get all products
         ArrayList<Product> productList = new ArrayList<>();
         if (groupID > 0){
-            productList = new ArrayList<>(db.GetProducts(groupID).values());;
+            productList = new ArrayList<>(db.GetProducts(groupID).values());
         }
 
         // Setup RecyclerView

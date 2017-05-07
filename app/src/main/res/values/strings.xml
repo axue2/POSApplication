@@ -8,4 +8,7 @@
     <string name="title_activity_order">OrderActivity</string>
     <string name="order_confirm_order">Confirm Order</string>
     <string name="order_payment">Payment</string>
+    <string name="decimal">.</string>
+    <string name="order_unconfirmed">Unconfirmed</string>
+    <string name="payment_title">Payment for</string>
 </resources>

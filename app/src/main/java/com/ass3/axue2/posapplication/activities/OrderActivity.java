@@ -139,42 +139,51 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("OnclickListener", "Click Successful");
-                Intent intent = new Intent(OrderActivity.this, MainActivity.class);
-                // If status is not In-use create new order
-                if(nOrderID <= 0){
-                    Log.d("OrderID", "Less than 0");
-                    mDBHelper =  new DatabaseHelper(getApplicationContext());
+                if (sType.equals(Order.TYPE_TAKEAWAY)) {
 
-                    Order order = new Order(nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
-                    nOrderID = mDBHelper.AddOrder(order);
+                    Intent intent = new Intent(OrderActivity.this, PaymentActivity.class);
+                    intent.putExtra(PaymentActivity.EXTRA_ORDERTYPE, sType);
+                    intent.putExtra(PaymentActivity.EXTRA_SUBTOTAL, nSubtotal);
 
-                    Log.d("newID", String.valueOf(nOrderID));
+                    startActivity(intent);
+                }else {
 
-                }
-                else{
-                    // Update subtotal for Order
-                    Order order = new Order(nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
-                    mDBHelper.UpdateOrder(order);
-                }
-                // Update Table details if its an eat-in order
-                if(sType.equals(Order.TYPE_EAT_IN)) {
-                    Table table = new Table(nTableID, tableName, tableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
-                    mDBHelper.UpdateTable(table);
-                }
-                // Adds/Updates OrderItems to db
-                for (OrderItem orderItem: mOrderItems) {
-                    orderItem.setnOrderID(nOrderID);
-                    if (orderItem.getnOrderItemID() > 0) {
-                        mDBHelper.UpdateOrderItem(orderItem);
-                    } else{
-                        mDBHelper.AddOrderItem(orderItem);
+                    Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+                    // If status is not In-use create new order
+                    if (nOrderID <= 0) {
+                        Log.d("OrderID", "Less than 0");
+                        mDBHelper = new DatabaseHelper(getApplicationContext());
+
+                        Order order = new Order(nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
+                        nOrderID = mDBHelper.AddOrder(order);
+
+                        Log.d("newID", String.valueOf(nOrderID));
+
+                    } else {
+                        // Update subtotal for Order
+                        Order order = new Order(nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
+                        mDBHelper.UpdateOrder(order);
+                    }
+                    // Update Table details if its an eat-in order
+                    if (sType.equals(Order.TYPE_EAT_IN)) {
+                        Table table = new Table(nTableID, tableName, tableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
+                        mDBHelper.UpdateTable(table);
+                    }
+                    // Adds/Updates OrderItems to db
+                    for (OrderItem orderItem : mOrderItems) {
+                        orderItem.setnOrderID(nOrderID);
+                        if (orderItem.getnOrderItemID() > 0) {
+                            mDBHelper.UpdateOrderItem(orderItem);
+                        } else {
+                            mDBHelper.AddOrderItem(orderItem);
+                        }
+
                     }
 
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    OrderActivity.this.finish();
                 }
-
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                OrderActivity.this.finish();
             }
         });
     }
@@ -279,7 +288,7 @@ public class OrderActivity extends AppCompatActivity {
         if (nOrderID > 0){
             mOrderNumberTextView.setText(String.valueOf(nOrderID));
         }else{
-            mOrderNumberTextView.setText("Unconfirmed");
+            mOrderNumberTextView.setText(R.string.order_unconfirmed);
         }
 
         mOrderQuantityTextView.setText(String.valueOf(nQuantity));
