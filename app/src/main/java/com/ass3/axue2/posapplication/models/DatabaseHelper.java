@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 
 /**
  * Created by anthony on 5/1/2017.
+ *
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -30,6 +31,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(Product.CREATE_STATEMENT);
         db.execSQL(Order.CREATE_STATEMENT);
         db.execSQL(OrderItem.CREATE_STATEMENT);
+        db.execSQL(Customer.CREATE_STATEMENT);
+        db.execSQL(Delivery.CREATE_STATEMENT);
     }
 
     @Override
@@ -298,7 +301,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public long AddCustomer(Customer customer){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Customer.COLUMN_ADDRESS_LINE_1, customer.getsAddressLine1());
+        values.put(Customer.COLUMN_ADDRESS_LINE_2, customer.getsAddressLine2());
+        values.put(Customer.COLUMN_ADDRESS_LINE_3, customer.getsAddressLine3());
+        values.put(Customer.COLUMN_POST_CODE, customer.getnPostCode());
+        values.put(Customer.COLUMN_PHONE, customer.getnPhone());
+        long id = db.insert(Customer.TABLE_NAME, null, values);
+        db.close();
+        return id;
+    }
 
+    public long AddDelivery(Delivery delivery){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Delivery.COLUMN_ORDER_ID, delivery.getnOrderID());
+        values.put(Delivery.COLUMN_DRIVER_ID, delivery.getnDriverID());
+        values.put(Delivery.COLUMN_CUSTOMER_ID, delivery.getnCustomerID());
+        values.put(Delivery.COLUMN_STATUS, delivery.getsStatus());
+        values.put(Delivery.COLUMN_DELIVERY_FEE, delivery.getnDeliveryFee());
+        long id = db.insert(Delivery.TABLE_NAME, null, values);
+        db.close();
+        return id;
+    }
 
     public void CreateDefaultTables(){
         AddTable(new Table("Table 1"));

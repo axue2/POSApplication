@@ -21,7 +21,9 @@ import android.widget.TextView;
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.OrderCurrentFragment;
 import com.ass3.axue2.posapplication.fragments.OrderGroupFragment;
+import com.ass3.axue2.posapplication.models.Customer;
 import com.ass3.axue2.posapplication.models.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.Delivery;
 import com.ass3.axue2.posapplication.models.Group;
 import com.ass3.axue2.posapplication.models.Order;
 import com.ass3.axue2.posapplication.models.OrderItem;
@@ -36,6 +38,7 @@ public class OrderActivity extends AppCompatActivity {
     public static final String EXTRA_TABLENAME = "Table Name";
     public static final String EXTRA_TABLEID = "Table ID";
     public static final String EXTRA_TABLEGUESTS = "Table Guests";
+
     public static final String EXTRA_ORDERID = "Order ID";
     public static final String EXTRA_ORDERTYPE = "Order Type";
 
@@ -156,20 +159,24 @@ public class OrderActivity extends AppCompatActivity {
                         Log.d("OrderID", "Less than 0");
                         mDBHelper = new DatabaseHelper(getApplicationContext());
 
-                        Order order = new Order(nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
+                        Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
                         nOrderID = mDBHelper.AddOrder(order);
 
                         Log.d("newID", String.valueOf(nOrderID));
 
                     } else {
                         // Update subtotal for Order
-                        Order order = new Order(nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
+                        Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
                         mDBHelper.UpdateOrder(order);
                     }
                     // Update Table details if its an eat-in order
                     if (sType.equals(Order.TYPE_EAT_IN)) {
                         Table table = new Table(nTableID, tableName, tableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
                         mDBHelper.UpdateTable(table);
+                    }
+                    // Otherwise add/update delivery details if delivery order
+                    else if (sType.equals(Order.TYPE_DELIVERY)){
+                        //TODO: Add Delivery Details & Customer Details
                     }
                     // Adds/Updates OrderItems to db
                     for (OrderItem orderItem : mOrderItems) {

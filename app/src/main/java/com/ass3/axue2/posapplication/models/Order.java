@@ -48,9 +48,9 @@ public class Order {
         nTotal = total;
     }
 
-    public Order(long tableID, String type, String status, double total){
-        nOrderID = -1;
-        nTableID = tableID;
+    public Order(long orderID, String type, String status, double total){
+        nOrderID = orderID;
+        nTableID = -1;
         sType = type;
         sStatus = status;
         nTotal = total;

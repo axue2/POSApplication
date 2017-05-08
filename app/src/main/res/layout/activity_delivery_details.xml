@@ -83,7 +83,7 @@
         android:layout_alignParentEnd="true"
         android:ems="10"
         android:hint="@string/delivery_details_postcode_hint"
-        android:inputType="textPersonName" />
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/delivery_details_phone_edit"

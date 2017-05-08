@@ -5,13 +5,13 @@ package com.ass3.axue2.posapplication.models;
  */
 
 public class Customer {
+
     private long nCustomerID;
     private String sAddressLine1;
     private String sAddressLine2;
     private String sAddressLine3;
     private int nPostCode;
     private int nPhone;
-
 
     // Database Constants
     static final String TABLE_NAME = "Customers";
@@ -31,4 +31,62 @@ public class Customer {
             COLUMN_POST_CODE + " INTEGER NOT NULL, " +
             COLUMN_PHONE + " INTEGER" +
             ")";
+
+
+    public Customer(){
+        nCustomerID = -1;
+        sAddressLine1 = "";
+        sAddressLine2 = "";
+        sAddressLine3 = "";
+        nPostCode = -1;
+        nPhone = -1;
+    }
+
+    public long getnCustomerID() {
+        return nCustomerID;
+    }
+
+    public void setnCustomerID(long nCustomerID) {
+        this.nCustomerID = nCustomerID;
+    }
+
+    public String getsAddressLine1() {
+        return sAddressLine1;
+    }
+
+    public void setsAddressLine1(String sAddressLine1) {
+        this.sAddressLine1 = sAddressLine1;
+    }
+
+    public String getsAddressLine2() {
+        return sAddressLine2;
+    }
+
+    public void setsAddressLine2(String sAddressLine2) {
+        this.sAddressLine2 = sAddressLine2;
+    }
+
+    public String getsAddressLine3() {
+        return sAddressLine3;
+    }
+
+    public void setsAddressLine3(String sAddressLine3) {
+        this.sAddressLine3 = sAddressLine3;
+    }
+
+    public int getnPostCode() {
+        return nPostCode;
+    }
+
+    public void setnPostCode(int nPostCode) {
+        this.nPostCode = nPostCode;
+    }
+
+    public int getnPhone() {
+        return nPhone;
+    }
+
+    public void setnPhone(int nPhone) {
+        this.nPhone = nPhone;
+    }
 }

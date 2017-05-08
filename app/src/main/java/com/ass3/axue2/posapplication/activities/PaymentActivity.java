@@ -168,7 +168,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                     // If there are more than one value
                     if(sPaid.length() > 1){
                         // If the value before the current value is a decimal
-                        if (sPaid.substring(sPaid.length()-2,sPaid.length() - 1).equals(".")){
+                        if (sPaid.substring(sPaid.length()-2,sPaid.length() - 1).equals(getString(R.string.decimal))){
                             bDecimalActive = true;
                             bDecimalUsed = false;
                             sPaid = sPaid.substring(0, sPaid.length() - 2);
@@ -177,7 +177,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                                 double paid = Double.parseDouble(sPaid);
                                 nChange = (nSubtotal - paid) * -1;
-
+                                String newString = sPaid + getString(R.string.decimal);
+                                mPaidTextView.setText(newString);
                                 mChangeTextView.setText(String.valueOf(nChange));
 
                             }else{
