@@ -10,7 +10,7 @@
     <string name="order_payment">Payment</string>
     <string name="decimal">.</string>
     <string name="order_unconfirmed">Unconfirmed</string>
-    <string name="payment_title">Payment for</string>
+    <string name="payment_title">Payment for:  </string>
     <string name="delivery_details_name">Name:</string>
     <string name="delivery_details_address">Address:</string>
     <string name="delivery_details_postcode">Postcode:</string>

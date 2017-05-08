@@ -53,13 +53,14 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         Intent intent = getIntent();
         sType = intent.getStringExtra(EXTRA_ORDERTYPE);
         nSubtotal = intent.getDoubleExtra(EXTRA_SUBTOTAL, 0);
+
         if (sType.equals(Order.TYPE_EAT_IN)) {
             sTableName = intent.getStringExtra(EXTRA_TABLENAME);
             nTableID = intent.getLongExtra(EXTRA_TABLEID, 0);
             nOrderID = intent.getLongExtra(EXTRA_ORDERID, 0);
-            setTitle(getString(R.string.payment_title) + sTableName);
+            setTitle(getString(R.string.payment_title) + " " + sTableName);
         } else if (sType.equals(Order.TYPE_TAKEAWAY)){
-            setTitle(getString(R.string.payment_title) + sType);
+            setTitle(getString(R.string.payment_title) + " " + sType);
         }
 
         mDBHelper = new DatabaseHelper(getApplicationContext());
