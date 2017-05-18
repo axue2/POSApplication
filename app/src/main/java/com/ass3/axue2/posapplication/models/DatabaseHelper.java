@@ -33,6 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(OrderItem.CREATE_STATEMENT);
         db.execSQL(Customer.CREATE_STATEMENT);
         db.execSQL(Delivery.CREATE_STATEMENT);
+        db.execSQL(Driver.CREATE_STATEMENT);
     }
 
     @Override
@@ -304,6 +305,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddCustomer(Customer customer){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(Customer.COLUMN_FIRST_NAME,customer.getsFirstName());
+        values.put(Customer.COLUMN_LAST_NAME,customer.getsLastName());
         values.put(Customer.COLUMN_ADDRESS_LINE_1, customer.getsAddressLine1());
         values.put(Customer.COLUMN_ADDRESS_LINE_2, customer.getsAddressLine2());
         values.put(Customer.COLUMN_ADDRESS_LINE_3, customer.getsAddressLine3());
@@ -312,6 +315,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long id = db.insert(Customer.TABLE_NAME, null, values);
         db.close();
         return id;
+    }
+
+    public HashMap<Long, Customer> GetAllCustomers() {
+        HashMap<Long, Customer> customers = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Customer.TABLE_NAME, null);
+
+        // Add all OrderItems in db to hashmap
+        if (cursor.moveToFirst()) {
+            do {
+                Customer customer = new Customer(cursor.getLong(0),
+                       cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getInt(6),
+                        cursor.getInt(7)
+                );
+                customers.put(customer.getnCustomerID(), customer);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return customers;
+    }
+
+    public Customer GetCustomer(long id){
+        // Access database
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Database query
+        Cursor cursor = db.query(Customer.TABLE_NAME, new String[] { Customer.COLUMN_ID, Customer.COLUMN_FIRST_NAME,
+        Customer.COLUMN_LAST_NAME, Customer.COLUMN_ADDRESS_LINE_1, Customer.COLUMN_ADDRESS_LINE_2,
+                Customer.COLUMN_ADDRESS_LINE_3, Customer.COLUMN_POST_CODE, Customer.COLUMN_PHONE},
+                Customer.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
+        // Checks query
+        if (cursor != null)
+            cursor.moveToFirst();
+        // Creates new monster with query values
+        Customer customer = new Customer(cursor.getLong(0),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getString(5),
+                cursor.getInt(6),
+                cursor.getInt(7)
+        );
+        cursor.close();
+
+        return customer;
     }
 
     public long AddDelivery(Delivery delivery){
@@ -325,6 +378,103 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long id = db.insert(Delivery.TABLE_NAME, null, values);
         db.close();
         return id;
+    }
+
+    public HashMap<Long, Delivery> GetDeliveriesByStatus(String status){
+        HashMap<Long, Delivery> deliveries = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Delivery.TABLE_NAME + " WHERE " +
+                Delivery.COLUMN_STATUS + " = '" + status + "'", null);
+
+        // Add all Deliveries in db to hashmap
+        if(cursor.moveToFirst()) {
+            do {
+                Delivery delivery = new Delivery(cursor.getLong(0),
+                        cursor.getLong(1),
+                        cursor.getLong(2),
+                        cursor.getLong(3),
+                        cursor.getString(4),
+                        cursor.getInt(5));
+                deliveries.put(delivery.getnDeliveryID(), delivery);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return deliveries;
+    }
+
+    public HashMap<Long, Delivery> GetDeliveriesByDriverAndStatus(String status, long driverID){
+        HashMap<Long, Delivery> deliveries = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Delivery.TABLE_NAME + " WHERE " +
+                Delivery.COLUMN_STATUS + " = '" + status + "'"
+                + " AND " + Delivery.COLUMN_DRIVER_ID + " = " + String.valueOf(driverID)
+                , null);
+
+        // Add all Deliveries in db to hashmap
+        if(cursor.moveToFirst()) {
+            do {
+                Delivery delivery = new Delivery(cursor.getLong(0),
+                        cursor.getLong(1),
+                        cursor.getLong(2),
+                        cursor.getLong(3),
+                        cursor.getString(4),
+                        cursor.getInt(5));
+                deliveries.put(delivery.getnDeliveryID(), delivery);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return deliveries;
+    }
+
+    public long AddDriver(Driver driver){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Driver.COLUMN_FIRST_NAME, driver.getnFirstName());
+        values.put(Driver.COLUMN_LAST_NAME, driver.getnLastName());
+        long id = db.insert(Driver.TABLE_NAME, null, values);
+        Log.d("Driver Added", driver.getnFirstName());
+        db.close();
+        return id;
+    }
+
+    public HashMap<Long, Driver> GetAllDrivers(){
+        HashMap<Long, Driver> drivers = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Driver.TABLE_NAME, null);
+
+        // Add all products in db to hashmap
+        if(cursor.moveToFirst()) {
+            do {
+                Driver driver = new Driver(cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getString(2)
+                );
+                drivers.put(driver.getnDriverID(), driver);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d("GetAllDrivers", String.valueOf(drivers.size()));
+        return drivers;
+    }
+
+    public Driver GetDriver(long id){
+        // Access database
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Database query
+        Cursor cursor = db.query(Driver.TABLE_NAME, new String[] { Driver.COLUMN_ID, Driver.COLUMN_FIRST_NAME, Driver.COLUMN_LAST_NAME},
+                Driver.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
+        // Checks query
+        if (cursor != null)
+            cursor.moveToFirst();
+        // Creates new Driver with query values
+        Driver driver = new Driver(cursor.getLong(0),
+                cursor.getString(1),
+                cursor.getString(2));
+        cursor.close();
+
+        return driver;
     }
 
     public void CreateDefaultTables(){
@@ -405,13 +555,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         AddProduct(new Product(6, "Classic Super Food Salad", 18));
         AddProduct(new Product(6, "Bresaola Salad", 18));
         AddProduct(new Product(6, "Prosciutto & Pear Salad", 18));
+    }
 
-        Log.d("Product Table 1 Size", String.valueOf(GetProducts(1).size()));
-        Log.d("Product Table 2 Size", String.valueOf(GetProducts(1).size()));
-        Log.d("Product Table 3 Size", String.valueOf(GetProducts(1).size()));
-        Log.d("Product Table 4 Size", String.valueOf(GetProducts(1).size()));
-        Log.d("Product Table 5 Size", String.valueOf(GetProducts(1).size()));
-        Log.d("Product Table 6 Size", String.valueOf(GetProducts(1).size()));
+    public void CreateDefaultDrivers(){
+        AddDriver(new Driver("Pauly","Falzoni"));
+        AddDriver(new Driver("Bobo","Gigliotti"));
+        AddDriver(new Driver("Davo","Dinkum"));
+    }
+
+    public void CreateTestDeliveries(){
+        AddDelivery(new Delivery(0, 0, 0, 1, Delivery.STATUS_UNALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 0, 2, Delivery.STATUS_UNALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 0, 3, Delivery.STATUS_UNALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 0, 4, Delivery.STATUS_UNALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 0, 1, Delivery.STATUS_UNALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 0, 2, Delivery.STATUS_UNALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 0, 3, Delivery.STATUS_UNALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 0, 4, Delivery.STATUS_UNALLOCATED, 10));
+
+        AddDelivery(new Delivery(0, 0, 1, 1, Delivery.STATUS_ALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 2, 2, Delivery.STATUS_ALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 3, 3, Delivery.STATUS_ALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 1, 4, Delivery.STATUS_ALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 2, 1, Delivery.STATUS_ALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 3, 2, Delivery.STATUS_ALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 1, 3, Delivery.STATUS_ALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 2, 4, Delivery.STATUS_ALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 3, 1, Delivery.STATUS_ALLOCATED, 10));
+        AddDelivery(new Delivery(0, 0, 1, 2, Delivery.STATUS_ALLOCATED, 10));
+
+        AddDelivery(new Delivery(0, 0, 1, 1, Delivery.STATUS_COMPLETE, 10));
+        AddDelivery(new Delivery(0, 0, 2, 2, Delivery.STATUS_COMPLETE, 10));
+        AddDelivery(new Delivery(0, 0, 3, 3, Delivery.STATUS_COMPLETE, 10));
+        AddDelivery(new Delivery(0, 0, 1, 4, Delivery.STATUS_COMPLETE, 10));
+        AddDelivery(new Delivery(0, 0, 2, 1, Delivery.STATUS_COMPLETE, 10));
+        AddDelivery(new Delivery(0, 0, 3, 2, Delivery.STATUS_COMPLETE, 10));
+        AddDelivery(new Delivery(0, 0, 1, 3, Delivery.STATUS_COMPLETE, 10));
+        AddDelivery(new Delivery(0, 0, 2, 4, Delivery.STATUS_COMPLETE, 10));
+        AddDelivery(new Delivery(0, 0, 3, 1, Delivery.STATUS_COMPLETE, 10));
+        AddDelivery(new Delivery(0, 0, 1, 2, Delivery.STATUS_COMPLETE, 10));
+
+    }
+
+    public void CreateTestCustomers(){
+        AddCustomer(new Customer("Larry","Miller","123 Fake St","Surrey Hills","",3123,33333));
+        AddCustomer(new Customer("Barry","White","123 Fake St","Surrey Hills","",3123,33333));
+        AddCustomer(new Customer("Sally","Kite","123 Fake St","Surrey Hills","",3123,33333));
+        AddCustomer(new Customer("Samuel","Sanders","123 Fake St","Surrey Hills","",3123,33333));
+        AddCustomer(new Customer("Ronald","Light","123 Fake St","Surrey Hills","",3123,33333));
     }
 
     public void deleteTable(String tableName){

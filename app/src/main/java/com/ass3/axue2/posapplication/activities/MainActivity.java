@@ -1,10 +1,8 @@
 package com.ass3.axue2.posapplication.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -13,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,8 +20,8 @@ import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.MainOrdersFragment;
 import com.ass3.axue2.posapplication.fragments.MainTableFragment;
 import com.ass3.axue2.posapplication.models.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.Delivery;
 import com.ass3.axue2.posapplication.models.Order;
-import com.ass3.axue2.posapplication.models.Table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle("Delivery Details");
+        setTitle(getString(R.string.main_title));
 
-        //this.deleteDatabase(mDBHelper.DATABASE_NAME);
+        this.deleteDatabase(mDBHelper.DATABASE_NAME);
 
         // Get database handler
         mDBHelper = new DatabaseHelper(getApplicationContext());
@@ -56,6 +53,15 @@ public class MainActivity extends AppCompatActivity {
 
         if(mDBHelper.GetProducts(1).size() == 0)
             mDBHelper.CreateDefaultProducts();
+
+        if(mDBHelper.GetAllDrivers().size() == 0)
+            mDBHelper.CreateDefaultDrivers();
+
+        if(mDBHelper.GetDeliveriesByStatus(Delivery.STATUS_COMPLETE).size() == 0)
+            mDBHelper.CreateTestDeliveries();
+
+        if(mDBHelper.GetAllCustomers().size() == 0)
+            mDBHelper.CreateTestCustomers();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -139,7 +145,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_delivery_manager) {
+            Intent intent = new Intent(this, DeliveryManagerActivity.class);
+            startActivity(intent);
+
             return true;
         }
 

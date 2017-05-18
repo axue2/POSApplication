@@ -177,6 +177,8 @@ public class OrderActivity extends AppCompatActivity {
                     // Otherwise add/update delivery details if delivery order
                     else if (sType.equals(Order.TYPE_DELIVERY)){
                         //TODO: Add Delivery Details & Customer Details
+                        Delivery delivery = new Delivery(nOrderID, 0, 0);
+                        mDBHelper.AddDelivery(delivery);
                     }
                     // Adds/Updates OrderItems to db
                     for (OrderItem orderItem : mOrderItems) {

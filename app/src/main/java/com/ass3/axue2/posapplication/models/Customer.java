@@ -7,6 +7,8 @@ package com.ass3.axue2.posapplication.models;
 public class Customer {
 
     private long nCustomerID;
+    private String sFirstName;
+    private String sLastName;
     private String sAddressLine1;
     private String sAddressLine2;
     private String sAddressLine3;
@@ -16,6 +18,8 @@ public class Customer {
     // Database Constants
     static final String TABLE_NAME = "Customers";
     static final String COLUMN_ID = "_id";
+    static final String COLUMN_FIRST_NAME = "FIRST_NAME";
+    static final String COLUMN_LAST_NAME = "LAST_NAME";
     static final String COLUMN_ADDRESS_LINE_1 = "ADDRESS_LINE_1";
     static final String COLUMN_ADDRESS_LINE_2 = "ADDRESS_LINE_2";
     static final String COLUMN_ADDRESS_LINE_3 = "ADDRESS_LINE_3";
@@ -25,16 +29,41 @@ public class Customer {
     // Customer Create Statement
     static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            COLUMN_FIRST_NAME + " TEXT, " +
+            COLUMN_LAST_NAME + " TEXT, " +
             COLUMN_ADDRESS_LINE_1 + " TEXT NOT NULL, " +
-            COLUMN_ADDRESS_LINE_2 + " TEXT NOT NULL, " +
+            COLUMN_ADDRESS_LINE_2 + " TEXT, " +
             COLUMN_ADDRESS_LINE_3 + " TEXT, " +
             COLUMN_POST_CODE + " INTEGER NOT NULL, " +
             COLUMN_PHONE + " INTEGER" +
             ")";
 
+    public Customer(long id, String firstName, String lastName, String al1, String al2, String al3, int postcode, int phone){
+        nCustomerID = id;
+        sFirstName = firstName;
+        sLastName = lastName;
+        sAddressLine1 = al1;
+        sAddressLine2 = al2;
+        sAddressLine3 = al3;
+        nPostCode = postcode;
+        nPhone = phone;
+    }
+
+    public Customer(String firstName, String lastName, String al1, String al2, String al3, int postcode, int phone){
+        nCustomerID = -1;
+        sFirstName = firstName;
+        sLastName = lastName;
+        sAddressLine1 = al1;
+        sAddressLine2 = al2;
+        sAddressLine3 = al3;
+        nPostCode = postcode;
+        nPhone = phone;
+    }
 
     public Customer(){
         nCustomerID = -1;
+        sFirstName = "";
+        sLastName = "";
         sAddressLine1 = "";
         sAddressLine2 = "";
         sAddressLine3 = "";
@@ -88,5 +117,21 @@ public class Customer {
 
     public void setnPhone(int nPhone) {
         this.nPhone = nPhone;
+    }
+
+    public String getsFirstName() {
+        return sFirstName;
+    }
+
+    public void setsFirstName(String sFirstName) {
+        this.sFirstName = sFirstName;
+    }
+
+    public String getsLastName() {
+        return sLastName;
+    }
+
+    public void setsLastName(String sLastName) {
+        this.sLastName = sLastName;
     }
 }

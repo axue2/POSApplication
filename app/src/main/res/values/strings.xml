@@ -63,4 +63,9 @@
     <string name="order_current_cardview_name">Add Product Here</string>
     <string name="order_current_cardview_price">$999.99</string>
     <string name="order_current_add_button">add button</string>
+    <string name="action_delivery_manager">Delivery Manager</string>
+    <string name="title_activity_delivery_manager">DeliveryManagerActivity</string>
+    <string name="delivery_manager_title">Delivery Manager</string>
+    <string name="main_title">POS Application</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>

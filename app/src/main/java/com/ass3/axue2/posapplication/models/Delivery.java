@@ -38,6 +38,35 @@ public class Delivery {
             COLUMN_DELIVERY_FEE + " REAL" +
             ")";
 
+    public Delivery(long deliveryID, long orderID, long driverID, long customerID,
+                    String status, double deliveryFee){
+        nDeliveryID = deliveryID;
+        nOrderID = orderID;
+        nDriverID = driverID;
+        nCustomerID = customerID;
+        sStatus = status;
+        nDeliveryFee = deliveryFee;
+    }
+
+    public Delivery(long driverID, double deliveryFee, String status){
+        nDeliveryID = -1;
+        nOrderID = -1;
+        nDriverID = driverID;
+        nCustomerID = -1;
+        sStatus = status;
+        nDeliveryFee = deliveryFee;
+    }
+
+    public Delivery(long orderID, long customerID, double deliveryFee){
+        nDeliveryID = -1;
+        nOrderID = orderID;
+        nDriverID = -1;
+        nCustomerID = customerID;
+        sStatus = STATUS_UNALLOCATED;
+        nDeliveryFee = deliveryFee;
+    }
+
+
     public long getnDeliveryID() {
         return nDeliveryID;
     }
