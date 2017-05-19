@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.content.Context;
 import android.support.v7.widget.ThemedSpinnerAdapter;
@@ -35,6 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeliveryManagerActivity extends AppCompatActivity {
+    public static final String BUTTON_UNALLOCATE = "Allocate Driver";
+    public static final String BUTTON_ALLOCATE = "Complete Delivery";
+    public static final String BUTTON_COMPLETE = "FALSE";
 
     private DatabaseHelper mDBHelper;
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -45,6 +49,8 @@ public class DeliveryManagerActivity extends AppCompatActivity {
     private long nDriverID;
     private ArrayList<Driver> mDrivers;
 
+    private Button mButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +60,8 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle(R.string.delivery_manager_title);
+
+        mButton = (Button) findViewById(R.id.delivery_manager_button);
 
         // Get database handler
         mDBHelper = new DatabaseHelper(getApplicationContext());
@@ -75,6 +83,33 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        // Setup Tab clicks
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0){
+                    mButton.setText(BUTTON_UNALLOCATE);
+                    mButton.setVisibility(View.VISIBLE);
+                } else if(position == 1){
+                    mButton.setText(BUTTON_ALLOCATE);
+                    mButton.setVisibility(View.VISIBLE);
+                } else if(position == 2){
+                    mButton.setText(BUTTON_COMPLETE);
+                    mButton.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
         // Get All Drivers
         mDrivers = new ArrayList<>(mDBHelper.GetAllDrivers().values());
         String[] driverNames = new String[mDrivers.size() + 1];
@@ -85,7 +120,6 @@ public class DeliveryManagerActivity extends AppCompatActivity {
             driverNames[count] = driver.getnFirstName() + " " + driver.getnLastName();
             count++;
         }
-
 
         // Setup spinner
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
@@ -154,6 +188,8 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -235,5 +271,9 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
     public long getnDriverID() {
         return nDriverID;
+    }
+
+    public Button getmButton() {
+        return mButton;
     }
 }
