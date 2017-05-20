@@ -36,9 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeliveryManagerActivity extends AppCompatActivity {
-    public static final String BUTTON_UNALLOCATE = "Allocate Driver";
-    public static final String BUTTON_ALLOCATE = "Complete Delivery";
-    public static final String BUTTON_COMPLETE = "FALSE";
 
     private DatabaseHelper mDBHelper;
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -49,7 +46,6 @@ public class DeliveryManagerActivity extends AppCompatActivity {
     private long nDriverID;
     private ArrayList<Driver> mDrivers;
 
-    private Button mButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +57,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle(R.string.delivery_manager_title);
 
-        mButton = (Button) findViewById(R.id.delivery_manager_button);
+
 
         // Get database handler
         mDBHelper = new DatabaseHelper(getApplicationContext());
@@ -82,33 +78,6 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        // Setup Tab clicks
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (position == 0){
-                    mButton.setText(BUTTON_UNALLOCATE);
-                    mButton.setVisibility(View.VISIBLE);
-                } else if(position == 1){
-                    mButton.setText(BUTTON_ALLOCATE);
-                    mButton.setVisibility(View.VISIBLE);
-                } else if(position == 2){
-                    mButton.setText(BUTTON_COMPLETE);
-                    mButton.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
 
         // Get All Drivers
         mDrivers = new ArrayList<>(mDBHelper.GetAllDrivers().values());
@@ -131,7 +100,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
                 // When the given dropdown item is selected, show its contents in the
                 // container view.
 
-                int tabPosition = mViewPager.getCurrentItem();
+
                 int spinnerPosition = parent.getSelectedItemPosition();
                 Log.d("Selected item position", String.valueOf(spinnerPosition));
                 if(parent.getSelectedItemPosition() > 0) {
@@ -145,14 +114,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
                 sDriverName = parent.getSelectedItem().toString();
                 Log.d("Driver Name", sDriverName);
 
-                mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-                createFragment(Delivery.STATUS_UNALLOCATED);
-                createFragment(Delivery.STATUS_ALLOCATED);
-                createFragment(Delivery.STATUS_COMPLETE);
-                mViewPager.setAdapter(mSectionsPagerAdapter);
-
-                // Set current item to allocated
-                mViewPager.setCurrentItem(tabPosition);
+                createTabs();
 
             }
 
@@ -160,16 +122,28 @@ public class DeliveryManagerActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
 
+    private void createTabs(){
+        //mSectionsPagerAdapter.destroyFragments();
+
+        int tabPosition = mViewPager.getCurrentItem();
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        createFragment(Delivery.STATUS_UNALLOCATED);
+        createFragment(Delivery.STATUS_ALLOCATED);
+        createFragment(Delivery.STATUS_COMPLETE);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        // Set current item to allocated
+        mViewPager.setCurrentItem(tabPosition);
     }
 
     private void createFragment(String status){
         Bundle bundle = new Bundle();
         bundle.putString(DeliveryManagerFragment.BUNDLE_DELIVERY_STATUS, status);
-        bundle.putString(DeliveryManagerFragment.BUNDLE_DRIVER_NAME, sDriverName);
-        bundle.putLong(DeliveryManagerFragment.BUNDLE_DRIVER_ID, nDriverID);
         Log.d("Driver Name", sDriverName);
         Log.d("Driver ID", String.valueOf(nDriverID));
+        Log.d("Driver ID", status);
         DeliveryManagerFragment fragment = new DeliveryManagerFragment();
         fragment.setArguments(bundle);
         mSectionsPagerAdapter.addFragment(fragment, status);
@@ -273,7 +247,4 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         return nDriverID;
     }
 
-    public Button getmButton() {
-        return mButton;
-    }
 }

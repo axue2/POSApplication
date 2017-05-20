@@ -16,5 +16,5 @@
     <color name="DeliveryManagerButton">#03a9f4</color>
     <color name="fab_takeaway">#f57c00</color>
     <color name="fab_delivery">#00c853</color>
-    <color name="deliveryUnselected">#cfd8dc</color>
+    <color name="deliverySelected">#cfd8dc</color>
 </resources>

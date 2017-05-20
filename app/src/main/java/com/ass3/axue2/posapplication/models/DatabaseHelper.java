@@ -110,7 +110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Checks query
         if (cursor != null)
             cursor.moveToFirst();
-        // Creates new monster with query values
+        // Creates new table with query values
         Table table = new Table(cursor.getLong(0),
                 cursor.getString(1),
                 cursor.getInt(2),
@@ -200,7 +200,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Checks query
         if (cursor != null)
             cursor.moveToFirst();
-        // Creates new monster with query values
+        // Creates new order with query values
         Order order = new Order(cursor.getLong(0),
                 cursor.getLong(1),
                 cursor.getString(2),
@@ -352,7 +352,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Checks query
         if (cursor != null)
             cursor.moveToFirst();
-        // Creates new monster with query values
+        // Creates new customer with query values
         Customer customer = new Customer(cursor.getLong(0),
                 cursor.getString(1),
                 cursor.getString(2),
@@ -426,6 +426,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return deliveries;
+    }
+
+    public Delivery GetDelivery(long id){
+        // Access database
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Database query
+        Cursor cursor = db.query(Delivery.TABLE_NAME, new String[] { Delivery.COLUMN_ID,
+                Delivery.COLUMN_ORDER_ID, Delivery.COLUMN_DRIVER_ID, Delivery.COLUMN_CUSTOMER_ID,
+                Delivery.COLUMN_STATUS, Delivery.COLUMN_DELIVERY_FEE},
+                Delivery.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
+        // Checks query
+        if (cursor != null)
+            cursor.moveToFirst();
+        // Creates new delivery with query values
+        Delivery delivery = new Delivery(cursor.getLong(0),
+                cursor.getLong(1),
+                cursor.getLong(2),
+                cursor.getLong(3),
+                cursor.getString(4),
+                cursor.getInt(5)
+        );
+        cursor.close();
+
+        return delivery;
+    }
+
+    public void UpdateDelivery(Delivery delivery){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(Delivery.COLUMN_ORDER_ID, delivery.getnOrderID());
+        values.put(Delivery.COLUMN_DRIVER_ID, delivery.getnDriverID());
+        values.put(Delivery.COLUMN_CUSTOMER_ID, delivery.getnCustomerID());
+        values.put(Delivery.COLUMN_STATUS, delivery.getsStatus());
+        values.put(Delivery.COLUMN_DELIVERY_FEE, delivery.getnDeliveryFee());
+        // Update values using table id
+        db.update(Delivery.TABLE_NAME, values, Delivery.COLUMN_ID + " = " + delivery.getnDeliveryID(), null );
+        db.close();
     }
 
     public long AddDriver(Driver driver){

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/delivery_manager_ll"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <android.support.v7.widget.CardView
         android:id="@+id/delivery_manager_list_cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="5dp"
-        app:cardBackgroundColor="@color/WHITE"
-        >
+        app:cardBackgroundColor="@color/WHITE">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -23,7 +23,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:gravity="fill"
-                android:text="@string/table_name_placeholder"
+                android:text="@string/delivery_id_placeholder"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -35,7 +35,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_toEndOf="@+id/delivery_manager_list_cv_id_text"
                 android:gravity="fill"
-                android:text="Greg Smith" />
+                android:text="@string/name_placeholder" />
 
             <TextView
                 android:id="@+id/delivery_manager_list_cv_status_text"
@@ -45,7 +45,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_toEndOf="@+id/delivery_manager_list_cv_customer_text"
                 android:gravity="fill"
-                android:text="Unallocated" />
+                android:text="@string/delivery_status_placeholder" />
 
             <TextView
                 android:id="@+id/delivery_manager_list_cv_total_text"

@@ -36,32 +36,14 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_below="@+id/appbar">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_above="@+id/delivery_manager_button">
-
-        </android.support.v4.view.ViewPager>
-
-        <Button
-            android:id="@+id/delivery_manager_button"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/DeliveryManagerButton"
-            android:text="Allocate Driver"
-            android:textColor="@color/WHITE"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true" />
-
-    </RelativeLayout>
+    </android.support.v4.view.ViewPager>
 
 </android.widget.RelativeLayout>

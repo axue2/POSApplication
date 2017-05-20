@@ -68,4 +68,8 @@
     <string name="delivery_manager_title">Delivery Manager</string>
     <string name="main_title">POS Application</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="fragment_delivery_manager_button_placeholder">Allocate Driver</string>
+    <string name="delivery_id_placeholder">1234</string>
+    <string name="name_placeholder">Greg Smith</string>
+    <string name="delivery_status_placeholder">Unallocated</string>
 </resources>
