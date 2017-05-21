@@ -27,6 +27,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            <ImageButton
+                android:id="@+id/location_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/ic_action_location" />
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout

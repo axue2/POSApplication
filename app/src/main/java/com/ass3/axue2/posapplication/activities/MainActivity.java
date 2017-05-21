@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setTitle(getString(R.string.main_title));
 
-        //this.deleteDatabase(mDBHelper.DATABASE_NAME);
+        this.deleteDatabase(mDBHelper.DATABASE_NAME);
 
         // Get database handler
         mDBHelper = new DatabaseHelper(getApplicationContext());

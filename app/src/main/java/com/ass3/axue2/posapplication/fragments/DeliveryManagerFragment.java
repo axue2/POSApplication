@@ -1,7 +1,10 @@
 package com.ass3.axue2.posapplication.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,8 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.ass3.axue2.posapplication.R;
+import com.ass3.axue2.posapplication.activities.DeliveryLocationActivity;
 import com.ass3.axue2.posapplication.activities.DeliveryManagerActivity;
 import com.ass3.axue2.posapplication.models.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.Delivery;
@@ -119,6 +124,20 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
                 updateDeliveries();
             }
         });
+
+        //ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+
+        ImageButton imageButton = (ImageButton) getActivity().findViewById(R.id.location_button);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), DeliveryLocationActivity.class);
+
+                startActivity(intent);
+            }
+        });
+
 
         return v;
     }

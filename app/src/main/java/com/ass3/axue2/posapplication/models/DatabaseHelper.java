@@ -637,11 +637,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void CreateTestCustomers(){
-        AddCustomer(new Customer("Larry","Miller","123 Fake St","Surrey Hills","",3123,33333));
-        AddCustomer(new Customer("Barry","White","123 Fake St","Surrey Hills","",3123,33333));
-        AddCustomer(new Customer("Sally","Kite","123 Fake St","Surrey Hills","",3123,33333));
-        AddCustomer(new Customer("Samuel","Sanders","123 Fake St","Surrey Hills","",3123,33333));
-        AddCustomer(new Customer("Ronald","Light","123 Fake St","Surrey Hills","",3123,33333));
+        AddCustomer(new Customer("Larry","Miller","7 Trainor St","Box Hill North","",3129,33333));
+        AddCustomer(new Customer("Barry","White","17 Berry St","Box Hill North","",3129,33333));
+        AddCustomer(new Customer("Sally","Kite","47 Ursa St","Balwyn North","",3104,33333));
+        AddCustomer(new Customer("Samuel","Sanders","3 Euroka St","Chadstone","",3148,33333));
+        AddCustomer(new Customer("Ronald","Light","20 Boyd St","Nagambie","",3608,33333));
     }
 
     public void deleteTable(String tableName){
