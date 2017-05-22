@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.OrderActivity;
-import com.ass3.axue2.posapplication.models.OrderItem;
+import com.ass3.axue2.posapplication.models.operational.OrderItem;
 
 import java.util.List;
 

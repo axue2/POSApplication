@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.models.DatabaseHelper;
-import com.ass3.axue2.posapplication.models.Product;
+import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Product;
 import com.ass3.axue2.posapplication.views.adapters.OrderGroupRecyclerViewAdapter;
 
 import java.util.ArrayList;

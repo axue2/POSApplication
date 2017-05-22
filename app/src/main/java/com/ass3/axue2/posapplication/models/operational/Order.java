@@ -1,4 +1,4 @@
-package com.ass3.axue2.posapplication.models;
+package com.ass3.axue2.posapplication.models.operational;
 
 /**
  * Created by anthony on 5/1/2017.
@@ -14,12 +14,12 @@ public class Order {
     private double nTotal;
 
     // Database Constants
-    static final String TABLE_NAME = "Orders";
-    static final String COLUMN_ID = "_id";
-    static final String COLUMN_TABLE_ID = "TABLE_ID";
-    static final String COLUMN_TYPE = "TYPE";
-    static final String COLUMN_STATUS = "STATUS";
-    static final String COLUMN_TOTAL = "TOTAL";
+    public static final String TABLE_NAME = "Orders";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_TABLE_ID = "TABLE_ID";
+    public static final String COLUMN_TYPE = "TYPE";
+    public static final String COLUMN_STATUS = "STATUS";
+    public static final String COLUMN_TOTAL = "TOTAL";
 
     // Constants for different Order types
     public static final String TYPE_EAT_IN = "EAT-IN";
@@ -32,7 +32,7 @@ public class Order {
     public static final String STATUS_REFUND = "REFUND";
 
     // Order Create Statement
-    static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             COLUMN_TABLE_ID + " INTEGER NOT NULL, " +
             COLUMN_TYPE + " TEXT NOT NULL, " +
@@ -62,6 +62,14 @@ public class Order {
         sType = type;
         sStatus = status;
         nTotal = total;
+    }
+
+    public Order() {
+        nOrderID = -1;
+        nTableID = -1;
+        sType = "";
+        sStatus = "";
+        nTotal = 0;
     }
 
     public long getnOrderID() {

@@ -1,4 +1,4 @@
-package com.ass3.axue2.posapplication.models;
+package com.ass3.axue2.posapplication.models.operational;
 
 /**
  * Created by anthony on 5/13/2017.

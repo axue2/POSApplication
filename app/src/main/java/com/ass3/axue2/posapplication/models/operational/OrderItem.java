@@ -1,4 +1,4 @@
-package com.ass3.axue2.posapplication.models;
+package com.ass3.axue2.posapplication.models.operational;
 
 /**
  * Created by anthony on 5/1/2017.
@@ -15,17 +15,17 @@ public class OrderItem {
     private int nQuantity;
 
     // Database Constants
-    static final String TABLE_NAME = "Order_Item";
-    static final String COLUMN_ID = "_id";
-    static final String COLUMN_ORDER_ID = "ORDER_ID";
-    static final String COLUMN_TABLE_ID = "TABLE_ID";
-    static final String COLUMN_PRODUCT_ID = "PRODUCT_ID";
-    static final String COLUMN_PRODUCT_NAME = "PRODUCT_NAME";
-    static final String COLUMN_PRODUCT_PRICE = "PRODUCT_PRICE";
-    static final String COLUMN_QUANTITY = "QUANTITY";
+    public static final String TABLE_NAME = "Order_Item";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_ORDER_ID = "ORDER_ID";
+    public static final String COLUMN_TABLE_ID = "TABLE_ID";
+    public static final String COLUMN_PRODUCT_ID = "PRODUCT_ID";
+    public static final String COLUMN_PRODUCT_NAME = "PRODUCT_NAME";
+    public static final String COLUMN_PRODUCT_PRICE = "PRODUCT_PRICE";
+    public static final String COLUMN_QUANTITY = "QUANTITY";
 
     // OrderItem Create Statement
-    static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             COLUMN_ORDER_ID + " INTEGER NOT NULL, " +
             COLUMN_TABLE_ID + " INTEGER NOT NULL, " +
@@ -55,6 +55,16 @@ public class OrderItem {
         sProductName = name;
         nPrice = price;
         nQuantity = quantity;
+    }
+
+    public OrderItem() {
+        nOrderItemID = 0;
+        nOrderID = 0;
+        nTableID = 0;
+        nProductID = 0;
+        sProductName = "";
+        nPrice = 0;
+        nQuantity = 0;
     }
 
     public void increaseQuantityByOne(){setnQuantity(this.nQuantity + 1);}

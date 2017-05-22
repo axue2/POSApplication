@@ -1,7 +1,9 @@
 package com.ass3.axue2.posapplication.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,15 +23,19 @@ import android.widget.TextView;
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.OrderCurrentFragment;
 import com.ass3.axue2.posapplication.fragments.OrderGroupFragment;
-import com.ass3.axue2.posapplication.models.Customer;
-import com.ass3.axue2.posapplication.models.DatabaseHelper;
-import com.ass3.axue2.posapplication.models.Delivery;
-import com.ass3.axue2.posapplication.models.Group;
-import com.ass3.axue2.posapplication.models.Order;
-import com.ass3.axue2.posapplication.models.OrderItem;
-import com.ass3.axue2.posapplication.models.Product;
-import com.ass3.axue2.posapplication.models.Table;
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Delivery;
+import com.ass3.axue2.posapplication.models.operational.Group;
+import com.ass3.axue2.posapplication.models.operational.Order;
+import com.ass3.axue2.posapplication.models.operational.OrderItem;
+import com.ass3.axue2.posapplication.models.operational.Product;
+import com.ass3.axue2.posapplication.models.operational.Table;
+import com.ass3.axue2.posapplication.network.OrderDAO;
+import com.ass3.axue2.posapplication.network.OrderItemDAO;
+import com.ass3.axue2.posapplication.network.TableDAO;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,12 +53,16 @@ public class OrderActivity extends AppCompatActivity {
     private long nQuantity = 0;
     private double nSubtotal = 0;
     private String sType;
+    private String mTableName;
+    private int nTableGuests;
+
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
 
     private DatabaseHelper mDBHelper;
+    private ConfigurationDatabaseHelper mCDBHelper;
 
     private TextView mOrderNumberTextView;
     private TextView mOrderQuantityTextView;
@@ -69,17 +79,19 @@ public class OrderActivity extends AppCompatActivity {
         // Find out which table was clicked in previous activity
         Intent intent = getIntent();
 
-        final String tableName = intent.getStringExtra(EXTRA_TABLENAME);
+        mTableName = intent.getStringExtra(EXTRA_TABLENAME);
         nTableID = intent.getLongExtra(EXTRA_TABLEID, 0);
-        final int tableGuests = intent.getIntExtra(EXTRA_TABLEGUESTS, 0);
+        nTableGuests = intent.getIntExtra(EXTRA_TABLEGUESTS, 0);
         nOrderID = intent.getLongExtra(EXTRA_ORDERID, 0);
         sType = intent.getStringExtra(EXTRA_ORDERTYPE);
 
 
-        Log.d("EXTRA_TABLENAME VALUE", tableName);
+        Log.d("EXTRA_TABLENAME VALUE", mTableName);
         Log.d("EXTRA_TABLEID VALUE", String.valueOf(nTableID));
 
         mDBHelper = new DatabaseHelper(getApplicationContext());
+        mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
+
 
         // Get all OrderItems
         mOrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
@@ -94,7 +106,7 @@ public class OrderActivity extends AppCompatActivity {
         
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle(tableName);
+        setTitle(mTableName);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -110,12 +122,14 @@ public class OrderActivity extends AppCompatActivity {
         for (Group group : groups) {
             OrderGroupFragment f = new OrderGroupFragment();
 
-            // Put GroupID in fragment
-            Bundle args = new Bundle();
-            args.putLong(OrderGroupFragment.BUNDLE_ITEM_GROUPID, group.getnGroupID());
-            f.setArguments(args);
+            if(group.getnGroupID() > 0) {
+                // Put GroupID in fragment
+                Bundle args = new Bundle();
+                args.putLong(OrderGroupFragment.BUNDLE_ITEM_GROUPID, group.getnGroupID());
+                f.setArguments(args);
 
-            mSectionsPagerAdapter.addFragment(f, group.getsGroupName());
+                mSectionsPagerAdapter.addFragment(f, group.getsGroupName());
+            }
         }
 
 
@@ -152,51 +166,137 @@ public class OrderActivity extends AppCompatActivity {
 
                     startActivity(intent);
                 }else {
-
-                    Intent intent = new Intent(OrderActivity.this, MainActivity.class);
-                    // If status is not In-use create new order
-                    if (nOrderID <= 0) {
-                        Log.d("OrderID", "Less than 0");
-                        mDBHelper = new DatabaseHelper(getApplicationContext());
+                    // if standalone mode
+                    if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0) {
+                        Intent intent = new Intent(OrderActivity.this, MainActivity.class);
 
                         Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
-                        nOrderID = mDBHelper.AddOrder(order);
-
-                        Log.d("newID", String.valueOf(nOrderID));
-
-                    } else {
-                        // Update subtotal for Order
-                        Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
-                        mDBHelper.UpdateOrder(order);
-                    }
-                    // Update Table details if its an eat-in order
-                    if (sType.equals(Order.TYPE_EAT_IN)) {
-                        Table table = new Table(nTableID, tableName, tableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
-                        mDBHelper.UpdateTable(table);
-                    }
-                    // Otherwise add/update delivery details if delivery order
-                    else if (sType.equals(Order.TYPE_DELIVERY)){
-                        //TODO: Add Delivery Details & Customer Details
-                        Delivery delivery = new Delivery(nOrderID, 0, 0);
-                        mDBHelper.AddDelivery(delivery);
-                    }
-                    // Adds/Updates OrderItems to db
-                    for (OrderItem orderItem : mOrderItems) {
-                        orderItem.setnOrderID(nOrderID);
-                        if (orderItem.getnOrderItemID() > 0) {
-                            mDBHelper.UpdateOrderItem(orderItem);
+                        // If status is not In-use create new order
+                        if (nOrderID <= 0) {
+                            nOrderID = mDBHelper.AddOrder(order);
                         } else {
-                            mDBHelper.AddOrderItem(orderItem);
+                            // Update subtotal for Order
+                            mDBHelper.UpdateOrder(order);
                         }
+                        // Update Table details if its an eat-in order
+                        if (sType.equals(Order.TYPE_EAT_IN)) {
+                            Table table = new Table(nTableID, mTableName, nTableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
+                            mDBHelper.UpdateTable(table);
+                        }
+                        // Otherwise add/update delivery details if delivery order
+                        else if (sType.equals(Order.TYPE_DELIVERY)) {
+                            //TODO: Add Delivery Details & Customer Details
+                            Delivery delivery = new Delivery(nOrderID, 0, 0);
+                            mDBHelper.AddDelivery(delivery);
+                        }
+                        // Adds/Updates OrderItems to db
+                        for (OrderItem orderItem : mOrderItems) {
+                            orderItem.setnOrderID(nOrderID);
+                            if (orderItem.getnOrderItemID() > 0) {
+                                mDBHelper.UpdateOrderItem(orderItem);
+                            } else {
+                                mDBHelper.AddOrderItem(orderItem);
+                            }
 
+                        }
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        OrderActivity.this.finish();
                     }
-
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    OrderActivity.this.finish();
+                    // if network mode
+                    else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+                        System.out.println("NETWORK MODE ON, CONFIRM TASK");
+                        new ConfirmTask(OrderActivity.this).execute();
+                    }
                 }
             }
         });
+    }
+
+    private class ConfirmTask extends AsyncTask<Void, Void, Void>{
+        private ProgressDialog mDialog;
+
+        public ConfirmTask(OrderActivity activity){
+            mDialog = new ProgressDialog(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mDialog.setTitle("Sending Data");
+            mDialog.setMessage("Sending database information to server. Please Wait...");
+            mDialog.setIndeterminate(true);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            System.out.println("DOINBACKGROUND STARTED....................");
+            Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
+            // If status is not In-use create new order
+            if (nOrderID <= 0) {
+                try{
+                    System.out.println("INSERT ORDER....................");
+                    // Insert Order
+                    OrderDAO orderDAO = new OrderDAO();
+                    nOrderID = orderDAO.insertOrder(order);
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try{
+                    // Update Order
+                    OrderDAO orderDAO = new OrderDAO();
+                    orderDAO.updateOrder(order);
+
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            // Update Table details if its an eat-in order
+            if (sType.equals(Order.TYPE_EAT_IN)) {
+                Table table = new Table(nTableID, mTableName, nTableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
+                try {
+                    TableDAO tableDAO = new TableDAO();
+                    tableDAO.updateTable(table);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            // Otherwise add/update delivery details if delivery order
+            else if (sType.equals(Order.TYPE_DELIVERY)) {
+                //TODO: Add Delivery Details & Customer Details
+                Delivery delivery = new Delivery(nOrderID, 0, 0);
+                mDBHelper.AddDelivery(delivery);
+            }
+            // Adds/Updates OrderItems to db
+            try {
+                OrderItemDAO orderItemDAO = new OrderItemDAO();
+                for (OrderItem orderItem : mOrderItems) {
+                    orderItem.setnOrderID(nOrderID);
+                    if (orderItem.getnOrderItemID() > 0) {
+                        orderItemDAO.updateOrderItem(orderItem);
+                    } else {
+                        orderItemDAO.insertOrderItem(orderItem);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mDialog.dismiss();
+            Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
     }
 
 

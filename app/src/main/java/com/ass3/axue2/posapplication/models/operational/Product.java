@@ -1,4 +1,4 @@
-package com.ass3.axue2.posapplication.models;
+package com.ass3.axue2.posapplication.models.operational;
 
 /**
  * Created by anthony on 4/29/2017.
@@ -8,14 +8,14 @@ package com.ass3.axue2.posapplication.models;
 public class Product {
 
     // Database Constants
-    static final String TABLE_NAME = "Products";
-    static final String COLUMN_ID = "_id";
-    static final String COLUMN_GROUPID = "GROUP_ID";
-    static final String COLUMN_NAME = "NAME";
-    static final String COLUMN_PRICE = "PRICE";
+    public static final String TABLE_NAME = "Products";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_GROUPID = "GROUP_ID";
+    public static final String COLUMN_NAME = "NAME";
+    public static final String COLUMN_PRICE = "PRICE";
 
     // Order Create Statement
-    static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             COLUMN_GROUPID + " INTEGER NOT NULL," +
             COLUMN_NAME + " TEXT NOT NULL, " +
@@ -40,6 +40,13 @@ public class Product {
         nGroupID = groupID;
         sProductName = name;
         nPrice = price;
+    }
+
+    public Product() {
+        nProductID = 0;
+        nGroupID = 0;
+        sProductName = "";
+        nPrice = 0;
     }
 
     public long getnProductID() {

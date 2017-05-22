@@ -1,6 +1,5 @@
 package com.ass3.axue2.posapplication.activities;
 
-import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,8 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.content.Context;
 import android.support.v7.widget.ThemedSpinnerAdapter;
@@ -30,9 +27,9 @@ import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.DeliveryManagerFragment;
-import com.ass3.axue2.posapplication.models.DatabaseHelper;
-import com.ass3.axue2.posapplication.models.Delivery;
-import com.ass3.axue2.posapplication.models.Driver;
+import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Delivery;
+import com.ass3.axue2.posapplication.models.operational.Driver;
 
 import java.util.ArrayList;
 import java.util.List;

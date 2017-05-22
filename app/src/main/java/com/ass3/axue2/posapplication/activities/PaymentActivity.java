@@ -1,20 +1,23 @@
 package com.ass3.axue2.posapplication.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.icu.math.BigDecimal;
-import android.icu.text.DecimalFormat;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.models.DatabaseHelper;
-import com.ass3.axue2.posapplication.models.Order;
-import com.ass3.axue2.posapplication.models.Table;
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Order;
+import com.ass3.axue2.posapplication.models.operational.Table;
+import com.ass3.axue2.posapplication.network.OrderDAO;
+import com.ass3.axue2.posapplication.network.TableDAO;
+
+import java.sql.SQLException;
 
 public class PaymentActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -220,38 +223,118 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
                 // Amount paid must be at least the subtotal
                 if(nChange >= 0) {
+                    ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
+                    if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0){
+                        if (sType.equals(Order.TYPE_TAKEAWAY)){
+                            // Create a new takeaway order
+                            Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
+                            mDBHelper.AddOrder(currentOrder);
+                        }
+                        // Assumes that if not takeaway order then it is a table order
+                        // May be rewritten if additional order types use this payment activity
+                        else{
+                            // Setup Order data with status now PAID
+                            Order currentOrder = mDBHelper.GetOrder(nOrderID);
+                            Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
+                                    currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
 
-                    if (sType.equals(Order.TYPE_TAKEAWAY)){
-                        // Create a new takeaway order
-                        Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
-                        mDBHelper.AddOrder(currentOrder);
+                            // Setup Table data as refreshed
+                            Table newTable = new Table(nTableID, sTableName,
+                                    0, -1, 0, Table.STATUS_OPEN);
+
+                            // Update db
+                            mDBHelper.UpdateTable(newTable);
+                            mDBHelper.UpdateOrder(newOrder);
+
+                        }
+                        // Return to MainActivity
+                        Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        PaymentActivity.this.finish();
+                    } else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+                        new PaymentTask(PaymentActivity.this).execute();
                     }
-                    // Assumes that if not takeaway order then it is a table order
-                    // May be rewritten if additional order types use this payment activity
-                    else{
-                        // Setup Order data with status now PAID
-                        Order currentOrder = mDBHelper.GetOrder(nOrderID);
-                        Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
-                                currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
 
-                        // Setup Table data as refreshed
-                        Table newTable = new Table(nTableID, sTableName,
-                                0, -1, 0, Table.STATUS_OPEN);
-
-                        // Update db
-                        mDBHelper.UpdateTable(newTable);
-                        mDBHelper.UpdateOrder(newOrder);
-
-                    }
-                    // Return to MainActivity
-                    Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    PaymentActivity.this.finish();
                 }
                 break;
             default:
                 break;
+        }
+    }
+
+    public class PaymentTask extends AsyncTask<Void, Void, Void>{
+        private ProgressDialog mDialog;
+
+        public PaymentTask(PaymentActivity activity){
+            mDialog = new ProgressDialog(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mDialog.setTitle("Sending Data");
+            mDialog.setMessage("Sending data to server. Please Wait...");
+            mDialog.setIndeterminate(true);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
+            if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0) {
+                if (sType.equals(Order.TYPE_TAKEAWAY)) {
+                    // Create a new takeaway order
+                    Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
+                    OrderDAO orderDAO = new OrderDAO();
+                    try{
+                        orderDAO.insertOrder(currentOrder);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    // TODO: Insert OrderItems
+                }
+                // Assumes that if not takeaway order then it is a table order
+                // May be rewritten if additional order types use this payment activity
+                else {
+                    // Setup Order data with status now PAID
+                    Order currentOrder = mDBHelper.GetOrder(nOrderID);
+                    Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
+                            currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
+
+                    // Setup Table data as refreshed
+                    Table newTable = new Table(nTableID, sTableName,
+                            0, -1, 0, Table.STATUS_OPEN);
+
+                    TableDAO tableDAO = new TableDAO();
+                    OrderDAO orderDAO = new OrderDAO();
+
+                    try{
+                        tableDAO.updateTable(newTable);
+                        orderDAO.updateOrder(currentOrder);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Update db
+                    mDBHelper.UpdateTable(newTable);
+                    mDBHelper.UpdateOrder(newOrder);
+
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // Return to MainActivity
+            Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            PaymentActivity.this.finish();
         }
     }
 

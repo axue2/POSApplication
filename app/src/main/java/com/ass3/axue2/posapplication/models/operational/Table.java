@@ -1,4 +1,4 @@
-package com.ass3.axue2.posapplication.models;
+package com.ass3.axue2.posapplication.models.operational;
 
 /**
  * Created by anthony on 4/21/2017.
@@ -15,13 +15,13 @@ public class Table {
     private String sStatus;
 
     // Database Constants
-    static final String TABLE_NAME = "Tables";
-    static final String COLUMN_ID = "_id";
-    static final String COLUMN_NAME = "NAME";
-    static final String COLUMN_GUESTS = "NO_GUESTS";
-    static final String COLUMN_ORDER_ID = "ORDER_ID";
-    static final String COLUMN_TOTAL = "INVOICE_TOTAL";
-    static final String COLUMN_STATUS = "STATUS";
+    public static final String TABLE_NAME = "Tables";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NAME = "NAME";
+    public static final String COLUMN_GUESTS = "NO_GUESTS";
+    public static final String COLUMN_ORDER_ID = "ORDER_ID";
+    public static final String COLUMN_TOTAL = "INVOICE_TOTAL";
+    public static final String COLUMN_STATUS = "STATUS";
 
     // Constants for Table status
     public static final String STATUS_OPEN = "OPEN";
@@ -30,7 +30,7 @@ public class Table {
 
 
     // Table Create Statement
-    static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             COLUMN_NAME + " TEXT NOT NULL, " +
             COLUMN_GUESTS + " INTEGER, " +

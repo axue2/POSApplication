@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.models.Order;
+import com.ass3.axue2.posapplication.models.operational.Order;
 
 public class DeliveryDetailsActivity extends AppCompatActivity {
 

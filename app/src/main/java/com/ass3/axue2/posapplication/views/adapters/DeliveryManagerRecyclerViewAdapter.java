@@ -1,12 +1,9 @@
 package com.ass3.axue2.posapplication.views.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.models.Customer;
-import com.ass3.axue2.posapplication.models.DatabaseHelper;
-import com.ass3.axue2.posapplication.models.Delivery;
+import com.ass3.axue2.posapplication.models.operational.Customer;
+import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Delivery;
 
 import java.util.ArrayList;
 

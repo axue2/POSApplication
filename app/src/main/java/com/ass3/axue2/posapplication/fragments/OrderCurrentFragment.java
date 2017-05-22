@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.OrderActivity;
-import com.ass3.axue2.posapplication.models.OrderItem;
+import com.ass3.axue2.posapplication.models.operational.OrderItem;
 import com.ass3.axue2.posapplication.views.adapters.OrderCurrentRecyclerViewAdapter;
 
 import java.util.ArrayList;

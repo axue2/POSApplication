@@ -15,8 +15,8 @@ import android.widget.TextView;
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.OrderActivity;
 import com.ass3.axue2.posapplication.activities.PaymentActivity;
-import com.ass3.axue2.posapplication.models.Order;
-import com.ass3.axue2.posapplication.models.Table;
+import com.ass3.axue2.posapplication.models.operational.Order;
+import com.ass3.axue2.posapplication.models.operational.Table;
 
 import java.util.List;
 

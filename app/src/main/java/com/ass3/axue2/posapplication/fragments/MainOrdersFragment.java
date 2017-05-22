@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.models.DatabaseHelper;
-import com.ass3.axue2.posapplication.models.Table;
+import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Table;
 import com.ass3.axue2.posapplication.views.adapters.MainRecyclerViewAdapter;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.ass3.axue2.posapplication.models;
+package com.ass3.axue2.posapplication.models.operational;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -36,6 +36,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(Driver.CREATE_STATEMENT);
     }
 
+    public void createTable(String statement){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(statement);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + Table.TABLE_NAME);
@@ -47,6 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void AddTable(Table table){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(Table.COLUMN_ID, table.getnTableID());
         values.put(Table.COLUMN_NAME, table.getsTableName());
         values.put(Table.COLUMN_GUESTS, table.getnGuests());
         values.put(Table.COLUMN_ORDER_ID, table.getnOrderID());
@@ -147,6 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddProduct(Product product){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(Product.COLUMN_ID, product.getnProductID());
         values.put(Product.COLUMN_GROUPID, product.getnGroupID());
         values.put(Product.COLUMN_NAME, product.getsProductName());
         values.put(Product.COLUMN_PRICE, product.getnPrice());
@@ -214,6 +221,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddOrderItem(OrderItem orderItem){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(OrderItem.COLUMN_ID, orderItem.getnOrderItemID());
         values.put(OrderItem.COLUMN_ORDER_ID, orderItem.getnOrderID());
         values.put(OrderItem.COLUMN_TABLE_ID, orderItem.getnTableID());
         values.put(OrderItem.COLUMN_PRODUCT_ID, orderItem.getnProductID());
@@ -268,6 +276,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void AddGroup(Group group){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(Group.COLUMN_ID, group.getnGroupID());
         values.put(Group.COLUMN_NAME, group.getsGroupName());
         db.insert(Group.TABLE_NAME, null, values);
         db.close();
@@ -293,6 +302,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddOrder(Order order){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(Order.COLUMN_ID, order.getnOrderID());
         values.put(Order.COLUMN_TABLE_ID, order.getnTableID());
         values.put(Order.COLUMN_TYPE, order.getsType());
         values.put(Order.COLUMN_TOTAL, order.getnTotal());
@@ -649,6 +659,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete(tableName, null, null);
         db.execSQL("delete * from " + tableName);
         db.execSQL("TRUNCATE table" + tableName);
+        db.close();
+    }
+
+    public void dropTable(String tableName){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + tableName );
         db.close();
     }
 }
