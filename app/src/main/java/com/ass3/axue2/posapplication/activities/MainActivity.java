@@ -70,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
             mCDBHelper.AddConfigurationSetting(new ConfigurationSetting(1,1));
         }
 
-        Log.d("Network Mode", String.valueOf(mCDBHelper.GetConfigurationSetting(1).getnNetworkMode()));
-
         // Checks to see if its in network mode
         if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
             new SynchroniseTask(MainActivity.this).execute();
