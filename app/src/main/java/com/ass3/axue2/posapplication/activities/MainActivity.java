@@ -110,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(OrderActivity.EXTRA_TABLEID, -1);
                 intent.putExtra(OrderActivity.EXTRA_ORDERID, -1);
 
+                intent.putExtra(OrderActivity.EXTRA_FROM, "MainActivity");
+
                 startActivity(intent);
 
             }
@@ -179,8 +181,6 @@ public class MainActivity extends AppCompatActivity {
 //                    System.out.println("Order ID: " + String.valueOf(order.getnOrderID()));
 //                    System.out.println("Order Status: " + order.getsStatus());
 //                    System.out.println();
-                    // Test
-                    orderDAO.updateOrder(order);
                 }
                 // Sync OrderItems
                 orderItems = orderItemDAO.getOrderItems();
@@ -190,7 +190,8 @@ public class MainActivity extends AppCompatActivity {
                     dbHelper.AddOrderItem(orderItem);
 //                    System.out.println("OrderItem ID: " + String.valueOf(orderItem.getnOrderItemID()));
 //                    System.out.println("Order Status: " + orderItem.getsProductName());
-//                    System.out.println();
+//                    System.out.println("OrderITEM PRICE: " + orderItem.getnPrice());
+//                    System.out.println("OrderITEM QUANTITY: " + orderItem.getnQuantity());
 
                 }
                 // Sync Products

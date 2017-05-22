@@ -1,6 +1,8 @@
 package com.ass3.axue2.posapplication.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,10 +18,13 @@ import android.widget.ImageButton;
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.DeliveryLocationActivity;
 import com.ass3.axue2.posapplication.activities.DeliveryManagerActivity;
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
+import com.ass3.axue2.posapplication.network.DeliveryDAO;
 import com.ass3.axue2.posapplication.views.adapters.DeliveryManagerRecyclerViewAdapter;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
@@ -123,8 +128,6 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        //ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-
         ImageButton imageButton = (ImageButton) getActivity().findViewById(R.id.location_button);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -155,21 +158,90 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
             }
 
             if(updatedStatus.equals(Delivery.STATUS_ALLOCATED) || updatedStatus.equals(Delivery.STATUS_COMPLETE)) {
-                for (int i = 0; i < mSelectedDeliveries.size(); i++) {
-                    Delivery delivery = mDBHelper.GetDelivery(mSelectedDeliveries.get(i));
-                    // checks delivery to see if it hasn't already be allocated
-                    if (delivery.getsStatus().equals(sDeliveryStatus)) {
-                        delivery.setsStatus(updatedStatus);
-                        delivery.setnDriverID(nDriverID);
+                ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getActivity());
+                if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0) {
+                    for (int i = 0; i < mSelectedDeliveries.size(); i++) {
+                        Delivery delivery = mDBHelper.GetDelivery(mSelectedDeliveries.get(i));
+                        // checks delivery to see if it hasn't already be allocated
+                        if (delivery.getsStatus().equals(sDeliveryStatus)) {
+                            delivery.setsStatus(updatedStatus);
+                            delivery.setnDriverID(nDriverID);
 
-                        mDBHelper.UpdateDelivery(delivery);
+                            mDBHelper.UpdateDelivery(delivery);
+                        }
                     }
+                    mSelectedDeliveries.clear();
+                    update();
+                } else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+                    new InsertTask((DeliveryManagerActivity)getActivity(), updatedStatus, mSelectedDeliveries).execute();
+
                 }
+
             }
+
         }
         //TODO: Figure out how to remove item in recyclerview
-        mSelectedDeliveries.clear();
-        update();
+
+    }
+
+
+    private class InsertTask extends AsyncTask<Void, Void, Void>{
+        private  ProgressDialog mDialog;
+        private DatabaseHelper dbHelper;
+        private String mStatus;
+        private ArrayList<Long> deliveryIDs;
+
+        public InsertTask(DeliveryManagerActivity activity, String status, ArrayList<Long> selectedDeliveries){
+            mDialog = new ProgressDialog(activity);
+            mStatus = status;
+            deliveryIDs = selectedDeliveries;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mDialog.setTitle("Sending Data");
+            mDialog.setMessage("Sending information to server. Please Wait...");
+            mDialog.setIndeterminate(true);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            System.out.println("DOINBACKGROUND.............................");
+            DeliveryDAO deliveryDAO = new DeliveryDAO();
+            System.out.println("DOINBACKGROUND.............................");
+
+            try {
+                for (int i = 0; i < deliveryIDs.size(); i++) {
+                    System.out.println("DELIVERY ID = " + String.valueOf(deliveryIDs.get(i)));
+                    Delivery delivery = deliveryDAO.getDelivery(deliveryIDs.get(i));
+                    if (delivery.getsStatus().equals(sDeliveryStatus)) {
+                        // checks delivery to see if it hasn't already be allocated
+
+                        delivery.setsStatus(mStatus);
+                        delivery.setnDriverID(nDriverID);
+                        System.out.println(mStatus);
+
+                        deliveryDAO.updateDelivery(delivery);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            deliveryIDs.clear();
+            update();
+            mDialog.dismiss();
+
+        }
     }
 
     public void toggleSelect(int position){

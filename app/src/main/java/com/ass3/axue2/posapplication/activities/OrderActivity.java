@@ -24,6 +24,7 @@ import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.OrderCurrentFragment;
 import com.ass3.axue2.posapplication.fragments.OrderGroupFragment;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
 import com.ass3.axue2.posapplication.models.operational.Group;
@@ -31,6 +32,8 @@ import com.ass3.axue2.posapplication.models.operational.Order;
 import com.ass3.axue2.posapplication.models.operational.OrderItem;
 import com.ass3.axue2.posapplication.models.operational.Product;
 import com.ass3.axue2.posapplication.models.operational.Table;
+import com.ass3.axue2.posapplication.network.CustomerDAO;
+import com.ass3.axue2.posapplication.network.DeliveryDAO;
 import com.ass3.axue2.posapplication.network.OrderDAO;
 import com.ass3.axue2.posapplication.network.OrderItemDAO;
 import com.ass3.axue2.posapplication.network.TableDAO;
@@ -48,6 +51,17 @@ public class OrderActivity extends AppCompatActivity {
     public static final String EXTRA_ORDERID = "Order ID";
     public static final String EXTRA_ORDERTYPE = "Order Type";
 
+    public static final String EXTRA_FROM = "From";
+
+    public static final String EXTRA_CUSTOMERNAME = "Customer Name";
+    public static final String EXTRA_AL1 = "Address Line 1";
+    public static final String EXTRA_AL2 = "Address Line 2";
+    public static final String EXTRA_AL3 = "Address Line 3";
+    public static final String EXTRA_POSTCODE = "Postcode";
+    public static final String EXTRA_PHONE = "Phone";
+    public static final String EXTRA_DELIVERYFEE = "Delivery";
+
+
     private long nTableID;
     private long nOrderID;
     private long nQuantity = 0;
@@ -55,6 +69,15 @@ public class OrderActivity extends AppCompatActivity {
     private String sType;
     private String mTableName;
     private int nTableGuests;
+
+    private String sCustomerName;
+    private String sAL1;
+    private String sAL2;
+    private String sAL3;
+    private int nPostcode;
+    private int nPhone;
+    private double nDeliveryFee;
+
 
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -75,8 +98,6 @@ public class OrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
-
-        // Find out which table was clicked in previous activity
         Intent intent = getIntent();
 
         mTableName = intent.getStringExtra(EXTRA_TABLENAME);
@@ -85,6 +106,15 @@ public class OrderActivity extends AppCompatActivity {
         nOrderID = intent.getLongExtra(EXTRA_ORDERID, 0);
         sType = intent.getStringExtra(EXTRA_ORDERTYPE);
 
+        if (intent.getStringExtra(EXTRA_FROM).equals("DeliveryDetailsActivity")){
+            sCustomerName = intent.getStringExtra(EXTRA_CUSTOMERNAME);
+            sAL1 = intent.getStringExtra(EXTRA_AL1);
+            sAL2 = intent.getStringExtra(EXTRA_AL2);
+            sAL3 = intent.getStringExtra(EXTRA_AL3);
+            nPostcode = intent.getIntExtra(EXTRA_POSTCODE, 0);
+            nPhone = intent.getIntExtra(EXTRA_POSTCODE, 0);
+            nDeliveryFee = intent.getDoubleExtra(EXTRA_DELIVERYFEE,0);
+        }
 
         Log.d("EXTRA_TABLENAME VALUE", mTableName);
         Log.d("EXTRA_TABLEID VALUE", String.valueOf(nTableID));
@@ -93,14 +123,18 @@ public class OrderActivity extends AppCompatActivity {
         mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
 
 
-        // Get all OrderItems
-        mOrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
-        // Get total quantity of OrderItems
-        for (OrderItem orderItem:mOrderItems) {
-            nQuantity += orderItem.getnQuantity();
-            nSubtotal += (orderItem.getnPrice() * orderItem.getnQuantity());
+        if (nOrderID > 0) {
+            // Get all OrderItems
+            mOrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
+            // Get total quantity of OrderItems
+            for (OrderItem orderItem : mOrderItems) {
+                nQuantity += orderItem.getnQuantity();
+                nSubtotal += (orderItem.getnPrice() * orderItem.getnQuantity());
+                System.out.println("ITEM PRICE: " + String.valueOf(orderItem.getnPrice()));
+                System.out.println("ITEM QUANTITY: " + String.valueOf(orderItem.getnPrice()));
+                System.out.println("ORDER SUBTOTAL: " + String.valueOf(nSubtotal));
+            }
         }
-
         // Get all the Groups
         ArrayList<Group> groups = new ArrayList<>(mDBHelper.GetAllGroups().values());
         
@@ -185,8 +219,11 @@ public class OrderActivity extends AppCompatActivity {
                         }
                         // Otherwise add/update delivery details if delivery order
                         else if (sType.equals(Order.TYPE_DELIVERY)) {
-                            //TODO: Add Delivery Details & Customer Details
-                            Delivery delivery = new Delivery(nOrderID, 0, 0);
+                            Customer customer = new Customer(sCustomerName, "", sAL1, sAL2, sAL3,
+                                    nPostcode, nPhone);
+                            long customerID = mDBHelper.AddCustomer(customer);
+
+                            Delivery delivery = new Delivery(nOrderID, customerID, nDeliveryFee);
                             mDBHelper.AddDelivery(delivery);
                         }
                         // Adds/Updates OrderItems to db
@@ -233,12 +270,10 @@ public class OrderActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            System.out.println("DOINBACKGROUND STARTED....................");
             Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
             // If status is not In-use create new order
             if (nOrderID <= 0) {
                 try{
-                    System.out.println("INSERT ORDER....................");
                     // Insert Order
                     OrderDAO orderDAO = new OrderDAO();
                     nOrderID = orderDAO.insertOrder(order);
@@ -268,9 +303,18 @@ public class OrderActivity extends AppCompatActivity {
             }
             // Otherwise add/update delivery details if delivery order
             else if (sType.equals(Order.TYPE_DELIVERY)) {
-                //TODO: Add Delivery Details & Customer Details
-                Delivery delivery = new Delivery(nOrderID, 0, 0);
-                mDBHelper.AddDelivery(delivery);
+                CustomerDAO customerDAO = new CustomerDAO();
+                DeliveryDAO deliveryDAO = new DeliveryDAO();
+                Customer customer = new Customer(sCustomerName, "", sAL1, sAL2, sAL3,
+                        nPostcode, nPhone);
+                try {
+                    long customerID = customerDAO.insertCustomer(customer);
+                    Delivery delivery = new Delivery(nOrderID, customerID, nDeliveryFee);
+                    deliveryDAO.insertDelivery(delivery);
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
             // Adds/Updates OrderItems to db
             try {

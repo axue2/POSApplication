@@ -1,5 +1,7 @@
 package com.ass3.axue2.posapplication.activities;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -27,10 +29,16 @@ import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.DeliveryManagerFragment;
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
 import com.ass3.axue2.posapplication.models.operational.Driver;
+import com.ass3.axue2.posapplication.network.CustomerDAO;
+import com.ass3.axue2.posapplication.network.DeliveryDAO;
+import com.ass3.axue2.posapplication.network.DriverDAO;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,13 +59,26 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery_manager);
 
+        // Get database handler
+        mDBHelper = new DatabaseHelper(getApplicationContext());
+        ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
+
+        // Get All Drivers
+        if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+            new SynchroniseTask(DeliveryManagerActivity.this).execute();
+        } else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0){
+            initialSetup();
+        }
+
+
+    }
+
+    private void initialSetup(){
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle(R.string.delivery_manager_title);
-
-        // Get database handler
-        mDBHelper = new DatabaseHelper(getApplicationContext());
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -76,13 +97,13 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        // Get All Drivers
         mDrivers = new ArrayList<>(mDBHelper.GetAllDrivers().values());
         String[] driverNames = new String[mDrivers.size() + 1];
+
         driverNames[0] = Driver.NAME_ALL;
         Log.d("Number of drivers", String.valueOf(mDrivers.size()));
         int count = 1;
-        for (Driver driver : mDrivers){
+        for (Driver driver : mDrivers) {
             driverNames[count] = driver.getnFirstName() + " " + driver.getnLastName();
             count++;
         }
@@ -119,6 +140,73 @@ public class DeliveryManagerActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    private class SynchroniseTask extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog mDialog;
+        private DatabaseHelper dbHelper;
+
+
+        public SynchroniseTask(DeliveryManagerActivity activity){
+            mDialog = new ProgressDialog(activity);
+            dbHelper = new DatabaseHelper(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mDialog.setTitle("Synchronising Data");
+            mDialog.setMessage("Getting database information from server. Please Wait...");
+            mDialog.setIndeterminate(true);
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            DeliveryDAO deliveryDAO = new DeliveryDAO();
+            DriverDAO driverDAO = new DriverDAO();
+            CustomerDAO customerDAO = new CustomerDAO();
+            List<Delivery> deliveries;
+            List<Driver> drivers;
+            List<Customer> customers;
+            try{
+                deliveries = deliveryDAO.getDeliveries();
+                drivers = driverDAO.getDrivers();
+                customers = customerDAO.getCustomers();
+                // Sync Deliveries
+                dbHelper.dropTable(Delivery.TABLE_NAME);
+                dbHelper.createTable(Delivery.CREATE_STATEMENT);
+                for (Delivery delivery : deliveries){
+                    dbHelper.AddDelivery(delivery);
+                }
+                // Sync Drivers
+                dbHelper.dropTable(Driver.TABLE_NAME);
+                dbHelper.createTable(Driver.CREATE_STATEMENT);
+                for (Driver driver : drivers){
+                    dbHelper.AddDriver(driver);
+                }
+                // Sync Customers
+                dbHelper.dropTable(Customer.TABLE_NAME);
+                dbHelper.createTable(Customer.CREATE_STATEMENT);
+                for (Customer customer : customers){
+                    dbHelper.AddCustomer(customer);
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            initialSetup();
+            mDialog.dismiss();
+        }
     }
 
     private void createTabs(){
@@ -159,8 +247,6 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {

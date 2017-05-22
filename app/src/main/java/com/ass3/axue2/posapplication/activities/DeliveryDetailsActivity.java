@@ -46,8 +46,20 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, OrderActivity.class);
                 intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_DELIVERY);
                 intent.putExtra(OrderActivity.EXTRA_TABLENAME, "Delivery");
-                intent.putExtra(OrderActivity.EXTRA_TABLEID, 0);
-                intent.putExtra(OrderActivity.EXTRA_ORDERID, 0);
+                long i = 0;
+                intent.putExtra(OrderActivity.EXTRA_TABLEID, i);
+                intent.putExtra(OrderActivity.EXTRA_ORDERID, i);
+
+                intent.putExtra(OrderActivity.EXTRA_CUSTOMERNAME, mCustomerName.getText().toString());
+                intent.putExtra(OrderActivity.EXTRA_AL1, mCustomerAddressLine1.getText().toString());
+                intent.putExtra(OrderActivity.EXTRA_AL2, mCustomerAddressLine2.getText().toString());
+                intent.putExtra(OrderActivity.EXTRA_AL3, mCustomerAddressLine3.getText().toString());
+                intent.putExtra(OrderActivity.EXTRA_POSTCODE, Integer.parseInt(mCustomerPostCode.getText().toString()));
+                intent.putExtra(OrderActivity.EXTRA_PHONE, Integer.parseInt(mCustomerPhone.getText().toString()));
+                intent.putExtra(OrderActivity.EXTRA_DELIVERYFEE,Double.parseDouble(mCustomerDeliveryFee.getText().toString()));
+
+
+                intent.putExtra(OrderActivity.EXTRA_FROM, "DeliveryDetailsActivity");
 
                 context.startActivity(intent);
             }

@@ -2,6 +2,7 @@ package com.ass3.axue2.posapplication.models.operational;
 
 /**
  * Created by Anthony on 9/05/2017.
+ *
  */
 
 public class Customer {
@@ -16,18 +17,18 @@ public class Customer {
     private int nPhone;
 
     // Database Constants
-    static final String TABLE_NAME = "Customers";
-    static final String COLUMN_ID = "_id";
-    static final String COLUMN_FIRST_NAME = "FIRST_NAME";
-    static final String COLUMN_LAST_NAME = "LAST_NAME";
-    static final String COLUMN_ADDRESS_LINE_1 = "ADDRESS_LINE_1";
-    static final String COLUMN_ADDRESS_LINE_2 = "ADDRESS_LINE_2";
-    static final String COLUMN_ADDRESS_LINE_3 = "ADDRESS_LINE_3";
-    static final String COLUMN_POST_CODE = "POST_CODE";
-    static final String COLUMN_PHONE = "PHONE";
+    public static final String TABLE_NAME = "Customers";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_FIRST_NAME = "FIRST_NAME";
+    public static final String COLUMN_LAST_NAME = "LAST_NAME";
+    public static final String COLUMN_ADDRESS_LINE_1 = "ADDRESS_LINE_1";
+    public static final String COLUMN_ADDRESS_LINE_2 = "ADDRESS_LINE_2";
+    public static final String COLUMN_ADDRESS_LINE_3 = "ADDRESS_LINE_3";
+    public static final String COLUMN_POST_CODE = "POST_CODE";
+    public static final String COLUMN_PHONE = "PHONE";
 
     // Customer Create Statement
-    static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             COLUMN_FIRST_NAME + " TEXT, " +
             COLUMN_LAST_NAME + " TEXT, " +

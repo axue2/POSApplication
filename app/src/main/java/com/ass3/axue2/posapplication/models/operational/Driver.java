@@ -8,15 +8,15 @@ package com.ass3.axue2.posapplication.models.operational;
 public class Driver {
 
     // Database Constants
-    static final String TABLE_NAME = "Drivers";
-    static final String COLUMN_ID = "_id";
-    static final String COLUMN_FIRST_NAME = "FIRST_NAME";
-    static final String COLUMN_LAST_NAME = "LAST_NAME";
+    public static final String TABLE_NAME = "Drivers";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_FIRST_NAME = "FIRST_NAME";
+    public static final String COLUMN_LAST_NAME = "LAST_NAME";
 
     public static final String NAME_ALL = "ALL";
 
     // Driver Create Statement
-    static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             COLUMN_FIRST_NAME + " TEXT, " +
             COLUMN_LAST_NAME + " TEXT" +
@@ -39,6 +39,12 @@ public class Driver {
         nDriverID = -1;
         nFirstName = firstName;
         nLastName = lastName;
+    }
+
+    public Driver() {
+        nDriverID = 0;
+        nFirstName = "";
+        nLastName = "";
     }
 
     public long getnDriverID() {

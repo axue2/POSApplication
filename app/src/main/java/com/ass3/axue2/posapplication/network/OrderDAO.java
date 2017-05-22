@@ -98,12 +98,6 @@ public class OrderDAO {
     }
 
     public void updateOrder(Order order) throws SQLException{
-/*        String query = "UPDATE " + Order.TABLE_NAME + " SET " +
-                Order.COLUMN_TABLE_ID + " = " + order.getnTableID() + ", "
-                + Order.COLUMN_TYPE + " = '" + order.getsType() + "', "
-                + Order.COLUMN_STATUS + " = '" + order.getsStatus() + "', "
-                + Order.COLUMN_TOTAL + " = " + String.valueOf(order.getnTotal())
-                + " WHERE " + Order.COLUMN_ID + " = " + String.valueOf(order.getnOrderID());*/
 
         String query = "UPDATE " + Order.TABLE_NAME + " SET "
                 + Order.COLUMN_TABLE_ID + " = '" + order.getnTableID()

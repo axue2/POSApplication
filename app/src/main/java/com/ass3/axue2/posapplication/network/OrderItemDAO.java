@@ -34,6 +34,7 @@ public class OrderItemDAO {
                 orderItem.setnTableID(rs.getInt(OrderItem.COLUMN_TABLE_ID));
                 orderItem.setnProductID(rs.getInt(OrderItem.COLUMN_PRODUCT_ID));
                 orderItem.setsProductName(rs.getString(OrderItem.COLUMN_PRODUCT_NAME));
+                orderItem.setnPrice(rs.getDouble(OrderItem.COLUMN_PRODUCT_PRICE));
                 orderItem.setnQuantity(rs.getInt(OrderItem.COLUMN_QUANTITY));
 
                 //add each orderItem to the list
@@ -62,6 +63,7 @@ public class OrderItemDAO {
                 orderItem.setnTableID(rs.getInt(OrderItem.COLUMN_TABLE_ID));
                 orderItem.setnProductID(rs.getInt(OrderItem.COLUMN_PRODUCT_ID));
                 orderItem.setsProductName(rs.getString(OrderItem.COLUMN_PRODUCT_NAME));
+                orderItem.setnPrice(rs.getDouble(OrderItem.COLUMN_PRODUCT_PRICE));
                 orderItem.setnQuantity(rs.getInt(OrderItem.COLUMN_QUANTITY));
             }
         } finally {

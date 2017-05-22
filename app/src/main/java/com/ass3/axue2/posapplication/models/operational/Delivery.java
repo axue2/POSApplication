@@ -20,16 +20,16 @@ public class Delivery {
     public static final String STATUS_COMPLETE = "COMPLETE";
 
     // Database Constants
-    static final String TABLE_NAME = "Delivery";
-    static final String COLUMN_ID = "_id";
-    static final String COLUMN_ORDER_ID = "ORDER_ID";
-    static final String COLUMN_DRIVER_ID = "DRIVER_ID";
-    static final String COLUMN_CUSTOMER_ID = "CUSTOMER_ID";
-    static final String COLUMN_STATUS = "STATUS";
-    static final String COLUMN_DELIVERY_FEE = "DELIVERY_FEE";
+    public static final String TABLE_NAME = "Delivery";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_ORDER_ID = "ORDER_ID";
+    public static final String COLUMN_DRIVER_ID = "DRIVER_ID";
+    public static final String COLUMN_CUSTOMER_ID = "CUSTOMER_ID";
+    public static final String COLUMN_STATUS = "STATUS";
+    public static final String COLUMN_DELIVERY_FEE = "DELIVERY_FEE";
 
     // Customer Create Statement
-    static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
+    public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             COLUMN_ORDER_ID + " INTEGER NOT NULL, " +
             COLUMN_DRIVER_ID + " INTEGER, " +
@@ -58,12 +58,21 @@ public class Delivery {
     }
 
     public Delivery(long orderID, long customerID, double deliveryFee){
-        nDeliveryID = -1;
+        nDeliveryID = 0;
         nOrderID = orderID;
-        nDriverID = -1;
+        nDriverID = 0;
         nCustomerID = customerID;
         sStatus = STATUS_UNALLOCATED;
         nDeliveryFee = deliveryFee;
+    }
+
+    public Delivery() {
+        nDeliveryID = 0;
+        nOrderID = 0;
+        nDriverID = 0;
+        nCustomerID = 0;
+        sStatus = "";
+        nDeliveryFee = 0;
     }
 
 
