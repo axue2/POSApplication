@@ -105,21 +105,16 @@ public class OrderDAO {
                 + Order.COLUMN_TOTAL + " = " + String.valueOf(order.getnTotal())
                 + " WHERE " + Order.COLUMN_ID + " = " + String.valueOf(order.getnOrderID());*/
 
-        String query = "UPDATE " + Order.TABLE_NAME + " SET " +
-                Order.COLUMN_TABLE_ID + " = ?, " + Order.COLUMN_TYPE + " = ?, " +
-                Order.COLUMN_STATUS + " = ?, " + Order.COLUMN_TOTAL + " = ?, " +
-                "WHERE " +  Order.COLUMN_ID + " = ?";
+        String query = "UPDATE " + Order.TABLE_NAME + " SET "
+                + Order.COLUMN_TABLE_ID + " = '" + order.getnTableID()
+                + "', " + Order.COLUMN_TYPE + " = '" + order.getsType()
+                + "', " + Order.COLUMN_STATUS + " = '" + order.getsStatus()
+                + "', " + Order.COLUMN_TOTAL + " = '" + order.getnTotal() + "'" +
+                " WHERE " + Order.COLUMN_ID + " = " + order.getnOrderID();
         try {
             connection = ConnectionFactory.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setLong(1, order.getnTableID());
-            preparedStatement.setString(2, order.getsType());
-            preparedStatement.setString(3, order.getsStatus());
-            preparedStatement.setDouble(4, order.getnTotal());
-            preparedStatement.setLong(5, order.getnOrderID());
-            preparedStatement.executeUpdate();
-            //statement = connection.createStatement();
-            //statement.executeUpdate(query);
+            statement = connection.createStatement();
+            statement.executeUpdate(query);
 
         }finally {
             DbUtil.close(statement);

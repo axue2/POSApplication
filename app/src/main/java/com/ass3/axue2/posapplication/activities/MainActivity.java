@@ -166,9 +166,9 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(Table.CREATE_STATEMENT);
                 for (Table table : tables){
                     dbHelper.AddTable(table);
-                    System.out.println("Table ID: " + String.valueOf(table.getnTableID()));
-                    System.out.println("Table Name: " + table.getsTableName());
-                    System.out.println();
+//                    System.out.println("Table ID: " + String.valueOf(table.getnTableID()));
+//                    System.out.println("Table Name: " + table.getsTableName());
+//                    System.out.println();
                 }
                 // Sync Orders
                 orders = orderDAO.getOrders();
@@ -176,9 +176,11 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(Order.CREATE_STATEMENT);
                 for (Order order: orders){
                     dbHelper.AddOrder(order);
-                    System.out.println("Order ID: " + String.valueOf(order.getnOrderID()));
-                    System.out.println("Order Status: " + order.getsStatus());
-                    System.out.println();
+//                    System.out.println("Order ID: " + String.valueOf(order.getnOrderID()));
+//                    System.out.println("Order Status: " + order.getsStatus());
+//                    System.out.println();
+                    // Test
+                    orderDAO.updateOrder(order);
                 }
                 // Sync OrderItems
                 orderItems = orderItemDAO.getOrderItems();
@@ -186,9 +188,10 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(OrderItem.CREATE_STATEMENT);
                 for (OrderItem orderItem : orderItems){
                     dbHelper.AddOrderItem(orderItem);
-                    System.out.println("OrderItem ID: " + String.valueOf(orderItem.getnOrderItemID()));
-                    System.out.println("Order Status: " + orderItem.getsProductName());
-                    System.out.println();
+//                    System.out.println("OrderItem ID: " + String.valueOf(orderItem.getnOrderItemID()));
+//                    System.out.println("Order Status: " + orderItem.getsProductName());
+//                    System.out.println();
+
                 }
                 // Sync Products
                 products = productDAO.getProducts();
@@ -196,9 +199,9 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(Product.CREATE_STATEMENT);
                 for (Product product : products){
                     dbHelper.AddProduct(product);
-                    System.out.println("Product ID: " + String.valueOf(product.getnProductID()));
-                    System.out.println("Product Name: " + product.getsProductName());
-                    System.out.println();
+//                    System.out.println("Product ID: " + String.valueOf(product.getnProductID()));
+//                    System.out.println("Product Name: " + product.getsProductName());
+//                    System.out.println();
                 }
                 // Sync Groups
                 groups = groupDAO.getGroups();
@@ -206,10 +209,11 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(Group.CREATE_STATEMENT);
                 for (Group group : groups){
                     dbHelper.AddGroup(group);
-                    System.out.println("Group ID: " + String.valueOf(group.getnGroupID()));
-                    System.out.println("Group Name: " + group.getsGroupName());
-                    System.out.println();
+//                    System.out.println("Group ID: " + String.valueOf(group.getnGroupID()));
+//                    System.out.println("Group Name: " + group.getsGroupName());
+//                    System.out.println();
                 }
+
             } catch (SQLException e) {
                 e.printStackTrace();
                 try {

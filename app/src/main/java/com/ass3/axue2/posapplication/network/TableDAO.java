@@ -94,11 +94,11 @@ public class TableDAO {
     public void updateTable(Table table) throws SQLException{
         String query = "UPDATE " + Table.TABLE_NAME + " SET " +
                 Table.COLUMN_NAME + " = '" + table.getsTableName() + "', "
-                + Table.COLUMN_GUESTS + " = " + String.valueOf(table.getnGuests()) + ", "
-                + Table.COLUMN_ORDER_ID + " = " + String.valueOf(table.getnOrderID()) + ", "
-                + Table.COLUMN_TOTAL + " = " + String.valueOf(table.getnInvSum()) + ", "
-                + Table.COLUMN_STATUS + " = " + table.getsStatus()
-                + " WHERE " + Table.COLUMN_ID + " = " + String.valueOf(table.getnTableID());
+                + Table.COLUMN_GUESTS + " = '" + table.getnGuests() + "', "
+                + Table.COLUMN_ORDER_ID + " = '" + table.getnOrderID() + "', "
+                + Table.COLUMN_TOTAL + " = '" + table.getnInvSum() + "', "
+                + Table.COLUMN_STATUS + " = '" + table.getsStatus() + "'"
+                + " WHERE " + Table.COLUMN_ID + " = " + table.getnTableID();
 
         try {
             connection = ConnectionFactory.getConnection();

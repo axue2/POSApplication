@@ -94,13 +94,13 @@ public class OrderItemDAO {
     }
 
     public void updateOrderItem(OrderItem orderItem) throws SQLException{
-        String query = "UPDATE '" + OrderItem.TABLE_NAME + "' SET '" +
-                OrderItem.COLUMN_ORDER_ID + "' = " + orderItem.getnOrderID() + ", '"
-                + OrderItem.COLUMN_TABLE_ID + "' = '" + String.valueOf(orderItem.getnTableID()) + "', '"
-                + OrderItem.COLUMN_PRODUCT_ID + "' = " + String.valueOf(orderItem.getnProductID()) + ", '"
-                + OrderItem.COLUMN_PRODUCT_NAME + "' = '" + orderItem.getsProductName() + "', '"
-                + OrderItem.COLUMN_QUANTITY + "' = " + orderItem.getnQuantity()
-                + " WHERE " + OrderItem.COLUMN_ID + " = " + String.valueOf(orderItem.getnOrderItemID());
+        String query = "UPDATE " + OrderItem.TABLE_NAME + " SET " +
+                OrderItem.COLUMN_ORDER_ID + " = '" + orderItem.getnOrderID() + "', "
+                + OrderItem.COLUMN_TABLE_ID + " = '" + orderItem.getnTableID() + "', "
+                + OrderItem.COLUMN_PRODUCT_ID + " = '" + orderItem.getnProductID() + "', "
+                + OrderItem.COLUMN_PRODUCT_NAME + " = '" + orderItem.getsProductName() + "', "
+                + OrderItem.COLUMN_QUANTITY + " = '" + orderItem.getnQuantity()
+                + "' WHERE " + OrderItem.COLUMN_ID + " = " + String.valueOf(orderItem.getnOrderItemID());
 /*
 
         String query = "UPDATE `order_item` SET `ORDER_ID`= 6,`TABLE_ID`= 3,`PRODUCT_ID`= 43,`PRODUCT_NAME`= 'something',`PRODUCT_PRICE`=1,`QUANTITY`=1 WHERE id = 1";
