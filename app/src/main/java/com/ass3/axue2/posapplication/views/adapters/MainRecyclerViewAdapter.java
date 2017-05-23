@@ -103,6 +103,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_EAT_IN);
                 intent.putExtra(OrderActivity.EXTRA_TABLEID, currentTable.getnTableID());
                 intent.putExtra(OrderActivity.EXTRA_ORDERID, currentTable.getnOrderID());
+                intent.putExtra(OrderActivity.EXTRA_FROM, "MainRecyclerViewAdapter");
 
                 context.startActivity(intent);
                 Log.d("Button", "Main CardView Pressed");

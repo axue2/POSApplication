@@ -96,4 +96,10 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
         String str = "$" + String.valueOf(delivery.getnDeliveryFee());
         holder.mInvoiceTextView.setText(str);
     }
+
+    public void updateDataset(ArrayList<Delivery> deliveries, ArrayList<Long> selectedDeliveries){
+        mDeliveries = deliveries;
+        mSelectedDeliveries = selectedDeliveries;
+        notifyDataSetChanged();
+    }
 }

@@ -11,7 +11,7 @@ public class ConnectionFactory {
     // connection information
     // TODO: allow user to dymanically change connection information
     private static ConnectionFactory instance = new ConnectionFactory();
-    public static final String URL = "jdbc:mysql://192.168.1.112/posdb";
+    public static final String URL = "jdbc:mysql://192.168.56.1/posdb";
     public static final String USER = "root";
     public static final String PASSWORD = "123";
     public static final String DRIVER_CLASS = "com.mysql.jdbc.Driver";

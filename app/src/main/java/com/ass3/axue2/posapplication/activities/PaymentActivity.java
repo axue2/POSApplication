@@ -13,11 +13,15 @@ import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Order;
+import com.ass3.axue2.posapplication.models.operational.OrderItem;
 import com.ass3.axue2.posapplication.models.operational.Table;
 import com.ass3.axue2.posapplication.network.OrderDAO;
+import com.ass3.axue2.posapplication.network.OrderItemDAO;
 import com.ass3.axue2.posapplication.network.TableDAO;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PaymentActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -283,46 +287,35 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected Void doInBackground(Void... params) {
-            ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
-            if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0) {
-                if (sType.equals(Order.TYPE_TAKEAWAY)) {
-                    // Create a new takeaway order
-                    Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
-                    OrderDAO orderDAO = new OrderDAO();
-                    try{
-                        orderDAO.insertOrder(currentOrder);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    // TODO: Insert OrderItems
-                }
-                // Assumes that if not takeaway order then it is a table order
-                // May be rewritten if additional order types use this payment activity
-                else {
-                    // Setup Order data with status now PAID
-                    Order currentOrder = mDBHelper.GetOrder(nOrderID);
+            if (sType.equals(Order.TYPE_TAKEAWAY)) {
+                // Create a new takeaway order
+                Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
+                OrderDAO orderDAO = new OrderDAO();
+                long orderID = 0;
+                // TODO: Insert OrderItems, create another tmp table?
+            }
+            // Assumes that if not takeaway order then it is a table order
+            // May be rewritten if additional order types use this payment activity
+            else {
+                // Setup Table data as refreshed
+                Table newTable = new Table(nTableID, sTableName,
+                        0, -1, 0, Table.STATUS_OPEN);
+
+                TableDAO tableDAO = new TableDAO();
+                OrderDAO orderDAO = new OrderDAO();
+
+                try{
+                    Order currentOrder = orderDAO.getOrder(nOrderID);
                     Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
                             currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
 
-                    // Setup Table data as refreshed
-                    Table newTable = new Table(nTableID, sTableName,
-                            0, -1, 0, Table.STATUS_OPEN);
+                    tableDAO.updateTable(newTable);
+                    orderDAO.updateOrder(newOrder);
 
-                    TableDAO tableDAO = new TableDAO();
-                    OrderDAO orderDAO = new OrderDAO();
-
-                    try{
-                        tableDAO.updateTable(newTable);
-                        orderDAO.updateOrder(currentOrder);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-
-                    // Update db
-                    mDBHelper.UpdateTable(newTable);
-                    mDBHelper.UpdateOrder(newOrder);
-
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
+
             }
             return null;
         }
@@ -330,6 +323,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            mDialog.dismiss();
             // Return to MainActivity
             Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

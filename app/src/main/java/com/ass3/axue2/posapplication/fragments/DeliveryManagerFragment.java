@@ -180,8 +180,6 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
             }
 
         }
-        //TODO: Figure out how to remove item in recyclerview
-
     }
 
 
@@ -225,7 +223,14 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
                         delivery.setnDriverID(nDriverID);
                         System.out.println(mStatus);
 
+
+
                         deliveryDAO.updateDelivery(delivery);
+                        for (Delivery chk : mDeliveries){
+                            if (chk.getnDeliveryID() == delivery.getnDeliveryID()){
+                                mDeliveries.remove(chk);
+                            }
+                        }
                     }
                 }
             } catch (SQLException e) {
@@ -260,8 +265,11 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
     }
 
     public void update(){
-        adapter.mSelectedDeliveries = mSelectedDeliveries;
+/*        adapter.mSelectedDeliveries = mSelectedDeliveries;
         adapter.mDeliveries = mDeliveries;
-        adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();*/
+
+        adapter.updateDataset(mDeliveries,mSelectedDeliveries);
+
     }
 }

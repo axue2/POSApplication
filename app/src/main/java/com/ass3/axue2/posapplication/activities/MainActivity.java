@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Checks to see if its in network mode
         if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+            //TODO Create empty tables if tables do not exist
             new SynchroniseTask(MainActivity.this).execute();
         } else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0){
             checkTablesEmpty();

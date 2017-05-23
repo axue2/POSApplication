@@ -48,6 +48,39 @@ public class OrderItemDAO {
         return list;
     }
 
+    public List<OrderItem> getOrderItemsByOrder(long id) throws SQLException {
+        String query = "SELECT * FROM " + OrderItem.TABLE_NAME + " WHERE "
+                + OrderItem.COLUMN_ORDER_ID + " = " + id;
+        List<OrderItem> list = new ArrayList<OrderItem>();
+        OrderItem orderItem = null;
+        ResultSet rs = null;
+        try {
+            connection = ConnectionFactory.getConnection();
+            statement = connection.createStatement();
+            rs = statement.executeQuery(query);
+            while (rs.next()) {
+                orderItem = new OrderItem();
+				/*Retrieve one orderItem details
+				and store it in orderItem object*/
+                orderItem.setnOrderItemID(rs.getInt(OrderItem.COLUMN_ID));
+                orderItem.setnOrderID(rs.getInt(OrderItem.COLUMN_ORDER_ID));
+                orderItem.setnTableID(rs.getInt(OrderItem.COLUMN_TABLE_ID));
+                orderItem.setnProductID(rs.getInt(OrderItem.COLUMN_PRODUCT_ID));
+                orderItem.setsProductName(rs.getString(OrderItem.COLUMN_PRODUCT_NAME));
+                orderItem.setnPrice(rs.getDouble(OrderItem.COLUMN_PRODUCT_PRICE));
+                orderItem.setnQuantity(rs.getInt(OrderItem.COLUMN_QUANTITY));
+
+                //add each orderItem to the list
+                list.add(orderItem);
+            }
+        } finally {
+            DbUtil.close(rs);
+            DbUtil.close(statement);
+            DbUtil.close(connection);
+        }
+        return list;
+    }
+
     public OrderItem getOrderItem(long id) throws SQLException{
         String query = "SELECT * FROM " + OrderItem.TABLE_NAME + " WHERE " + OrderItem.COLUMN_ID + " = " + id;
         ResultSet rs = null;
