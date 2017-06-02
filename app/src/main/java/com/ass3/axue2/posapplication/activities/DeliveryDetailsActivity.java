@@ -54,9 +54,18 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
                 intent.putExtra(OrderActivity.EXTRA_AL1, mCustomerAddressLine1.getText().toString());
                 intent.putExtra(OrderActivity.EXTRA_AL2, mCustomerAddressLine2.getText().toString());
                 intent.putExtra(OrderActivity.EXTRA_AL3, mCustomerAddressLine3.getText().toString());
-                intent.putExtra(OrderActivity.EXTRA_POSTCODE, Integer.parseInt(mCustomerPostCode.getText().toString()));
-                intent.putExtra(OrderActivity.EXTRA_PHONE, Integer.parseInt(mCustomerPhone.getText().toString()));
-                intent.putExtra(OrderActivity.EXTRA_DELIVERYFEE,Double.parseDouble(mCustomerDeliveryFee.getText().toString()));
+                if (!mCustomerPostCode.getText().toString().equals(""))
+                    intent.putExtra(OrderActivity.EXTRA_POSTCODE, Integer.parseInt(mCustomerPostCode.getText().toString()));
+                else
+                    intent.putExtra(OrderActivity.EXTRA_POSTCODE, 0);
+                if (!mCustomerPhone.getText().toString().equals(""))
+                    intent.putExtra(OrderActivity.EXTRA_PHONE, Integer.parseInt(mCustomerPhone.getText().toString()));
+                else
+                    intent.putExtra(OrderActivity.EXTRA_PHONE, 0);
+                if (!mCustomerDeliveryFee.getText().toString().equals(""))
+                    intent.putExtra(OrderActivity.EXTRA_DELIVERYFEE,Double.parseDouble(mCustomerDeliveryFee.getText().toString()));
+                else
+                    intent.putExtra(OrderActivity.EXTRA_DELIVERYFEE, 0);
 
 
                 intent.putExtra(OrderActivity.EXTRA_FROM, "DeliveryDetailsActivity");

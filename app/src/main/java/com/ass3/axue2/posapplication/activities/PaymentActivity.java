@@ -13,15 +13,11 @@ import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Order;
-import com.ass3.axue2.posapplication.models.operational.OrderItem;
 import com.ass3.axue2.posapplication.models.operational.Table;
 import com.ass3.axue2.posapplication.network.OrderDAO;
-import com.ass3.axue2.posapplication.network.OrderItemDAO;
 import com.ass3.axue2.posapplication.network.TableDAO;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PaymentActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -228,7 +224,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 // Amount paid must be at least the subtotal
                 if(nChange >= 0) {
                     ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
-                    if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0){
+                    if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0){
                         if (sType.equals(Order.TYPE_TAKEAWAY)){
                             // Create a new takeaway order
                             Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
@@ -256,7 +252,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         PaymentActivity.this.finish();
-                    } else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+                    } else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 1){
                         new PaymentTask(PaymentActivity.this).execute();
                     }
 

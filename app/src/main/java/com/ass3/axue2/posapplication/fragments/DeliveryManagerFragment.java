@@ -159,7 +159,7 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
 
             if(updatedStatus.equals(Delivery.STATUS_ALLOCATED) || updatedStatus.equals(Delivery.STATUS_COMPLETE)) {
                 ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getActivity());
-                if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0) {
+                if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0) {
                     for (int i = 0; i < mSelectedDeliveries.size(); i++) {
                         Delivery delivery = mDBHelper.GetDelivery(mSelectedDeliveries.get(i));
                         // checks delivery to see if it hasn't already be allocated
@@ -172,7 +172,7 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
                     }
                     mSelectedDeliveries.clear();
                     update();
-                } else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+                } else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 1){
                     new InsertTask((DeliveryManagerActivity)getActivity(), updatedStatus, mSelectedDeliveries).execute();
 
                 }
@@ -190,7 +190,7 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
         private ArrayList<Long> deliveryIDs;
 
         public InsertTask(DeliveryManagerActivity activity, String status, ArrayList<Long> selectedDeliveries){
-            mDialog = new ProgressDialog(activity);
+/*            mDialog = new ProgressDialog(activity);*/
             mStatus = status;
             deliveryIDs = selectedDeliveries;
         }
@@ -198,12 +198,12 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+/*            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mDialog.setTitle("Sending Data");
             mDialog.setMessage("Sending information to server. Please Wait...");
             mDialog.setIndeterminate(true);
             mDialog.setCanceledOnTouchOutside(false);
-            mDialog.show();
+            mDialog.show();*/
         }
 
         @Override
@@ -244,7 +244,7 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
             super.onPostExecute(aVoid);
             deliveryIDs.clear();
             update();
-            mDialog.dismiss();
+/*            mDialog.dismiss();*/
 
         }
     }

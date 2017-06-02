@@ -41,7 +41,7 @@ import com.ass3.axue2.posapplication.network.DriverDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+// TODO: FIX MAJOR DELIVERY MANAGER BUG
 public class DeliveryManagerActivity extends AppCompatActivity {
 
     private DatabaseHelper mDBHelper;
@@ -64,9 +64,9 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
 
         // Get All Drivers
-        if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+        if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 1){
             new SynchroniseTask(DeliveryManagerActivity.this).execute();
-        } else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0){
+        } else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0){
             initialSetup();
         }
 

@@ -52,7 +52,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void AddTable(Table table){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(Table.COLUMN_ID, table.getnTableID());
         values.put(Table.COLUMN_NAME, table.getsTableName());
         values.put(Table.COLUMN_GUESTS, table.getnGuests());
         values.put(Table.COLUMN_ORDER_ID, table.getnOrderID());
@@ -153,7 +152,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddProduct(Product product){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(Product.COLUMN_ID, product.getnProductID());
         values.put(Product.COLUMN_GROUPID, product.getnGroupID());
         values.put(Product.COLUMN_NAME, product.getsProductName());
         values.put(Product.COLUMN_PRICE, product.getnPrice());
@@ -221,7 +219,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddOrderItem(OrderItem orderItem){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(OrderItem.COLUMN_ID, orderItem.getnOrderItemID());
         values.put(OrderItem.COLUMN_ORDER_ID, orderItem.getnOrderID());
         values.put(OrderItem.COLUMN_TABLE_ID, orderItem.getnTableID());
         values.put(OrderItem.COLUMN_PRODUCT_ID, orderItem.getnProductID());
@@ -276,7 +273,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void AddGroup(Group group){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(Group.COLUMN_ID, group.getnGroupID());
         values.put(Group.COLUMN_NAME, group.getsGroupName());
         db.insert(Group.TABLE_NAME, null, values);
         db.close();
@@ -302,7 +298,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddOrder(Order order){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(Order.COLUMN_ID, order.getnOrderID());
         values.put(Order.COLUMN_TABLE_ID, order.getnTableID());
         values.put(Order.COLUMN_TYPE, order.getsType());
         values.put(Order.COLUMN_TOTAL, order.getnTotal());

@@ -1,7 +1,6 @@
 package com.ass3.axue2.posapplication.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
@@ -24,7 +23,7 @@ import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.fragments.MainOrdersFragment;
 import com.ass3.axue2.posapplication.fragments.MainTableFragment;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
-import com.ass3.axue2.posapplication.models.configuration.ConfigurationSetting;
+import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
 import com.ass3.axue2.posapplication.models.operational.Group;
@@ -38,9 +37,6 @@ import com.ass3.axue2.posapplication.network.OrderItemDAO;
 import com.ass3.axue2.posapplication.network.ProductDAO;
 import com.ass3.axue2.posapplication.network.TableDAO;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,15 +62,15 @@ public class MainActivity extends AppCompatActivity {
         ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
 
 
-        if (mCDBHelper.GetConfigurationSettings().size() == 0){
-            mCDBHelper.AddConfigurationSetting(new ConfigurationSetting(1,1));
+        if (mCDBHelper.GetNetworkSettings().size() == 0){
+            mCDBHelper.AddNetworkSetting(new NetworkSetting(1,0));
         }
 
         // Checks to see if its in network mode
-        if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+        if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 1){
             //TODO Create empty tables if tables do not exist
             new SynchroniseTask(MainActivity.this).execute();
-        } else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0){
+        } else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0){
             checkTablesEmpty();
             createTabLayouts();
         }
@@ -274,6 +270,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
 
             return true;
+        } else if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

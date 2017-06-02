@@ -24,7 +24,7 @@ public class ConfigurationDatabaseHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(ConfigurationSetting.CREATE_STATEMENT);
+        db.execSQL(NetworkSetting.CREATE_STATEMENT);
     }
 
     @Override
@@ -32,43 +32,73 @@ public class ConfigurationDatabaseHelper extends SQLiteOpenHelper{
 
     }
 
-    public void AddConfigurationSetting(ConfigurationSetting setting){
+    public void AddNetworkSetting(NetworkSetting setting){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(ConfigurationSetting.COLUMN_NETWORK_MODE, setting.getnNetworkMode());
-        db.insert(ConfigurationSetting.TABLE_NAME, null, values);
+        values.put(NetworkSetting.COLUMN_NETWORK_MODE, setting.getnNetworkMode());
+        values.put(NetworkSetting.COLUMN_IP_ADDRESS, setting.getsIPAddress());
+        values.put(NetworkSetting.COLUMN_DATABASE_NAME, setting.getsDBName());
+        values.put(NetworkSetting.COLUMN_USERNAME, setting.getsUsername());
+        values.put(NetworkSetting.COLUMN_PASSWORD, setting.getsPassword());
+        db.insert(NetworkSetting.TABLE_NAME, null, values);
         db.close();
     }
 
-    public ConfigurationSetting GetConfigurationSetting(long id){
+    public void UpdateNetworkSetting(NetworkSetting setting){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(NetworkSetting.COLUMN_NETWORK_MODE, setting.getnNetworkMode());
+        values.put(NetworkSetting.COLUMN_IP_ADDRESS, setting.getsIPAddress());
+        values.put(NetworkSetting.COLUMN_DATABASE_NAME, setting.getsDBName());
+        values.put(NetworkSetting.COLUMN_USERNAME, setting.getsUsername());
+        values.put(NetworkSetting.COLUMN_PASSWORD, setting.getsPassword());
+        db.insert(NetworkSetting.TABLE_NAME, null, values);
+        // Update values using table id
+        db.update(NetworkSetting.TABLE_NAME, values, NetworkSetting.COLUMN_ID + " = " + setting.getnID(), null );
+        db.close();
+    }
+
+    public NetworkSetting GetNetworkSetting(long id){
         // Access database
         SQLiteDatabase db = this.getReadableDatabase();
         // Database query
-        Cursor cursor = db.query(ConfigurationSetting.TABLE_NAME, new String[] { ConfigurationSetting.COLUMN_ID,
-                ConfigurationSetting.COLUMN_NETWORK_MODE},
-                ConfigurationSetting.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
+        Cursor cursor = db.query(NetworkSetting.TABLE_NAME, new String[] { NetworkSetting.COLUMN_ID,
+                NetworkSetting.COLUMN_NETWORK_MODE, NetworkSetting.COLUMN_IP_ADDRESS,
+                NetworkSetting.COLUMN_DATABASE_NAME, NetworkSetting.COLUMN_USERNAME,
+                NetworkSetting.COLUMN_PASSWORD},
+                NetworkSetting.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
         // Checks query
         if (cursor != null)
             cursor.moveToFirst();
         // Creates new order with query values
-        ConfigurationSetting setting = new ConfigurationSetting(cursor.getLong(0),
-                cursor.getInt(1)
+        NetworkSetting setting = new NetworkSetting(cursor.getLong(0),
+                cursor.getInt(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getString(5)
         );
         cursor.close();
 
         return setting;
     }
 
-    public HashMap<Long, ConfigurationSetting> GetConfigurationSettings(){
-        HashMap<Long, ConfigurationSetting> settings = new LinkedHashMap<>();
+    public HashMap<Long, NetworkSetting> GetNetworkSettings(){
+        HashMap<Long, NetworkSetting> settings = new LinkedHashMap<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + ConfigurationSetting.TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + NetworkSetting.TABLE_NAME, null);
 
         // Add all settings in db to hashmap
         if(cursor.moveToFirst()) {
             do {
-                ConfigurationSetting setting = new ConfigurationSetting(cursor.getLong(0),
-                        cursor.getInt(1)
+                NetworkSetting setting = new NetworkSetting(cursor.getLong(0),
+                        cursor.getInt(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5)
                 );
                 settings.put(setting.getnID(), setting);
             } while(cursor.moveToNext());

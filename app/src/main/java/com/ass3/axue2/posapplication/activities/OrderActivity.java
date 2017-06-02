@@ -201,7 +201,7 @@ public class OrderActivity extends AppCompatActivity {
                     startActivity(intent);
                 }else {
                     // if standalone mode
-                    if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 0) {
+                    if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0) {
                         Intent intent = new Intent(OrderActivity.this, MainActivity.class);
 
                         Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
@@ -241,7 +241,7 @@ public class OrderActivity extends AppCompatActivity {
                         OrderActivity.this.finish();
                     }
                     // if network mode
-                    else if (mCDBHelper.GetConfigurationSetting(1).getnNetworkMode() == 1){
+                    else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 1){
                         System.out.println("NETWORK MODE ON, CONFIRM TASK");
                         new ConfirmTask(OrderActivity.this).execute();
                     }
