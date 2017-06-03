@@ -109,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         // Database query
         Cursor cursor = db.query(Table.TABLE_NAME, new String[] { Table.COLUMN_ID,
-                        Table.COLUMN_NAME, Table.COLUMN_GUESTS,
+                        Table.COLUMN_NAME, Table.COLUMN_GUESTS, Table.COLUMN_ORDER_ID,
                         Table.COLUMN_TOTAL, Table.COLUMN_STATUS},
                 Table.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
         // Checks query
@@ -278,6 +278,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public Group GetGroup(long id){
+        // Access database
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Database query
+        Cursor cursor = db.query(Group.TABLE_NAME, new String[] { Group.COLUMN_ID, Group.COLUMN_NAME},
+                Group.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
+        // Checks query
+        if (cursor != null)
+            cursor.moveToFirst();
+        // Creates new group with query values
+        Group group = new Group(cursor.getLong(0),
+                cursor.getString(1)
+        );
+        cursor.close();
+
+        return group;
+    }
+
     public HashMap<Long, Group> GetAllGroups(){
         HashMap<Long, Group> groups = new LinkedHashMap<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -293,6 +311,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return groups;
+    }
+
+    public void UpdateGroup(Group group){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(Group.COLUMN_ID, group.getnGroupID());
+        values.put(Group.COLUMN_NAME, group.getsGroupName());
+        // Update values using table id
+        db.update(Group.TABLE_NAME, values, Group.COLUMN_ID + " = " + group.getnGroupID(), null );
+        db.close();
     }
 
     public long AddOrder(Order order){

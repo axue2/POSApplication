@@ -1,4 +1,4 @@
-package com.ass3.axue2.posapplication.activities;
+package com.ass3.axue2.posapplication.activities.Settings;
 
 import android.content.Context;
 import android.content.DialogInterface;

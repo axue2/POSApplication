@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/WHITE"
-    tools:context="com.ass3.axue2.posapplication.activities.SettingsActivity">
+    tools:context="com.ass3.axue2.posapplication.activities.Settings.SettingsActivity">
 
     <Button
         android:id="@+id/settings_general_button"
@@ -29,6 +29,17 @@
         android:paddingEnd="10dp"
         android:text="Tables"
         android:stateListAnimator="@null"/>
+
+    <Button
+        android:id="@+id/settings_groups_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/WHITE"
+        android:gravity="start|center_vertical"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:stateListAnimator="@null"
+        android:text="Groups" />
 
     <Button
         android:id="@+id/settings_products_button"

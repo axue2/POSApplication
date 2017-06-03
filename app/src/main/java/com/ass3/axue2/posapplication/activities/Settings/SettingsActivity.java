@@ -1,4 +1,4 @@
-package com.ass3.axue2.posapplication.activities;
+package com.ass3.axue2.posapplication.activities.Settings;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +21,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         general.setOnClickListener(this);
         Button tables = (Button) findViewById(R.id.settings_tables_button);
         tables.setOnClickListener(this);
+        Button groups = (Button) findViewById(R.id.settings_groups_button);
+        groups.setOnClickListener(this);
         Button products = (Button) findViewById(R.id.settings_products_button);
         products.setOnClickListener(this);
         Button networks = (Button) findViewById(R.id.settings_network_button);
@@ -35,14 +37,23 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.settings_tables_button:
                 System.out.println("Tables Button");
+                Intent tableIntent = new Intent(this, SettingsTableActivity.class);
+                startActivity(tableIntent);
+                break;
+            case R.id.settings_groups_button:
+                System.out.println("Groups Button");
+                Intent settingIntent = new Intent(this, SettingsGroupActivity.class);
+                startActivity(settingIntent);
                 break;
             case R.id.settings_products_button:
                 System.out.println("Products Button");
+                Intent productIntent = new Intent(this, SettingsProductActivity.class);
+                startActivity(productIntent);
                 break;
             case R.id.settings_network_button:
                 System.out.println("Network Button");
-                Intent intent = new Intent(this, SettingsNetworkActivity.class);
-                startActivity(intent);
+                Intent networkIntent = new Intent(this, SettingsNetworkActivity.class);
+                startActivity(networkIntent);
                 break;
         }
     }

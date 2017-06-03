@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ass3.axue2.posapplication.activities.SettingsNetworkActivity"
+    tools:context="com.ass3.axue2.posapplication.activities.Settings.SettingsNetworkActivity"
     android:orientation="vertical"
     android:background="@color/WHITE">
 

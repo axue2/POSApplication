@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.ass3.axue2.posapplication.R;
+import com.ass3.axue2.posapplication.activities.Settings.SettingsActivity;
 import com.ass3.axue2.posapplication.fragments.MainOrdersFragment;
 import com.ass3.axue2.posapplication.fragments.MainTableFragment;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
