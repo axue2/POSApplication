@@ -63,9 +63,11 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".activities.Settings.SettingsProductActivity" />
         <activity android:name=".activities.Settings.SettingsGroupActivity" />
-        <activity android:name=".activities.Settings.SettingsTableActivity"></activity>
+        <activity android:name=".activities.Settings.SettingsTableActivity" />
+        <activity
+            android:name=".activities.Settings.SettingsProductActivity"
+            android:label="@string/title_activity_settings_products"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
-
 </manifest>

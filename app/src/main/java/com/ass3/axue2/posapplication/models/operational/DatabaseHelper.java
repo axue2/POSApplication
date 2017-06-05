@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 /**
  * Created by anthony on 5/1/2017.
  *
+ *
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -160,6 +161,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public Product GetProduct(long id){
+        // Access database
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Database query
+        Cursor cursor = db.query(Product.TABLE_NAME, new String[] { Product.COLUMN_ID, Product.COLUMN_GROUPID,
+                Product.COLUMN_NAME, Product.COLUMN_PRICE},
+                Order.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
+        // Checks query
+        if (cursor != null)
+            cursor.moveToFirst();
+        // Creates new order with query values
+        Product product = new Product(cursor.getLong(0),
+                cursor.getLong(1),
+                cursor.getString(2),
+                cursor.getInt(3)
+        );
+        cursor.close();
+
+        return product;
+    }
+
     public HashMap<Long, Product> GetProducts(long groupID){
         HashMap<Long, Product> products = new LinkedHashMap<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -179,6 +201,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return products;
+    }
+
+    public void UpdateProduct(Product product){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(Product.COLUMN_GROUPID, product.getnGroupID());
+        values.put(Product.COLUMN_NAME, product.getsProductName());
+        values.put(Product.COLUMN_PRICE, product.getnPrice());
+        // Update values using table id
+        db.update(Product.TABLE_NAME, values, Product.COLUMN_ID + " = " + product.getnProductID(), null );
+        db.close();
     }
 
     public void UpdateOrder(Order order){
