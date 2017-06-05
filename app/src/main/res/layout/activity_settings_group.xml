@@ -33,10 +33,11 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/RelativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/LinearLayout"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/LinearLayout">
 
         <Button
             android:id="@+id/settings_group_confirm_button"
@@ -56,8 +57,8 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="27dp"
             android:layout_marginTop="25dp"
-            android:textColor="@color/BLACK"
-            android:text="Group ID:" />
+            android:text="Group ID:"
+            android:textColor="@color/BLACK" />
 
         <TextView
             android:id="@+id/settings_group_id_textview"
@@ -65,10 +66,10 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/textView3"
             android:layout_toEndOf="@+id/textView3"
-            android:text="1"
-            android:textColor="@color/BLACK"
+            android:paddingEnd="20dp"
             android:paddingStart="20dp"
-            android:paddingEnd="20dp"/>
+            android:text="1"
+            android:textColor="@color/BLACK" />
 
         <TextView
             android:id="@+id/textView8"
@@ -77,8 +78,8 @@
             android:layout_alignStart="@+id/textView3"
             android:layout_below="@+id/textView3"
             android:layout_marginTop="24dp"
-            android:textColor="@color/BLACK"
-            android:text="Group Name:" />
+            android:text="Group Name:"
+            android:textColor="@color/BLACK" />
 
         <EditText
             android:id="@+id/settings_group_name_editText"

@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.activities.Settings.SettingsGroupActivity;
 import com.ass3.axue2.posapplication.activities.Settings.SettingsProductActivity;
 import com.ass3.axue2.posapplication.models.operational.Product;
 

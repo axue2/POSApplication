@@ -28,7 +28,6 @@ import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Group;
 import com.ass3.axue2.posapplication.models.operational.Product;
-import com.ass3.axue2.posapplication.views.adapters.SettingsGroupRecyclerViewAdapter;
 import com.ass3.axue2.posapplication.views.adapters.SettingsProductRecyclerViewAdapter;
 
 import java.util.ArrayList;
