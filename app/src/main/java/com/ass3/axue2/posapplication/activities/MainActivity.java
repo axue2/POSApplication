@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,7 +48,7 @@ import java.util.List;
  *
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DatabaseHelper mDBHelper;
 
@@ -58,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Setup Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(getString(R.string.main_title));
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
 
 
+        // Checks to see if there are Network Settings
         if (mCDBHelper.GetNetworkSettings().size() == 0){
             mCDBHelper.AddNetworkSetting(new NetworkSetting(1,0));
         }
@@ -83,23 +84,32 @@ public class MainActivity extends AppCompatActivity {
             createTabLayouts();
         }
 
-        //TODO: Add animations to floating action buttons
         // Setup Floating Action Buttons
-        final FloatingActionButton mainFAB = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton mainFAB = (FloatingActionButton) findViewById(R.id.fab);
+        mainFAB.setOnClickListener(this);
         FloatingActionButton fabTakeaway = (FloatingActionButton) findViewById(R.id.fab_takeaway);
+        fabTakeaway.setOnClickListener(this);
         FloatingActionButton fabDelivery = (FloatingActionButton) findViewById(R.id.fab_delivery);
-        // Setup Animations
-        final Animation showAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.show_button);
-        final Animation hideAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.hide_button);
-        final Animation showLayout = AnimationUtils.loadAnimation(MainActivity.this, R.anim.show_layout);
-        final Animation hideLayout = AnimationUtils.loadAnimation(MainActivity.this, R.anim.hide_layout);
-        // Setup LinearLayouts
-        final LinearLayout takeawayLayout = (LinearLayout) findViewById(R.id.main_takeaway_layout);
-        final LinearLayout deliveryLayout = (LinearLayout) findViewById(R.id.main_delivery_layout);
-        // Main fab onClickListener
-        mainFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fabDelivery.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            // If main fab clicked
+            case R.id.fab:
+                // Setup FAB
+                final FloatingActionButton mainFAB = (FloatingActionButton) findViewById(R.id.fab);
+                // Setup Animations
+                final Animation showAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.show_button);
+                final Animation hideAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.hide_button);
+                final Animation showLayout = AnimationUtils.loadAnimation(MainActivity.this, R.anim.show_layout);
+                final Animation hideLayout = AnimationUtils.loadAnimation(MainActivity.this, R.anim.hide_layout);
+                // Setup LinearLayouts
+                final LinearLayout takeawayLayout = (LinearLayout) findViewById(R.id.main_takeaway_layout);
+                final LinearLayout deliveryLayout = (LinearLayout) findViewById(R.id.main_delivery_layout);
+
+                // If main fab has been clicked then hide the other fabs
                 if(takeawayLayout.getVisibility() == View.VISIBLE &&
                         deliveryLayout.getVisibility() == View.VISIBLE){
                     takeawayLayout.setVisibility(View.GONE);
@@ -107,47 +117,40 @@ public class MainActivity extends AppCompatActivity {
                     takeawayLayout.startAnimation(hideLayout);
                     deliveryLayout.startAnimation(hideLayout);
                     mainFAB.startAnimation(hideAnimation);
-                } else{
+                }
+                // Otherwise show the other fabs
+                else{
                     takeawayLayout.setVisibility(View.VISIBLE);
                     deliveryLayout.setVisibility(View.VISIBLE);
                     takeawayLayout.startAnimation(showLayout);
                     deliveryLayout.startAnimation(showLayout);
                     mainFAB.startAnimation(showAnimation);
                 }
-            }
-        });
-        // Start Takeaway Activity
-        fabTakeaway.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), OrderActivity.class);
-                intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_TAKEAWAY);
-                intent.putExtra(OrderActivity.EXTRA_TABLENAME, Order.TYPE_TAKEAWAY);
-                intent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
-                intent.putExtra(OrderActivity.EXTRA_TABLEID, 0);
-                intent.putExtra(OrderActivity.EXTRA_ORDERID, 0);
-                intent.putExtra(OrderActivity.EXTRA_FROM, "MainActivity");
-                startActivity(intent);
-
-            }
-        });
-
-        // Start Delivery Activity
-        fabDelivery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), DeliveryDetailsActivity.class);
-                startActivity(intent);
-            }
-        });
-
+                break;
+            // If takeaway fab clicked
+            case R.id.fab_takeaway:
+                Intent takeawayIntent = new Intent(v.getContext(), OrderActivity.class);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_TAKEAWAY);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_TABLENAME, Order.TYPE_TAKEAWAY);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_TABLEID, 0);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_ORDERID, 0);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_FROM, "MainActivity");
+                startActivity(takeawayIntent);
+                break;
+            // If delivery fab clicked
+            case R.id.fab_delivery:
+                Intent deliveryIntent = new Intent(v.getContext(), DeliveryDetailsActivity.class);
+                startActivity(deliveryIntent);
+                break;
+        }
     }
 
     private class SynchroniseTask extends AsyncTask<Void, Void, Void>{
         private ProgressDialog mDialog;
         private DatabaseHelper dbHelper;
 
-        public SynchroniseTask(MainActivity activity){
+        SynchroniseTask(MainActivity activity){
             mDialog = new ProgressDialog(activity);
             dbHelper = new DatabaseHelper(activity);
         }
