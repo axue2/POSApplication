@@ -73,7 +73,7 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
 
         final View v = inflater.inflate(R.layout.fragment_delivery_manager, container, false);
 
-        //setup button
+        // Setup Button
         Button mButton = (Button) v.findViewById(R.id.fragment_delivery_manager_button);
         switch (sDeliveryStatus){
             case Delivery.STATUS_UNALLOCATED:
@@ -131,7 +131,6 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Button Clicked", "onClick: ");
                 updateDeliveries();
             }
         });
@@ -152,8 +151,6 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
     }
 
     public void updateDeliveries(){
-        Log.d("Number of deliveries", String.valueOf(mSelectedDeliveries.size()));
-        Log.d("DriverID", String.valueOf(nDriverID));
         String updatedStatus = "";
 
         // Checks if valid driver
@@ -167,6 +164,7 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
 
             if(updatedStatus.equals(Delivery.STATUS_ALLOCATED) || updatedStatus.equals(Delivery.STATUS_COMPLETE)) {
                 ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getActivity());
+                // If not network mode
                 if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0) {
                     for (int i = 0; i < mSelectedDeliveries.size(); i++) {
                         Delivery delivery = mDBHelper.GetDelivery(mSelectedDeliveries.get(i));
@@ -230,8 +228,6 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
                         delivery.setsStatus(mStatus);
                         delivery.setnDriverID(nDriverID);
                         System.out.println(mStatus);
-
-
 
                         deliveryDAO.updateDelivery(delivery);
                         for (Delivery chk : mDeliveries){

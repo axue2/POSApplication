@@ -88,11 +88,12 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
         if(delivery.getnCustomerID() > 0) {
             Customer customer = db.GetCustomer(delivery.getnCustomerID());
             holder.mCustomerNameTextView.setText(customer.getsFirstName() + " " + customer.getsLastName());
+            holder.mStatusTextView.setText(String.valueOf(customer.getnPostCode()));
         }
 
         holder.mDeliveryIDTextView.setText(String.valueOf(delivery.getnDeliveryID()));
         //TODO: Set Delivery fee for total fee
-        holder.mStatusTextView.setText(delivery.getsStatus());
+/*        holder.mStatusTextView.setText(delivery.getsStatus());*/
         String str = "$" + String.valueOf(delivery.getnDeliveryFee());
         holder.mInvoiceTextView.setText(str);
     }

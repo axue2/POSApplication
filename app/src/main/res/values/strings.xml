@@ -74,5 +74,6 @@
     <string name="delivery_status_placeholder">Unallocated</string>
     <string name="title_activity_delivery_location">Map</string>
     <string name="title_activity_settings_products">SettingsProductsActivity</string>
+    <string name="title_activity_delivery_managerr">DeliveryManagerrActivity</string>
 
 </resources>

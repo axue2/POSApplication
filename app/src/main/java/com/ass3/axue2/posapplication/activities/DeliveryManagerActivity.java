@@ -94,14 +94,15 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        // Setup Tab layouts
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         mDrivers = new ArrayList<>(mDBHelper.GetAllDrivers().values());
         String[] driverNames = new String[mDrivers.size() + 1];
 
+        // Add in all drivers
         driverNames[0] = Driver.NAME_ALL;
-        Log.d("Number of drivers", String.valueOf(mDrivers.size()));
         int count = 1;
         for (Driver driver : mDrivers) {
             driverNames[count] = driver.getnFirstName() + " " + driver.getnLastName();
@@ -118,20 +119,14 @@ public class DeliveryManagerActivity extends AppCompatActivity {
                 // When the given dropdown item is selected, show its contents in the
                 // container view.
 
-
                 int spinnerPosition = parent.getSelectedItemPosition();
-                Log.d("Selected item position", String.valueOf(spinnerPosition));
                 if(parent.getSelectedItemPosition() > 0) {
                     // Driver position should be position-1 due to all taking first position
                     nDriverID = mDrivers.get(spinnerPosition - 1).getnDriverID();
-                    Log.d("position > 0", String.valueOf(nDriverID));
                 } else{
                     nDriverID = 0;
                 }
-                Log.d("Driver ID", String.valueOf(nDriverID));
                 sDriverName = parent.getSelectedItem().toString();
-                Log.d("Driver Name", sDriverName);
-
                 createTabs();
 
             }
@@ -143,24 +138,24 @@ public class DeliveryManagerActivity extends AppCompatActivity {
     }
 
     private class SynchroniseTask extends AsyncTask<Void, Void, Void> {
-        private ProgressDialog mDialog;
+/*        private ProgressDialog mDialog;*/
         private DatabaseHelper dbHelper;
 
 
         public SynchroniseTask(DeliveryManagerActivity activity){
-            mDialog = new ProgressDialog(activity);
+/*            mDialog = new ProgressDialog(activity);*/
             dbHelper = new DatabaseHelper(activity);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+/*            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mDialog.setTitle("Synchronising Data");
             mDialog.setMessage("Getting database information from server. Please Wait...");
             mDialog.setIndeterminate(true);
             mDialog.setCanceledOnTouchOutside(false);
-            mDialog.show();
+            mDialog.show();*/
         }
 
         @Override
@@ -205,7 +200,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             initialSetup();
-            mDialog.dismiss();
+/*            mDialog.dismiss();*/
         }
     }
 
@@ -226,9 +221,6 @@ public class DeliveryManagerActivity extends AppCompatActivity {
     private void createFragment(String status){
         Bundle bundle = new Bundle();
         bundle.putString(DeliveryManagerFragment.BUNDLE_DELIVERY_STATUS, status);
-        Log.d("Driver Name", sDriverName);
-        Log.d("Driver ID", String.valueOf(nDriverID));
-        Log.d("Driver ID", status);
         DeliveryManagerFragment fragment = new DeliveryManagerFragment();
         fragment.setArguments(bundle);
         mSectionsPagerAdapter.addFragment(fragment, status);
