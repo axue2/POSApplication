@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
 import com.ass3.axue2.posapplication.R;
@@ -41,6 +43,11 @@ import com.ass3.axue2.posapplication.network.TableDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Created by anthony on 4/21/2017.
+ *
+ */
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,50 +84,59 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //TODO: Add animations to floating action buttons
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        // Setup Floating Action Buttons
+        final FloatingActionButton mainFAB = (FloatingActionButton) findViewById(R.id.fab);
         FloatingActionButton fabTakeaway = (FloatingActionButton) findViewById(R.id.fab_takeaway);
         FloatingActionButton fabDelivery = (FloatingActionButton) findViewById(R.id.fab_delivery);
+        // Setup Animations
+        final Animation showAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.show_button);
+        final Animation hideAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.hide_button);
+        final Animation showLayout = AnimationUtils.loadAnimation(MainActivity.this, R.anim.show_layout);
+        final Animation hideLayout = AnimationUtils.loadAnimation(MainActivity.this, R.anim.hide_layout);
+        // Setup LinearLayouts
         final LinearLayout takeawayLayout = (LinearLayout) findViewById(R.id.main_takeaway_layout);
         final LinearLayout deliveryLayout = (LinearLayout) findViewById(R.id.main_delivery_layout);
-        fab.setOnClickListener(new View.OnClickListener() {
+        // Main fab onClickListener
+        mainFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(takeawayLayout.getVisibility() == View.VISIBLE &&
                         deliveryLayout.getVisibility() == View.VISIBLE){
                     takeawayLayout.setVisibility(View.GONE);
                     deliveryLayout.setVisibility(View.GONE);
+                    takeawayLayout.startAnimation(hideLayout);
+                    deliveryLayout.startAnimation(hideLayout);
+                    mainFAB.startAnimation(hideAnimation);
                 } else{
                     takeawayLayout.setVisibility(View.VISIBLE);
                     deliveryLayout.setVisibility(View.VISIBLE);
+                    takeawayLayout.startAnimation(showLayout);
+                    deliveryLayout.startAnimation(showLayout);
+                    mainFAB.startAnimation(showAnimation);
                 }
             }
         });
-
+        // Start Takeaway Activity
         fabTakeaway.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(view.getContext(), OrderActivity.class);
                 intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_TAKEAWAY);
                 intent.putExtra(OrderActivity.EXTRA_TABLENAME, Order.TYPE_TAKEAWAY);
                 intent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
-
-                intent.putExtra(OrderActivity.EXTRA_TABLEID, -1);
-                intent.putExtra(OrderActivity.EXTRA_ORDERID, -1);
-
+                intent.putExtra(OrderActivity.EXTRA_TABLEID, 0);
+                intent.putExtra(OrderActivity.EXTRA_ORDERID, 0);
                 intent.putExtra(OrderActivity.EXTRA_FROM, "MainActivity");
-
                 startActivity(intent);
 
             }
         });
 
+        // Start Delivery Activity
         fabDelivery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(view.getContext(), DeliveryDetailsActivity.class);
-
                 startActivity(intent);
             }
         });
@@ -166,9 +182,6 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(Table.CREATE_STATEMENT);
                 for (Table table : tables){
                     dbHelper.AddTable(table);
-//                    System.out.println("Table ID: " + String.valueOf(table.getnTableID()));
-//                    System.out.println("Table Name: " + table.getsTableName());
-//                    System.out.println();
                 }
                 // Sync Orders
                 orders = orderDAO.getOrders();
@@ -176,9 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(Order.CREATE_STATEMENT);
                 for (Order order: orders){
                     dbHelper.AddOrder(order);
-//                    System.out.println("Order ID: " + String.valueOf(order.getnOrderID()));
-//                    System.out.println("Order Status: " + order.getsStatus());
-//                    System.out.println();
                 }
                 // Sync OrderItems
                 orderItems = orderItemDAO.getOrderItems();
@@ -186,11 +196,6 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(OrderItem.CREATE_STATEMENT);
                 for (OrderItem orderItem : orderItems){
                     dbHelper.AddOrderItem(orderItem);
-//                    System.out.println("OrderItem ID: " + String.valueOf(orderItem.getnOrderItemID()));
-//                    System.out.println("Order Status: " + orderItem.getsProductName());
-//                    System.out.println("OrderITEM PRICE: " + orderItem.getnPrice());
-//                    System.out.println("OrderITEM QUANTITY: " + orderItem.getnQuantity());
-
                 }
                 // Sync Products
                 products = productDAO.getProducts();
@@ -198,9 +203,6 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(Product.CREATE_STATEMENT);
                 for (Product product : products){
                     dbHelper.AddProduct(product);
-//                    System.out.println("Product ID: " + String.valueOf(product.getnProductID()));
-//                    System.out.println("Product Name: " + product.getsProductName());
-//                    System.out.println();
                 }
                 // Sync Groups
                 groups = groupDAO.getGroups();
@@ -208,9 +210,6 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.createTable(Group.CREATE_STATEMENT);
                 for (Group group : groups){
                     dbHelper.AddGroup(group);
-//                    System.out.println("Group ID: " + String.valueOf(group.getnGroupID()));
-//                    System.out.println("Group Name: " + group.getsGroupName());
-//                    System.out.println();
                 }
 
             } catch (SQLException e) {
@@ -306,7 +305,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkTablesEmpty(){
-        Log.d("Checking tables", "checkTablesEmpty: ");
         // If tables are empty add default values
         if(mDBHelper.GetAllTables().size() == 0)
             mDBHelper.CreateDefaultTables();
