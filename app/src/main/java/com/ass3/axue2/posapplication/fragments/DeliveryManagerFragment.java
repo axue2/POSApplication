@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -93,12 +94,19 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
         rv.setHasFixedSize(true);
 
         // Setup Adapter
-        adapter = new DeliveryManagerRecyclerViewAdapter(getActivity(), mDeliveries, mSelectedDeliveries);
+        adapter = new DeliveryManagerRecyclerViewAdapter(getActivity(), mDeliveries,
+                mSelectedDeliveries);
         rv.setAdapter(adapter);
 
         // Setup Layout Manager
         mLinearLayoutManager = new LinearLayoutManager(getContext());
         rv.setLayoutManager(mLinearLayoutManager);
+
+        // Setup Divider
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),
+                mLinearLayoutManager.getOrientation());
+        rv.addItemDecoration(itemDecoration);
+
 
         rv.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override

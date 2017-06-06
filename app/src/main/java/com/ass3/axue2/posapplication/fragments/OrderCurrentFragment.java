@@ -3,6 +3,7 @@ package com.ass3.axue2.posapplication.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 
 public class OrderCurrentFragment extends android.support.v4.app.Fragment {
 
-    OrderCurrentRecyclerViewAdapter mAdaper;
+    OrderCurrentRecyclerViewAdapter mAdapter;
 
     @Nullable
     @Override
@@ -37,17 +38,23 @@ public class OrderCurrentFragment extends android.support.v4.app.Fragment {
         }
 
         // Setup Adapter
-        mAdaper = new OrderCurrentRecyclerViewAdapter(getActivity(), orderItems);
-        rv.setAdapter(mAdaper);
+        mAdapter = new OrderCurrentRecyclerViewAdapter(getActivity(), orderItems);
+        rv.setAdapter(mAdapter);
+
         // Setup Layout Manager
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rv.setLayoutManager(llm);
+
+        // Setup Divider
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),
+                llm.getOrientation());
+        rv.addItemDecoration(itemDecoration);
 
         return rv;
     }
 
     public void updateRecyclerView(){
-        mAdaper.update();
+        mAdapter.update();
     }
 
     

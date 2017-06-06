@@ -2,6 +2,7 @@ package com.ass3.axue2.posapplication.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -51,6 +52,11 @@ public class OrderGroupFragment extends android.support.v4.app.Fragment {
         // Setup Layout Manager
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         rv.setLayoutManager(llm);
+
+        // Setup Divider
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),
+                llm.getOrientation());
+        rv.addItemDecoration(itemDecoration);
 
         return rv;
     }

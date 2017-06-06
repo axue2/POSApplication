@@ -47,7 +47,6 @@ public class OrderActivity extends AppCompatActivity {
     public static final String EXTRA_TABLENAME = "Table Name";
     public static final String EXTRA_TABLEID = "Table ID";
     public static final String EXTRA_TABLEGUESTS = "Table Guests";
-
     public static final String EXTRA_ORDERID = "Order ID";
     public static final String EXTRA_ORDERTYPE = "Order Type";
 
@@ -60,7 +59,6 @@ public class OrderActivity extends AppCompatActivity {
     public static final String EXTRA_POSTCODE = "Postcode";
     public static final String EXTRA_PHONE = "Phone";
     public static final String EXTRA_DELIVERYFEE = "Delivery";
-
 
     private long nTableID;
     private long nOrderID;
