@@ -53,6 +53,17 @@
         android:stateListAnimator="@null"/>
 
     <Button
+        android:id="@+id/settings_database_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/WHITE"
+        android:gravity="start|center_vertical"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:stateListAnimator="@null"
+        android:text="Database" />
+
+    <Button
         android:id="@+id/settings_network_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

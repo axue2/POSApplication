@@ -20,4 +20,5 @@
     <color name="deliverySelected">#cfd8dc</color>
     <color name="settingsButton">#76ff03</color>
     <color name="settingsConfirmButton">#0091ea</color>
+    <color name="settingsDeleteDBButton">#f44336</color>
 </resources>

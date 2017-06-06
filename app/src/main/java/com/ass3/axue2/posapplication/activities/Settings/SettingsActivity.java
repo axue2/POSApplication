@@ -25,6 +25,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         groups.setOnClickListener(this);
         Button products = (Button) findViewById(R.id.settings_products_button);
         products.setOnClickListener(this);
+        Button database = (Button) findViewById(R.id.settings_database_button);
+        database.setOnClickListener(this);
         Button networks = (Button) findViewById(R.id.settings_network_button);
         networks.setOnClickListener(this);
 
@@ -33,25 +35,26 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v){
         switch (v.getId()){
             case R.id.settings_general_button:
-                System.out.println("General Button");
+                Intent generalIntent = new Intent(this, SettingsGeneralActivity.class);
+                startActivity(generalIntent);
                 break;
             case R.id.settings_tables_button:
-                System.out.println("Tables Button");
                 Intent tableIntent = new Intent(this, SettingsTableActivity.class);
                 startActivity(tableIntent);
                 break;
             case R.id.settings_groups_button:
-                System.out.println("Groups Button");
                 Intent settingIntent = new Intent(this, SettingsGroupActivity.class);
                 startActivity(settingIntent);
                 break;
             case R.id.settings_products_button:
-                System.out.println("Products Button");
                 Intent productIntent = new Intent(this, SettingsProductActivity.class);
                 startActivity(productIntent);
                 break;
+            case R.id.settings_database_button:
+                Intent databaseIntent = new Intent(this, SettingsDatabaseActivity.class);
+                startActivity(databaseIntent);
+                break;
             case R.id.settings_network_button:
-                System.out.println("Network Button");
                 Intent networkIntent = new Intent(this, SettingsNetworkActivity.class);
                 startActivity(networkIntent);
                 break;

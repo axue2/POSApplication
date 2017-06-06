@@ -26,6 +26,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery_details);
+        setTitle("Delivery Details");
 
         mConfirmButton = (Button) findViewById(R.id.delivery_details_confirm_button);
         mCustomerName = (EditText) findViewById(R.id.delivery_details_name_edit);

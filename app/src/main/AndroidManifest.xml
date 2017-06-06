@@ -68,6 +68,9 @@
         <activity
             android:name=".activities.Settings.SettingsProductActivity"
             android:label="@string/title_activity_settings_products"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.Settings.SettingsDatabaseActivity" />
+        <activity android:name=".activities.Settings.SettingsGeneralActivity"></activity>
     </application>
+
 </manifest>
