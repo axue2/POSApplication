@@ -11,6 +11,7 @@ public class Restaurant {
     private String sAddressLine1;
     private String sAddressLine2;
     private String sAddressLine3;
+    private String sState;
     private int nPostCode;
     private String sPhone;
 
@@ -22,6 +23,7 @@ public class Restaurant {
     public static final String COLUMN_ADDRESS_LINE_1 = "ADDRESS_LINE_1";
     public static final String COLUMN_ADDRESS_LINE_2 = "ADDRESS_LINE_2";
     public static final String COLUMN_ADDRESS_LINE_3 = "ADDRESS_LINE_3";
+    public static final String COLUMN_STATE = "STATE";
     public static final String COLUMN_POST_CODE = "POST_CODE";
     public static final String COLUMN_PHONE = "PHONE";
 
@@ -32,16 +34,18 @@ public class Restaurant {
             COLUMN_ADDRESS_LINE_1 + " TEXT NOT NULL, " +
             COLUMN_ADDRESS_LINE_2 + " TEXT, " +
             COLUMN_ADDRESS_LINE_3 + " TEXT, " +
+            COLUMN_STATE + " TEXT NOT NULL," +
             COLUMN_POST_CODE + " INTEGER NOT NULL, " +
-            COLUMN_PHONE + " STRING" +
+            COLUMN_PHONE + " TEXT" +
             ")";
 
-    public Restaurant(long id, String name, String al1, String al2, String al3, int postcode, String phone){
+    public Restaurant(long id, String name, String al1, String al2, String al3, String state, int postcode, String phone){
         nRestaurantID = id;
         sRestaurantName = name;
         sAddressLine1 = al1;
         sAddressLine2 = al2;
         sAddressLine3 = al3;
+        sState = state;
         nPostCode = postcode;
         sPhone = phone;
     }
@@ -100,5 +104,13 @@ public class Restaurant {
 
     public void setsPhone(String sPhone) {
         this.sPhone = sPhone;
+    }
+
+    public String getsState() {
+        return sState;
+    }
+
+    public void setsState(String sState) {
+        this.sState = sState;
     }
 }

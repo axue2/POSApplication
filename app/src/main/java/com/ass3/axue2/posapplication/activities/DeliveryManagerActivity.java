@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -37,6 +38,7 @@ import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
 import com.ass3.axue2.posapplication.models.operational.Driver;
+import com.ass3.axue2.posapplication.models.operational.Restaurant;
 import com.ass3.axue2.posapplication.network.CustomerDAO;
 import com.ass3.axue2.posapplication.network.DeliveryDAO;
 import com.ass3.axue2.posapplication.network.DriverDAO;
@@ -44,14 +46,12 @@ import com.ass3.axue2.posapplication.network.DriverDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-// TODO: FIX MAJOR DELIVERY MANAGER BUG
+
 public class DeliveryManagerActivity extends AppCompatActivity {
 
     private DatabaseHelper mDBHelper;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-
-    private String sDriverName = Driver.NAME_ALL;
 
     private long nDriverID;
     private ArrayList<Driver> mDrivers;
@@ -74,8 +74,6 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         } else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0){
             initialSetup();
         }
-
-
     }
 
     private void initialSetup(){
@@ -131,7 +129,6 @@ public class DeliveryManagerActivity extends AppCompatActivity {
                 } else{
                     nDriverID = 0;
                 }
-                sDriverName = parent.getSelectedItem().toString();
                 createTabs();
 
             }
@@ -146,41 +143,54 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // https://developers.google.com/maps/documentation/urls/android-intents
-                //Uri gmmIntentUri = Uri.parse("google.navigation:q=34 Clyde St, Box Hill North VIC 3129(Google+Sydney)");
-                //Intent intent = new Intent(v.getContext(), DeliveryLocationActivity.class);
-                //Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                //intent.setPackage("com.google.android.apps.maps");
+
+                // Get Restaurant Setting
+                Restaurant restaurant = mDBHelper.GetRestaurant(1);
 
                 String mapUrl = "https://maps.google.com/maps?";
-                mapUrl += "saddr=34 Clyde St, Box Hill North VIC 3129";
+                // If Restaurant Address exists then use it as a starting point
+                // Otherwise Google Maps will just use the GPS location
+                if (!restaurant.getsAddressLine1().equals("")){
+                    mapUrl += "saddr=";
+                    mapUrl += restaurant.getsAddressLine1();
+                    mapUrl += ", ";
+                    mapUrl += restaurant.getsAddressLine2();
+                    mapUrl += " ";
+                    mapUrl += restaurant.getsState();
+                    mapUrl += " ";
+                    mapUrl += restaurant.getnPostCode();
+                }
                 System.out.println(String.valueOf("Selected Deliveries: " + mSelectedDeliveries.size()));
+                // If deliveries have been clicked
                 if (mSelectedDeliveries.size() > 0){
                     String url = "";
                     int size = mSelectedDeliveries.size();
+                    // Cycle through all deliveries and get their addresses
                     for (int i = 0; i < size; i++){
                         if (i == 0){
                             url += "&daddr=";
                         } else{
                             url += "+to:";
                         }
-                        Customer customer = mDBHelper.GetCustomer(mDBHelper.GetDelivery(mSelectedDeliveries.get(i)).getnCustomerID());
+                        // get Customer address
+                        Customer customer = mDBHelper.GetCustomer(
+                                mDBHelper.GetDelivery(
+                                        mSelectedDeliveries.get(i)).getnCustomerID());
+                        // Add Customer address as a destination point
                         url += customer.getsAddressLine1();
                         url += ", ";
                         url += customer.getsAddressLine2();
                         url += " ";
-                        url+= "VIC";
+                        url+= restaurant.getsState();
                         url += " ";
                         url += customer.getnPostCode();
                         System.out.println(url);
                     }
                     System.out.println(url);
                     mapUrl += url;
-                    //mapUrl += "&daddr=34 Shannon St, Box Hill North VIC 3129";
                     System.out.println(mapUrl);
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mapUrl));
                     startActivity(intent);
-
                 }
             }
         });
@@ -191,7 +201,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         private DatabaseHelper dbHelper;
 
 
-        public SynchroniseTask(DeliveryManagerActivity activity){
+        SynchroniseTask(DeliveryManagerActivity activity){
 /*            mDialog = new ProgressDialog(activity);*/
             dbHelper = new DatabaseHelper(activity);
         }
@@ -303,13 +313,13 @@ public class DeliveryManagerActivity extends AppCompatActivity {
     private static class MyAdapter extends ArrayAdapter<String> implements ThemedSpinnerAdapter {
         private final ThemedSpinnerAdapter.Helper mDropDownHelper;
 
-        public MyAdapter(Context context, String[] objects) {
+        MyAdapter(Context context, String[] objects) {
             super(context, android.R.layout.simple_list_item_1, objects);
             mDropDownHelper = new ThemedSpinnerAdapter.Helper(context);
         }
 
         @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
             View view;
 
             if (convertView == null) {
@@ -363,16 +373,8 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {return mFragmentTitles.get(position);}
     }
 
-    public String getsDriverName() {
-        return sDriverName;
-    }
-
     public long getnDriverID() {
         return nDriverID;
-    }
-
-    public ArrayList<Long> getmSelectedDeliveries() {
-        return mSelectedDeliveries;
     }
 
     public void setmSelectedDeliveries(ArrayList<Long> mSelectedDeliveries) {

@@ -594,6 +594,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Restaurant.COLUMN_ADDRESS_LINE_1, restaurant.getsAddressLine1());
         values.put(Restaurant.COLUMN_ADDRESS_LINE_2, restaurant.getsAddressLine2());
         values.put(Restaurant.COLUMN_ADDRESS_LINE_3, restaurant.getsAddressLine3());
+        values.put(Restaurant.COLUMN_STATE, restaurant.getsState());
         values.put(Restaurant.COLUMN_POST_CODE, restaurant.getnPostCode());
         values.put(Restaurant.COLUMN_PHONE, restaurant.getsPhone());
         long id = db.insert(Restaurant.TABLE_NAME, null, values);
@@ -607,7 +608,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Database query
         Cursor cursor = db.query(Restaurant.TABLE_NAME, new String[] { Restaurant.COLUMN_ID,
                         Restaurant.COLUMN_NAME, Restaurant.COLUMN_ADDRESS_LINE_1, Restaurant.COLUMN_ADDRESS_LINE_2,
-                        Restaurant.COLUMN_ADDRESS_LINE_3, Restaurant.COLUMN_POST_CODE, Restaurant.COLUMN_PHONE},
+                        Restaurant.COLUMN_ADDRESS_LINE_3, Restaurant.COLUMN_STATE,
+                        Restaurant.COLUMN_POST_CODE, Restaurant.COLUMN_PHONE},
                 Restaurant.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
         // Checks query
         if (cursor != null)
@@ -618,8 +620,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getString(2),
                 cursor.getString(3),
                 cursor.getString(4),
-                cursor.getInt(5),
-                cursor.getString(6)
+                cursor.getString(5),
+                cursor.getInt(6),
+                cursor.getString(7)
         );
         cursor.close();
 
@@ -639,8 +642,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(2),
                         cursor.getString(3),
                         cursor.getString(4),
-                        cursor.getInt(5),
-                        cursor.getString(6)
+                        cursor.getString(5),
+                        cursor.getInt(6),
+                        cursor.getString(7)
                 );
                 restaurants.put(restaurant.getnRestaurantID(), restaurant);
             } while(cursor.moveToNext());
@@ -658,6 +662,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Restaurant.COLUMN_ADDRESS_LINE_1, restaurant.getsAddressLine1());
         values.put(Restaurant.COLUMN_ADDRESS_LINE_2, restaurant.getsAddressLine2());
         values.put(Restaurant.COLUMN_ADDRESS_LINE_3, restaurant.getsAddressLine3());
+        values.put(Restaurant.COLUMN_STATE, restaurant.getsState());
         values.put(Restaurant.COLUMN_POST_CODE, restaurant.getnPostCode());
         values.put(Restaurant.COLUMN_PHONE, restaurant.getsPhone());
         // Update values using table id
@@ -795,7 +800,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void CreateDefaultRestaurant(){
-        AddRestaurant(new Restaurant(0, "My Restaurant", "7 Trainor St", "Box Hil North", "", 3129, "0430688669"));
+        AddRestaurant(new Restaurant(0, "My Restaurant", "17 Berry St", "Box Hill North", "", "VICTORIA", 3129, "0430688669"));
     }
 
     public void deleteTable(String tableName){
