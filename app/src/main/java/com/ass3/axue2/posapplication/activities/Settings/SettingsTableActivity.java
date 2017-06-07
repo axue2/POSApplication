@@ -1,6 +1,7 @@
 package com.ass3.axue2.posapplication.activities.Settings;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -68,6 +69,8 @@ public class SettingsTableActivity extends AppCompatActivity implements View.OnC
                     Table table = mDBHelper.GetTable(tableID);
                     table.setsTableName(name.getText().toString());
                     mDBHelper.UpdateTable(table);
+                    Snackbar.make(v, "Table Settings Updated",
+                            Snackbar.LENGTH_SHORT).show();
                 }
                 break;
         }

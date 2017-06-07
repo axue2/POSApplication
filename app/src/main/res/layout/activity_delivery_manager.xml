@@ -34,7 +34,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_action_location" />
+                app:srcCompat="@drawable/ic_action_location"
+                android:contentDescription="@string/location_button" />
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout

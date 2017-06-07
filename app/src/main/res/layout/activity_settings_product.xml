@@ -20,8 +20,6 @@
             android:id="@+id/settings_product_rv"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/appbar"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         </android.support.v7.widget.RecyclerView>
@@ -31,15 +29,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/settingsConfirmButton"
-            android:text="Add New Product"
+            android:text="@string/add_product_button"
             android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/RelativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/LinearLayout">
+            android:layout_height="match_parent">
 
             <Button
                 android:id="@+id/settings_product_confirm_button"
@@ -49,7 +45,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentStart="true"
                 android:background="@color/settingsButton"
-                android:text="Confirm" />
+                android:text="@string/confirm" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -59,7 +55,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="27dp"
                 android:layout_marginTop="25dp"
-                android:text="Product ID:"
+                android:text="@string/product_id"
                 android:textColor="@color/BLACK" />
 
             <TextView
@@ -70,7 +66,6 @@
                 android:layout_toEndOf="@+id/textView3"
                 android:paddingEnd="20dp"
                 android:paddingStart="20dp"
-                android:text="1"
                 android:textColor="@color/BLACK" />
 
             <TextView
@@ -80,7 +75,7 @@
                 android:layout_alignStart="@+id/textView3"
                 android:layout_below="@+id/textView3"
                 android:layout_marginTop="24dp"
-                android:text="Product Name:"
+                android:text="@string/product_name"
                 android:textColor="@color/BLACK" />
 
             <TextView
@@ -90,7 +85,7 @@
                 android:layout_alignStart="@+id/textView8"
                 android:layout_below="@+id/settings_product_name_editText"
                 android:paddingTop="10dp"
-                android:text="Group Name:"
+                android:text="@string/group_name"
                 android:textColor="@color/BLACK" />
 
             <TextView
@@ -100,7 +95,7 @@
                 android:layout_alignBaseline="@+id/settings_product_price_editText"
                 android:layout_alignBottom="@+id/settings_product_price_editText"
                 android:layout_alignStart="@+id/textView9"
-                android:text="Price:"
+                android:text="@string/price"
                 android:textColor="@color/BLACK" />
 
             <EditText
@@ -112,7 +107,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_toEndOf="@+id/settings_product_id_textview"
                 android:ems="10"
-                android:hint="Product Name"
+                android:hint="@string/product_name_hint"
                 android:inputType="text"
                 android:textSize="12sp" />
 
@@ -124,7 +119,7 @@
                 android:layout_alignStart="@+id/spinner2"
                 android:layout_below="@+id/spinner2"
                 android:ems="10"
-                android:hint="Price"
+                android:hint="@string/price_hint"
                 android:inputType="numberDecimal"
                 android:textSize="12sp" />
 

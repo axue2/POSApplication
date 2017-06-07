@@ -38,7 +38,7 @@
                 android:layout_marginEnd="12dp"
 
                 android:background="@color/PaymentButtonBackground"
-                android:text="Delete"
+                android:text="@string/delete"
                 android:textColor="@color/PaymentButtonText"
                 android:visibility="invisible" />
 

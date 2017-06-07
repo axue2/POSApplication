@@ -1,6 +1,7 @@
 package com.ass3.axue2.posapplication.activities.Settings;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,14 +38,13 @@ public class SettingsGroupActivity extends AppCompatActivity implements View.OnC
 
         mGroups = new ArrayList<>(mDBHelper.GetAllGroups().values());
 
+        // Setup RecyclerView
         RecyclerView rv = (RecyclerView) findViewById(R.id.settings_group_rv);
-
         SettingsGroupRecyclerViewAdapter adapter = new SettingsGroupRecyclerViewAdapter(this, mGroups);
-
         rv.setAdapter(adapter);
-
         rv.setLayoutManager(new LinearLayoutManager(this));
 
+        // Setup Button
         Button mConfirmButton = (Button) findViewById(R.id.settings_group_confirm_button);
         mConfirmButton.setOnClickListener(this);
 
@@ -69,11 +69,14 @@ public class SettingsGroupActivity extends AppCompatActivity implements View.OnC
             case R.id.settings_group_confirm_button:
                 TextView id = (TextView) findViewById(R.id.settings_group_id_textview);
                 EditText name = (EditText) findViewById(R.id.settings_group_name_editText);
+                // If Group ID exists then update
                 if (!id.getText().toString().equals("")) {
                     long groupID = Long.parseLong(id.getText().toString());
                     Group group = mDBHelper.GetGroup(groupID);
                     group.setsGroupName(name.getText().toString());
                     mDBHelper.UpdateGroup(group);
+                    Snackbar.make(v, "Group Settings Updated",
+                            Snackbar.LENGTH_SHORT).show();
                 }
                 break;
         }

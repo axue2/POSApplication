@@ -17,7 +17,7 @@
         android:paddingEnd="10dp"
         android:paddingStart="10dp"
         android:stateListAnimator="@null"
-        android:text="Restaurant" />
+        android:text="@string/restaurant" />
 
     <Button
         android:id="@+id/settings_tables_button"
@@ -27,7 +27,7 @@
         android:gravity="start|center_vertical"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:text="Tables"
+        android:text="@string/tables"
         android:stateListAnimator="@null"/>
 
     <Button
@@ -39,7 +39,7 @@
         android:paddingEnd="10dp"
         android:paddingStart="10dp"
         android:stateListAnimator="@null"
-        android:text="Groups" />
+        android:text="@string/groups" />
 
     <Button
         android:id="@+id/settings_products_button"
@@ -49,7 +49,7 @@
         android:gravity="start|center_vertical"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:text="Products"
+        android:text="@string/products"
         android:stateListAnimator="@null"/>
 
     <Button
@@ -61,7 +61,7 @@
         android:paddingEnd="10dp"
         android:paddingStart="10dp"
         android:stateListAnimator="@null"
-        android:text="Database" />
+        android:text="@string/database" />
 
     <Button
         android:id="@+id/settings_network_button"
@@ -71,7 +71,7 @@
         android:gravity="start|center_vertical"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:text="Network"
+        android:text="@string/network"
         android:stateListAnimator="@null"/>
 
 </LinearLayout>
