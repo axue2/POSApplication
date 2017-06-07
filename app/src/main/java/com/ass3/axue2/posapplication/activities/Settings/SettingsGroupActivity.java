@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -42,7 +43,13 @@ public class SettingsGroupActivity extends AppCompatActivity implements View.OnC
         RecyclerView rv = (RecyclerView) findViewById(R.id.settings_group_rv);
         SettingsGroupRecyclerViewAdapter adapter = new SettingsGroupRecyclerViewAdapter(this, mGroups);
         rv.setAdapter(adapter);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        rv.setLayoutManager(llm);
+
+        // Setup Divider
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this,
+                llm.getOrientation());
+        rv.addItemDecoration(itemDecoration);
 
         // Setup Button
         Button mConfirmButton = (Button) findViewById(R.id.settings_group_confirm_button);

@@ -2,6 +2,7 @@ package com.ass3.axue2.posapplication.activities.Settings;
 
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -59,16 +60,21 @@ public class SettingsProductActivity extends AppCompatActivity implements View.O
         mContext = this;
         mDBHelper = new DatabaseHelper(this);
 
+        // Setup Products & Groups
         mGroups = new ArrayList<>(mDBHelper.GetAllGroups().values());
-
-        mRV = (RecyclerView) findViewById(R.id.settings_product_rv);
-
         mProducts = new ArrayList<>(mDBHelper.GetProducts(mGroups.get(0).getnGroupID()).values());
+
+        // Setup RecyclerView
+        mRV = (RecyclerView) findViewById(R.id.settings_product_rv);
         mAdapter = new SettingsProductRecyclerViewAdapter(this, mProducts);
-
         mRV.setAdapter(mAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        mRV.setLayoutManager(llm);
 
-        mRV.setLayoutManager(new LinearLayoutManager(this));
+        // Setup Divider
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this,
+                llm.getOrientation());
+        mRV.addItemDecoration(itemDecoration);
 
         Button mConfirmButton = (Button) findViewById(R.id.settings_product_confirm_button);
         mConfirmButton.setOnClickListener(this);

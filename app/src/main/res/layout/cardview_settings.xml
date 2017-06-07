@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="5dp"
-        app:cardBackgroundColor="@color/MainTableOpen">
+        app:cardBackgroundColor="@color/GREY">
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -36,13 +37,17 @@ public class SettingsTableActivity extends AppCompatActivity implements View.OnC
 
         mTables = new ArrayList<>(mDBHelper.GetAllTables().values());
 
+        // Setup RecyclerView
         RecyclerView rv = (RecyclerView) findViewById(R.id.settings_table_rv);
-
         SettingsTableRecyclerViewAdapter adapter = new SettingsTableRecyclerViewAdapter(this, mTables);
-
         rv.setAdapter(adapter);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        rv.setLayoutManager(llm);
 
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        // Setup Divider
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this,
+                llm.getOrientation());
+        rv.addItemDecoration(itemDecoration);
 
         Button mConfirmButton = (Button) findViewById(R.id.settings_table_confirm_button);
         mConfirmButton.setOnClickListener(this);
