@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/settings_general_button"
+            android:id="@+id/settings_restaurant_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/WHITE"
@@ -27,8 +27,8 @@
             android:id="@+id/network_mode_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/settings_general_button"
-            android:layout_alignBottom="@+id/settings_general_button"
+            android:layout_alignBaseline="@+id/settings_restaurant_button"
+            android:layout_alignBottom="@+id/settings_restaurant_button"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="40dp"
             android:checked="false"

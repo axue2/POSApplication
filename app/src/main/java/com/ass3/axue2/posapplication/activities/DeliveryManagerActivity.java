@@ -1,6 +1,8 @@
 package com.ass3.axue2.posapplication.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.content.Context;
 import android.support.v7.widget.ThemedSpinnerAdapter;
@@ -52,6 +55,8 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
     private long nDriverID;
     private ArrayList<Driver> mDrivers;
+
+    private ArrayList<Long> mSelectedDeliveries = new ArrayList<>();
 
 
     @Override
@@ -133,6 +138,50 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        ImageButton imageButton = (ImageButton) findViewById(R.id.location_button);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // https://developers.google.com/maps/documentation/urls/android-intents
+                //Uri gmmIntentUri = Uri.parse("google.navigation:q=34 Clyde St, Box Hill North VIC 3129(Google+Sydney)");
+                //Intent intent = new Intent(v.getContext(), DeliveryLocationActivity.class);
+                //Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                //intent.setPackage("com.google.android.apps.maps");
+
+                String mapUrl = "https://maps.google.com/maps?";
+                mapUrl += "saddr=34 Clyde St, Box Hill North VIC 3129";
+                System.out.println(String.valueOf("Selected Deliveries: " + mSelectedDeliveries.size()));
+                if (mSelectedDeliveries.size() > 0){
+                    String url = "";
+                    int size = mSelectedDeliveries.size();
+                    for (int i = 0; i < size; i++){
+                        if (i == 0){
+                            url += "&daddr=";
+                        } else{
+                            url += "+to:";
+                        }
+                        Customer customer = mDBHelper.GetCustomer(mDBHelper.GetDelivery(mSelectedDeliveries.get(i)).getnCustomerID());
+                        url += customer.getsAddressLine1();
+                        url += ", ";
+                        url += customer.getsAddressLine2();
+                        url += " ";
+                        url+= "VIC";
+                        url += " ";
+                        url += customer.getnPostCode();
+                        System.out.println(url);
+                    }
+                    System.out.println(url);
+                    mapUrl += url;
+                    //mapUrl += "&daddr=34 Shannon St, Box Hill North VIC 3129";
+                    System.out.println(mapUrl);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mapUrl));
+                    startActivity(intent);
+
+                }
             }
         });
     }
@@ -320,6 +369,14 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
     public long getnDriverID() {
         return nDriverID;
+    }
+
+    public ArrayList<Long> getmSelectedDeliveries() {
+        return mSelectedDeliveries;
+    }
+
+    public void setmSelectedDeliveries(ArrayList<Long> mSelectedDeliveries) {
+        this.mSelectedDeliveries = mSelectedDeliveries;
     }
 
 }

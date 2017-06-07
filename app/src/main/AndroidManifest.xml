@@ -70,7 +70,7 @@
             android:label="@string/title_activity_settings_products"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.Settings.SettingsDatabaseActivity" />
-        <activity android:name=".activities.Settings.SettingsGeneralActivity" />
+        <activity android:name=".activities.Settings.SettingsRestaurantActivity" />
     </application>
 
 </manifest>

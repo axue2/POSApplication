@@ -35,6 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(Customer.CREATE_STATEMENT);
         db.execSQL(Delivery.CREATE_STATEMENT);
         db.execSQL(Driver.CREATE_STATEMENT);
+        db.execSQL(Restaurant.CREATE_STATEMENT);
     }
 
     public void createTable(String statement){
@@ -586,6 +587,85 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return driver;
     }
 
+    public long AddRestaurant(Restaurant restaurant){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Restaurant.COLUMN_NAME,restaurant.getsRestaurantName());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_1, restaurant.getsAddressLine1());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_2, restaurant.getsAddressLine2());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_3, restaurant.getsAddressLine3());
+        values.put(Restaurant.COLUMN_POST_CODE, restaurant.getnPostCode());
+        values.put(Restaurant.COLUMN_PHONE, restaurant.getsPhone());
+        long id = db.insert(Restaurant.TABLE_NAME, null, values);
+        db.close();
+        return id;
+    }
+
+    public Restaurant GetRestaurant(long id){
+        // Access database
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Database query
+        Cursor cursor = db.query(Restaurant.TABLE_NAME, new String[] { Restaurant.COLUMN_ID,
+                        Restaurant.COLUMN_NAME, Restaurant.COLUMN_ADDRESS_LINE_1, Restaurant.COLUMN_ADDRESS_LINE_2,
+                        Restaurant.COLUMN_ADDRESS_LINE_3, Restaurant.COLUMN_POST_CODE, Restaurant.COLUMN_PHONE},
+                Restaurant.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
+        // Checks query
+        if (cursor != null)
+            cursor.moveToFirst();
+        // Creates new restaurant with query values
+        Restaurant restaurant = new Restaurant(cursor.getLong(0),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getInt(5),
+                cursor.getString(6)
+        );
+        cursor.close();
+
+        return restaurant;
+    }
+
+    public HashMap<Long, Restaurant> GetAllRestaurants(){
+        HashMap<Long, Restaurant> restaurants = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Restaurant.TABLE_NAME, null);
+
+        // Add all products in db to hashmap
+        if(cursor.moveToFirst()) {
+            do {
+                Restaurant restaurant = new Restaurant(cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5),
+                        cursor.getString(6)
+                );
+                restaurants.put(restaurant.getnRestaurantID(), restaurant);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return restaurants;
+    }
+
+    public void UpdateRestaurant(Restaurant restaurant){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(Restaurant.COLUMN_NAME,restaurant.getsRestaurantName());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_1, restaurant.getsAddressLine1());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_2, restaurant.getsAddressLine2());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_3, restaurant.getsAddressLine3());
+        values.put(Restaurant.COLUMN_POST_CODE, restaurant.getnPostCode());
+        values.put(Restaurant.COLUMN_PHONE, restaurant.getsPhone());
+        // Update values using table id
+        db.update(Restaurant.TABLE_NAME, values, Restaurant.COLUMN_ID + " = " + restaurant.getnRestaurantID(), null );
+        db.close();
+    }
+
+
     public void CreateDefaultTables(){
         AddTable(new Table("Table 1"));
         AddTable(new Table("Table 2"));
@@ -712,6 +792,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         AddCustomer(new Customer("Sally","Kite","47 Ursa St","Balwyn North","",3104,33333));
         AddCustomer(new Customer("Samuel","Sanders","3 Euroka St","Chadstone","",3148,33333));
         AddCustomer(new Customer("Ronald","Light","20 Boyd St","Nagambie","",3608,33333));
+    }
+
+    public void CreateDefaultRestaurant(){
+        AddRestaurant(new Restaurant(0, "My Restaurant", "7 Trainor St", "Box Hil North", "", 3129, "0430688669"));
     }
 
     public void deleteTable(String tableName){

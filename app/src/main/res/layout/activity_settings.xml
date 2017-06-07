@@ -9,15 +9,15 @@
     tools:context="com.ass3.axue2.posapplication.activities.Settings.SettingsActivity">
 
     <Button
-        android:id="@+id/settings_general_button"
+        android:id="@+id/settings_restaurant_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/WHITE"
         android:gravity="start|center_vertical"
-        android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:text="General"
-        android:stateListAnimator="@null"/>
+        android:paddingStart="10dp"
+        android:stateListAnimator="@null"
+        android:text="Restaurant" />
 
     <Button
         android:id="@+id/settings_tables_button"

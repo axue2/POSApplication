@@ -326,5 +326,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(mDBHelper.GetAllCustomers().size() == 0)
             mDBHelper.CreateTestCustomers();
+
+        if (mDBHelper.GetAllRestaurants().size() == 0)
+            mDBHelper.CreateDefaultRestaurant();
     }
 }

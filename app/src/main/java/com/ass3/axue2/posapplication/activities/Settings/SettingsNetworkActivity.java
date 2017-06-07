@@ -69,8 +69,6 @@ public class SettingsNetworkActivity extends AppCompatActivity {
         mNetworkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.v("Switch State=", ""+isChecked);
-
                 if (isChecked){
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("Warning!").setMessage("Setting application to network mode will destroy all current data. Are you Sure?")

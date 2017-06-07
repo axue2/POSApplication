@@ -17,7 +17,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setTitle("Settings");
 
         // Setup buttons
-        Button general = (Button) findViewById(R.id.settings_general_button);
+        Button general = (Button) findViewById(R.id.settings_restaurant_button);
         general.setOnClickListener(this);
         Button tables = (Button) findViewById(R.id.settings_tables_button);
         tables.setOnClickListener(this);
@@ -34,8 +34,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     public void onClick(View v){
         switch (v.getId()){
-            case R.id.settings_general_button:
-                Intent generalIntent = new Intent(this, SettingsGeneralActivity.class);
+            case R.id.settings_restaurant_button:
+                Intent generalIntent = new Intent(this, SettingsRestaurantActivity.class);
                 startActivity(generalIntent);
                 break;
             case R.id.settings_tables_button:

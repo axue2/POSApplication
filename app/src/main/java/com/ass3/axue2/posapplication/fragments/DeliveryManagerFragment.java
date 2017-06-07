@@ -2,6 +2,7 @@ package com.ass3.axue2.posapplication.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.DeliveryLocationActivity;
 import com.ass3.axue2.posapplication.activities.DeliveryManagerActivity;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
 import com.ass3.axue2.posapplication.network.DeliveryDAO;
@@ -134,18 +136,6 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
                 updateDeliveries();
             }
         });
-
-        ImageButton imageButton = (ImageButton) getActivity().findViewById(R.id.location_button);
-
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), DeliveryLocationActivity.class);
-
-                startActivity(intent);
-            }
-        });
-
 
         return v;
     }
@@ -274,6 +264,10 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
         adapter.notifyDataSetChanged();*/
 
         adapter.updateDataset(mDeliveries,mSelectedDeliveries);
+        if (getActivity() instanceof DeliveryManagerActivity) {
+            System.out.println(String.valueOf(mSelectedDeliveries.size()));
+            ((DeliveryManagerActivity) getActivity()).setmSelectedDeliveries(mSelectedDeliveries);
+        }
 
     }
 }

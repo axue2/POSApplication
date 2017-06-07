@@ -59,6 +59,8 @@ public class SettingsGroupActivity extends AppCompatActivity implements View.OnC
 
         id.setText(String.valueOf(groupID));
         name.setText(group.getsGroupName());
+
+
     }
 
     @Override
