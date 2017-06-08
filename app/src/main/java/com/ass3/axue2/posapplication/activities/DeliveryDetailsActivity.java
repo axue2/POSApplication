@@ -2,6 +2,7 @@ package com.ass3.axue2.posapplication.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -41,37 +42,43 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Check if address is valid
+
                 Context context = v.getContext();
 
-                Intent intent = new Intent(context, OrderActivity.class);
-                intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_DELIVERY);
-                intent.putExtra(OrderActivity.EXTRA_TABLENAME, "Delivery");
-                long i = 0;
-                intent.putExtra(OrderActivity.EXTRA_TABLEID, i);
-                intent.putExtra(OrderActivity.EXTRA_ORDERID, i);
+                // Check to see if Postcode and al1 fields have been filled
+                // For now, these are the only mandatory fields
+                if (!mCustomerPostCode.getText().toString().equals("") ||
+                        !mCustomerAddressLine1.getText().toString().equals("")){
+                    // Setup Intent
+                    Intent intent = new Intent(context, OrderActivity.class);
+                    intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_DELIVERY);
+                    intent.putExtra(OrderActivity.EXTRA_TABLENAME, "Delivery");
+                    intent.putExtra(OrderActivity.EXTRA_TABLEID, 0);
+                    intent.putExtra(OrderActivity.EXTRA_ORDERID, 0);
 
-                intent.putExtra(OrderActivity.EXTRA_CUSTOMERNAME, mCustomerName.getText().toString());
-                intent.putExtra(OrderActivity.EXTRA_AL1, mCustomerAddressLine1.getText().toString());
-                intent.putExtra(OrderActivity.EXTRA_AL2, mCustomerAddressLine2.getText().toString());
-                intent.putExtra(OrderActivity.EXTRA_AL3, mCustomerAddressLine3.getText().toString());
-                if (!mCustomerPostCode.getText().toString().equals(""))
+                    intent.putExtra(OrderActivity.EXTRA_CUSTOMERNAME, mCustomerName.getText().toString());
+                    intent.putExtra(OrderActivity.EXTRA_AL1, mCustomerAddressLine1.getText().toString());
+                    intent.putExtra(OrderActivity.EXTRA_AL2, mCustomerAddressLine2.getText().toString());
+                    intent.putExtra(OrderActivity.EXTRA_AL3, mCustomerAddressLine3.getText().toString());
                     intent.putExtra(OrderActivity.EXTRA_POSTCODE, Integer.parseInt(mCustomerPostCode.getText().toString()));
-                else
-                    intent.putExtra(OrderActivity.EXTRA_POSTCODE, 0);
-                if (!mCustomerPhone.getText().toString().equals(""))
-                    intent.putExtra(OrderActivity.EXTRA_PHONE, Integer.parseInt(mCustomerPhone.getText().toString()));
-                else
-                    intent.putExtra(OrderActivity.EXTRA_PHONE, 0);
-                if (!mCustomerDeliveryFee.getText().toString().equals(""))
-                    intent.putExtra(OrderActivity.EXTRA_DELIVERYFEE,Double.parseDouble(mCustomerDeliveryFee.getText().toString()));
-                else
-                    intent.putExtra(OrderActivity.EXTRA_DELIVERYFEE, 0);
 
+                    // Check if phone and delivery fee fields are empty
+                    if (!mCustomerPhone.getText().toString().equals(""))
+                        intent.putExtra(OrderActivity.EXTRA_PHONE, Integer.parseInt(mCustomerPhone.getText().toString()));
+                    else
+                        intent.putExtra(OrderActivity.EXTRA_PHONE, 0);
+                    if (!mCustomerDeliveryFee.getText().toString().equals(""))
+                        intent.putExtra(OrderActivity.EXTRA_DELIVERYFEE,Double.parseDouble(mCustomerDeliveryFee.getText().toString()));
+                    else
+                        intent.putExtra(OrderActivity.EXTRA_DELIVERYFEE, 0);
 
-                intent.putExtra(OrderActivity.EXTRA_FROM, "DeliveryDetailsActivity");
-
-                context.startActivity(intent);
+                    intent.putExtra(OrderActivity.EXTRA_FROM, "DeliveryDetailsActivity");
+                    context.startActivity(intent);
+                }
+                else{
+                    Snackbar.make(v, "One or more mandatory fields have not been set.",
+                            Snackbar.LENGTH_LONG).show();
+                }
             }
         });
     }

@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Setup Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle(getString(R.string.main_title));
 
         //this.deleteDatabase(mDBHelper.DATABASE_NAME);
         //this.deleteDatabase(ConfigurationDatabaseHelper.DATABASE_NAME);
@@ -82,6 +81,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0){
             checkTablesEmpty();
             createTabLayouts();
+        }
+
+        // If Restaurant Name has not been set
+        if (mDBHelper.GetRestaurant(1).getsRestaurantName().equals("")){
+            setTitle(getString(R.string.main_title));
+        }
+        // If Restaurant Name has been set
+        else{
+            setTitle(mDBHelper.GetRestaurant(1).getsRestaurantName());
         }
 
         // Setup Floating Action Buttons
