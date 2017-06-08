@@ -1,8 +1,6 @@
 package com.ass3.axue2.posapplication.fragments;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,13 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.activities.DeliveryLocationActivity;
 import com.ass3.axue2.posapplication.activities.DeliveryManagerActivity;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
-import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
 import com.ass3.axue2.posapplication.network.DeliveryDAO;
@@ -185,7 +180,7 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
         private String mStatus;
         private ArrayList<Long> deliveryIDs;
 
-        public InsertTask(DeliveryManagerActivity activity, String status, ArrayList<Long> selectedDeliveries){
+        InsertTask(DeliveryManagerActivity activity, String status, ArrayList<Long> selectedDeliveries){
 /*            mDialog = new ProgressDialog(activity);*/
             mStatus = status;
             deliveryIDs = selectedDeliveries;
@@ -263,7 +258,7 @@ public class DeliveryManagerFragment extends android.support.v4.app.Fragment {
         adapter.mDeliveries = mDeliveries;
         adapter.notifyDataSetChanged();*/
 
-        adapter.updateDataset(mDeliveries,mSelectedDeliveries);
+        adapter.updateDataSet(mDeliveries,mSelectedDeliveries);
         if (getActivity() instanceof DeliveryManagerActivity) {
             System.out.println(String.valueOf(mSelectedDeliveries.size()));
             ((DeliveryManagerActivity) getActivity()).setmSelectedDeliveries(mSelectedDeliveries);

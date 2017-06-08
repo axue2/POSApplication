@@ -136,10 +136,21 @@ public class OrderItemDAO {
                 + OrderItem.COLUMN_PRODUCT_NAME + " = '" + orderItem.getsProductName() + "', "
                 + OrderItem.COLUMN_QUANTITY + " = '" + orderItem.getnQuantity()
                 + "' WHERE " + OrderItem.COLUMN_ID + " = " + String.valueOf(orderItem.getnOrderItemID());
-/*
+        try {
+            connection = ConnectionFactory.getConnection();
+            statement = connection.createStatement();
+            statement.executeUpdate(query);
 
-        String query = "UPDATE `order_item` SET `ORDER_ID`= 6,`TABLE_ID`= 3,`PRODUCT_ID`= 43,`PRODUCT_NAME`= 'something',`PRODUCT_PRICE`=1,`QUANTITY`=1 WHERE id = 1";
-*/
+        }finally {
+            DbUtil.close(statement);
+            DbUtil.close(connection);
+        }
+    }
+
+    public void deleteOrderItem(OrderItem orderItem) throws SQLException{
+        String query = "DELETE FROM " + OrderItem.TABLE_NAME + " WHERE " +
+                OrderItem.COLUMN_ID + " = " + orderItem.getnOrderItemID();
+        System.out.println(query);
 
         try {
             connection = ConnectionFactory.getConnection();

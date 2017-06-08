@@ -129,7 +129,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
                 holder.mPaymentButton.setVisibility(View.INVISIBLE);
             // Set TextViews to visible
             holder.mStatusTextView.setVisibility(View.VISIBLE);
-            holder.mGuestsTextView.setVisibility(View.VISIBLE);
+            /*holder.mGuestsTextView.setVisibility(View.VISIBLE);*/
             holder.mInvoiceTextView.setVisibility(View.VISIBLE);
 
             // Set values for TextViews

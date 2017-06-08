@@ -118,5 +118,6 @@
     <string name="delete_database_button">Delete Database</string>
     <string name="location_button">Location Button</string>
     <string name="delete">Delete</string>
+    <string name="current_order">Current Order</string>
 
 </resources>

@@ -255,6 +255,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddOrderItem(OrderItem orderItem){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        if (orderItem.getnOrderItemID() > 0)
+            values.put(OrderItem.COLUMN_ID, orderItem.getnOrderItemID());
         values.put(OrderItem.COLUMN_ORDER_ID, orderItem.getnOrderID());
         values.put(OrderItem.COLUMN_TABLE_ID, orderItem.getnTableID());
         values.put(OrderItem.COLUMN_PRODUCT_ID, orderItem.getnProductID());
@@ -304,6 +306,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return orderItems;
+    }
+
+    public void DeleteOrderItem(OrderItem orderItem){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("DELETE FROM " + OrderItem.TABLE_NAME + " WHERE "
+                + OrderItem.COLUMN_ID + " = '" + orderItem.getnOrderItemID() + "'"
+                + " AND " + OrderItem.COLUMN_ORDER_ID + " = '" + orderItem.getnOrderID() + "'"
+        );
+        db.close();
     }
 
     public void AddGroup(Group group){

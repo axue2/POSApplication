@@ -115,7 +115,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         // Setup spinner
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setAdapter(new MyAdapter(toolbar.getContext(), driverNames));
-
+        // TODO: Async task to Refresh delivery manager
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -143,6 +143,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
 
                 // Get Restaurant Setting
                 Restaurant restaurant = mDBHelper.GetRestaurant(1);
@@ -306,8 +307,6 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
     private static class MyAdapter extends ArrayAdapter<String> implements ThemedSpinnerAdapter {

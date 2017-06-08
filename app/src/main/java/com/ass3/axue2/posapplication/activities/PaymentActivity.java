@@ -263,22 +263,22 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public class PaymentTask extends AsyncTask<Void, Void, Void>{
-        private ProgressDialog mDialog;
+    private class PaymentTask extends AsyncTask<Void, Void, Void>{
+        /*private ProgressDialog mDialog;*/
 
-        public PaymentTask(PaymentActivity activity){
-            mDialog = new ProgressDialog(activity);
+        PaymentTask(PaymentActivity activity){
+            /*mDialog = new ProgressDialog(activity);*/
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+/*            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mDialog.setTitle("Sending Data");
             mDialog.setMessage("Sending data to server. Please Wait...");
             mDialog.setIndeterminate(true);
             mDialog.setCanceledOnTouchOutside(false);
-            mDialog.show();
+            mDialog.show();*/
         }
 
         @Override
@@ -319,7 +319,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            mDialog.dismiss();
+ /*           mDialog.dismiss();*/
             // Return to MainActivity
             Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

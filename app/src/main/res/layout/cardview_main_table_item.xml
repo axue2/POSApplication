@@ -44,7 +44,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_toEndOf="@+id/main_table_list_cv_status_text"
                 android:gravity="fill"
-                android:text="@string/table_guests_placeholder" />
+                android:text="@string/table_guests_placeholder"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/main_table_list_cv_total_text"

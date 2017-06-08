@@ -98,7 +98,7 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
         holder.mInvoiceTextView.setText(str);
     }
 
-    public void updateDataset(ArrayList<Delivery> deliveries, ArrayList<Long> selectedDeliveries){
+    public void updateDataSet(ArrayList<Delivery> deliveries, ArrayList<Long> selectedDeliveries){
         mDeliveries = deliveries;
         mSelectedDeliveries = selectedDeliveries;
         notifyDataSetChanged();

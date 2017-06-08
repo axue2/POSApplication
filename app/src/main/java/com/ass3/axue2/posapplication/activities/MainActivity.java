@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         assert mViewPager != null;
         mSectionsPagerAdapter.addFragment(new MainOrdersFragment(), "Orders");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
+        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Tables");
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
