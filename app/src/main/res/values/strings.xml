@@ -65,7 +65,7 @@
     <string name="order_current_add_button">add button</string>
     <string name="action_delivery_manager">Delivery Manager</string>
     <string name="title_activity_delivery_manager">DeliveryManagerActivity</string>
-    <string name="delivery_manager_title">Delivery Manager</string>
+    <string name="delivery_manager_title">Deliveries</string>
     <string name="main_title">POS Application</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="fragment_delivery_manager_button_placeholder">Allocate Driver</string>

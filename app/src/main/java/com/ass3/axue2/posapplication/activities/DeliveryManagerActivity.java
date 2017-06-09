@@ -1,28 +1,24 @@
 package com.ass3.axue2.posapplication.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.content.Context;
@@ -32,7 +28,6 @@ import android.content.res.Resources.Theme;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.fragments.DeliveryManagerFragment;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
@@ -42,6 +37,7 @@ import com.ass3.axue2.posapplication.models.operational.Restaurant;
 import com.ass3.axue2.posapplication.network.CustomerDAO;
 import com.ass3.axue2.posapplication.network.DeliveryDAO;
 import com.ass3.axue2.posapplication.network.DriverDAO;
+import com.ass3.axue2.posapplication.views.adapters.DeliveryManagerRecyclerViewAdapter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,15 +45,25 @@ import java.util.List;
 
 public class DeliveryManagerActivity extends AppCompatActivity {
 
+    public static final String BUTTON_UNALLOCATE = "Allocate Driver";
+    public static final String BUTTON_ALLOCATE = "Complete Delivery";
+    public static final String BUTTON_COMPLETE = "FALSE";
+
     private DatabaseHelper mDBHelper;
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
+    private ConfigurationDatabaseHelper mCDBHelper;
 
     private long nDriverID;
+    private String sStatus;
+
     private ArrayList<Driver> mDrivers;
 
-    private ArrayList<Long> mSelectedDeliveries = new ArrayList<>();
+    private ArrayList<Delivery> mDeliveries = new ArrayList<>();
+    private ArrayList<Delivery> mSelectedDeliveries = new ArrayList<>();
 
+    private RecyclerView mRV;
+    private DeliveryManagerRecyclerViewAdapter mAdapter;
+
+    private Button mConfirmButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +72,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
         // Get database handler
         mDBHelper = new DatabaseHelper(getApplicationContext());
+        mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
         ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
 
         // Get All Drivers
@@ -83,44 +90,42 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle(R.string.delivery_manager_title);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-
-        assert mViewPager != null;
-        createFragment(Delivery.STATUS_UNALLOCATED);
-        createFragment(Delivery.STATUS_ALLOCATED);
-        createFragment(Delivery.STATUS_COMPLETE);
-
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // Setup Tab layouts
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
+        // Get Drivers
         mDrivers = new ArrayList<>(mDBHelper.GetAllDrivers().values());
         String[] driverNames = new String[mDrivers.size() + 1];
 
-        // Add in all drivers
+        // Add in 'all' drivers
         driverNames[0] = Driver.NAME_ALL;
         int count = 1;
+        // Add all drivers
         for (Driver driver : mDrivers) {
             driverNames[count] = driver.getnFirstName() + " " + driver.getnLastName();
             count++;
         }
 
+        // Set initial status as unallocated
+        sStatus = Delivery.STATUS_UNALLOCATED;
+
+        // Setup RecyclerView
+        mRV = (RecyclerView) findViewById(R.id.delivery_manager_rv);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        mRV.setLayoutManager(llm);
+
+        // Setup Divider
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this,
+                llm.getOrientation());
+        mRV.addItemDecoration(itemDecoration);
+
+        // Setup Confirm Button
+        mConfirmButton = (Button) findViewById(R.id.delivery_manager_confirm_button);
+
         // Setup spinner
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         spinner.setAdapter(new MyAdapter(toolbar.getContext(), driverNames));
-        // TODO: Async task to Refresh delivery manager
+
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // When the given dropdown item is selected, show its contents in the
-                // container view.
 
                 int spinnerPosition = parent.getSelectedItemPosition();
                 if(parent.getSelectedItemPosition() > 0) {
@@ -129,8 +134,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
                 } else{
                     nDriverID = 0;
                 }
-                createTabs();
-
+                refresh();
             }
 
             @Override
@@ -138,14 +142,39 @@ public class DeliveryManagerActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton imageButton = (ImageButton) findViewById(R.id.location_button);
+        // Setup TabLayouts
+        TabLayout mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        mTabLayout.addTab(mTabLayout.newTab().setText(Delivery.STATUS_UNALLOCATED));
+        mTabLayout.addTab(mTabLayout.newTab().setText(Delivery.STATUS_ALLOCATED));
+        mTabLayout.addTab(mTabLayout.newTab().setText(Delivery.STATUS_COMPLETE));
 
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                // Set status and 'refresh' RecyclerView
+                sStatus = (String) tab.getText();
+                refresh();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // Set status and 'refresh' RecyclerView
+                sStatus = (String) tab.getText();
+                refresh();
+            }
+        });
+
+        // Setup Location Button
+        ImageButton imageButton = (ImageButton) findViewById(R.id.location_button);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                // Get Restaurant Setting
+                // Get Restaurant Setting in order to get state
                 Restaurant restaurant = mDBHelper.GetRestaurant(1);
 
                 String mapUrl = "https://maps.google.com/maps?";
@@ -175,8 +204,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
                         }
                         // get Customer address
                         Customer customer = mDBHelper.GetCustomer(
-                                mDBHelper.GetDelivery(
-                                        mSelectedDeliveries.get(i)).getnCustomerID());
+                                mSelectedDeliveries.get(i).getnCustomerID());
                         // Add Customer address as a destination point
                         url += customer.getsAddressLine1();
                         url += ", ";
@@ -185,74 +213,124 @@ public class DeliveryManagerActivity extends AppCompatActivity {
                         url+= restaurant.getsState();
                         url += " ";
                         url += customer.getnPostCode();
-                        System.out.println(url);
                     }
-                    System.out.println(url);
                     mapUrl += url;
-                    System.out.println(mapUrl);
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mapUrl));
                     startActivity(intent);
                 }
             }
         });
+
+        mConfirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // delivery status the delivery is to be updated to
+                String updatedStatus = "";
+
+                // Checks if valid driver
+                if (nDriverID > 0 && mSelectedDeliveries.size() > 0){
+                    // Checks which tab
+                    if (sStatus.equals(Delivery.STATUS_UNALLOCATED)) {
+                        updatedStatus = Delivery.STATUS_ALLOCATED;
+                    } else if (sStatus.equals(Delivery.STATUS_ALLOCATED)) {
+                        updatedStatus = Delivery.STATUS_COMPLETE;
+                    }
+                    // Checks to see if updatedStatus has text
+                    if(updatedStatus.equals(Delivery.STATUS_ALLOCATED) || updatedStatus.equals(Delivery.STATUS_COMPLETE)) {
+                        // If not network mode
+                        if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0) {
+                            for (int i = 0; i < mSelectedDeliveries.size(); i++) {
+                                Delivery delivery = mSelectedDeliveries.get(i);
+                                // checks delivery to see if it hasn't already be allocated
+                                if (delivery.getsStatus().equals(sStatus)) {
+                                    delivery.setsStatus(updatedStatus);
+                                    delivery.setnDriverID(nDriverID);
+
+                                    mDBHelper.UpdateDelivery(delivery);
+                                    mAdapter.removeItem(delivery);
+                                }
+                            }
+                            mSelectedDeliveries.clear();
+                        }
+                        // Otherwise if network mode
+                        else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 1){
+                            new UpdateTask(updatedStatus, DeliveryManagerActivity.this).execute();
+                        }
+
+                    }
+
+                }
+            }
+        });
+    }
+
+    private class UpdateTask extends AsyncTask<Object, Object, ArrayList<Delivery>> {
+        private DatabaseHelper dbHelper;
+        private String mStatus;
+
+        UpdateTask(String status, DeliveryManagerActivity activity){
+            dbHelper = new DatabaseHelper(activity);
+            mStatus = status;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<Delivery> doInBackground(Object... params) {
+            DeliveryDAO deliveryDAO = new DeliveryDAO();
+            ArrayList<Delivery> deliveries = new ArrayList<>();
+            try {
+                for (Delivery del : mDeliveries) {
+                    // Get delivery from server db
+                    Delivery delivery = deliveryDAO.getDelivery(del.getnDeliveryID());
+                    // check to see if delivery hasn't already be allocated
+                    if (delivery.getsStatus().equals(sStatus)) {
+                        // update delivery
+                        delivery.setsStatus(mStatus);
+                        delivery.setnDriverID(nDriverID);
+                        deliveryDAO.updateDelivery(delivery);
+                        deliveries.add(delivery);
+                    }
+                }
+                // synchronise with server db
+                synchronise(dbHelper);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return deliveries;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Delivery> deliveries) {
+            super.onPostExecute(deliveries);
+            for (Delivery delivery : deliveries){
+                mDeliveries.remove(delivery);
+/*                mAdapter.removeItem(delivery);*/
+                refresh();
+            }
+
+        }
     }
 
     private class SynchroniseTask extends AsyncTask<Void, Void, Void> {
-/*        private ProgressDialog mDialog;*/
         private DatabaseHelper dbHelper;
 
 
         SynchroniseTask(DeliveryManagerActivity activity){
-/*            mDialog = new ProgressDialog(activity);*/
             dbHelper = new DatabaseHelper(activity);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-/*            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mDialog.setTitle("Synchronising Data");
-            mDialog.setMessage("Getting database information from server. Please Wait...");
-            mDialog.setIndeterminate(true);
-            mDialog.setCanceledOnTouchOutside(false);
-            mDialog.show();*/
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            DeliveryDAO deliveryDAO = new DeliveryDAO();
-            DriverDAO driverDAO = new DriverDAO();
-            CustomerDAO customerDAO = new CustomerDAO();
-            List<Delivery> deliveries;
-            List<Driver> drivers;
-            List<Customer> customers;
-            try{
-                deliveries = deliveryDAO.getDeliveries();
-                drivers = driverDAO.getDrivers();
-                customers = customerDAO.getCustomers();
-                // Sync Deliveries
-                dbHelper.dropTable(Delivery.TABLE_NAME);
-                dbHelper.createTable(Delivery.CREATE_STATEMENT);
-                for (Delivery delivery : deliveries){
-                    dbHelper.AddDelivery(delivery);
-                }
-                // Sync Drivers
-                dbHelper.dropTable(Driver.TABLE_NAME);
-                dbHelper.createTable(Driver.CREATE_STATEMENT);
-                for (Driver driver : drivers){
-                    dbHelper.AddDriver(driver);
-                }
-                // Sync Customers
-                dbHelper.dropTable(Customer.TABLE_NAME);
-                dbHelper.createTable(Customer.CREATE_STATEMENT);
-                for (Customer customer : customers){
-                    dbHelper.AddCustomer(customer);
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
+            synchronise(dbHelper);
             return null;
         }
 
@@ -260,54 +338,73 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             initialSetup();
-/*            mDialog.dismiss();*/
         }
     }
 
-    private void createTabs(){
-        //mSectionsPagerAdapter.destroyFragments();
+    private void synchronise(DatabaseHelper dbHelper){
+        DeliveryDAO deliveryDAO = new DeliveryDAO();
+        DriverDAO driverDAO = new DriverDAO();
+        CustomerDAO customerDAO = new CustomerDAO();
+        List<Delivery> deliveries;
+        List<Driver> drivers;
+        List<Customer> customers;
+        try{
+            deliveries = deliveryDAO.getDeliveries();
+            drivers = driverDAO.getDrivers();
+            customers = customerDAO.getCustomers();
+            // Sync Deliveries
+            dbHelper.dropTable(Delivery.TABLE_NAME);
+            dbHelper.createTable(Delivery.CREATE_STATEMENT);
+            for (Delivery delivery : deliveries){
+                dbHelper.AddDelivery(delivery);
+            }
+            // Sync Drivers
+            dbHelper.dropTable(Driver.TABLE_NAME);
+            dbHelper.createTable(Driver.CREATE_STATEMENT);
+            for (Driver driver : drivers){
+                dbHelper.AddDriver(driver);
+            }
+            // Sync Customers
+            dbHelper.dropTable(Customer.TABLE_NAME);
+            dbHelper.createTable(Customer.CREATE_STATEMENT);
+            for (Customer customer : customers){
+                dbHelper.AddCustomer(customer);
+            }
 
-        int tabPosition = mViewPager.getCurrentItem();
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        createFragment(Delivery.STATUS_UNALLOCATED);
-        createFragment(Delivery.STATUS_ALLOCATED);
-        createFragment(Delivery.STATUS_COMPLETE);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // Set current item to allocated
-        mViewPager.setCurrentItem(tabPosition);
-    }
-
-    private void createFragment(String status){
-        Bundle bundle = new Bundle();
-        bundle.putString(DeliveryManagerFragment.BUNDLE_DELIVERY_STATUS, status);
-        DeliveryManagerFragment fragment = new DeliveryManagerFragment();
-        fragment.setArguments(bundle);
-        mSectionsPagerAdapter.addFragment(fragment, status);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_delivery_manager, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        return super.onOptionsItemSelected(item);
     }
 
+    private void refresh(){
+        // Clear all selected deliveries
+        mSelectedDeliveries.clear();
+        // Checks delivery status and sets buttons accordingly
+        switch (sStatus){
+            case Delivery.STATUS_UNALLOCATED:
+                mConfirmButton.setText(BUTTON_UNALLOCATE);
+                mConfirmButton.setVisibility(View.VISIBLE);
+                break;
+            case Delivery.STATUS_ALLOCATED:
+                mConfirmButton.setText(BUTTON_ALLOCATE);
+                mConfirmButton.setVisibility(View.VISIBLE);
+                break;
+            default:
+                mConfirmButton.setText(BUTTON_COMPLETE);
+                mConfirmButton.setVisibility(View.GONE);
+        }
+        // If status unallocated or 'all' drivers
+        if (sStatus.equals(Delivery.STATUS_UNALLOCATED) || nDriverID <= 0){
+            mDeliveries = new ArrayList<>(mDBHelper.GetDeliveriesByStatus(sStatus).values());
+        }
+        // Otherwise driverID > 0 and not unallocated status
+        else{
+            mDeliveries = new ArrayList<>(mDBHelper.GetDeliveriesByDriverAndStatus(sStatus, nDriverID).values());
+        }
+        mAdapter = new DeliveryManagerRecyclerViewAdapter(this, mDeliveries);
+        mRV.setAdapter(mAdapter);
+    }
 
     private static class MyAdapter extends ArrayAdapter<String> implements ThemedSpinnerAdapter {
         private final ThemedSpinnerAdapter.Helper mDropDownHelper;
@@ -346,38 +443,16 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    private class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        private List<Fragment> mFragments = new ArrayList<>();
-        private  List<String> mFragmentTitles = new ArrayList<>();
-
-        SectionsPagerAdapter(FragmentManager fm) {super(fm);}
-
-        void addFragment(Fragment fragment, String title){
-            mFragments.add(fragment);
-            mFragmentTitles.add(title);
-        }
-
-        @Override
-        public Fragment getItem(int position) {return mFragments.get(position);}
-
-        @Override
-        public int getCount() {return mFragments.size();}
-
-        @Override
-        public CharSequence getPageTitle(int position) {return mFragmentTitles.get(position);}
+    public ArrayList<Delivery> getmSelectedDeliveries() {
+        return mSelectedDeliveries;
     }
 
-    public long getnDriverID() {
-        return nDriverID;
+    public void addmSelectedDelivery(Delivery delivery) {
+        this.mSelectedDeliveries.add(delivery);
     }
 
-    public void setmSelectedDeliveries(ArrayList<Long> mSelectedDeliveries) {
-        this.mSelectedDeliveries = mSelectedDeliveries;
+    public void removemSelectedDelivery(Delivery delivery) {
+        this.mSelectedDeliveries.remove(delivery);
     }
 
 }
