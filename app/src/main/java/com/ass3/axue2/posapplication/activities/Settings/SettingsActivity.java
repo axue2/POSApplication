@@ -25,6 +25,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         groups.setOnClickListener(this);
         Button products = (Button) findViewById(R.id.settings_products_button);
         products.setOnClickListener(this);
+        Button drivers = (Button) findViewById(R.id.settings_drivers_button);
+        drivers.setOnClickListener(this);
         Button database = (Button) findViewById(R.id.settings_database_button);
         database.setOnClickListener(this);
         Button networks = (Button) findViewById(R.id.settings_network_button);
@@ -49,6 +51,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.settings_products_button:
                 Intent productIntent = new Intent(this, SettingsProductActivity.class);
                 startActivity(productIntent);
+                break;
+            case R.id.settings_drivers_button:
+                Intent driverIntent = new Intent(this, SettingsDriverActivity.class);
+                startActivity(driverIntent);
                 break;
             case R.id.settings_database_button:
                 Intent databaseIntent = new Intent(this, SettingsDatabaseActivity.class);

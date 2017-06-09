@@ -71,6 +71,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.Settings.SettingsDatabaseActivity" />
         <activity android:name=".activities.Settings.SettingsRestaurantActivity" />
+        <activity android:name=".activities.Settings.SettingsDriverActivity"></activity>
     </application>
 
 </manifest>

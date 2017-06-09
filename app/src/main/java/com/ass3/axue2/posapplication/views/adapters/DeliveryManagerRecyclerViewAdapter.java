@@ -15,6 +15,7 @@ import com.ass3.axue2.posapplication.activities.DeliveryManagerActivity;
 import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
+import com.ass3.axue2.posapplication.models.operational.Order;
 
 import java.util.ArrayList;
 
@@ -109,10 +110,16 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
             holder.mStatusTextView.setText(String.valueOf(customer.getnPostCode()));
         }
 
-        holder.mDeliveryIDTextView.setText(String.valueOf(delivery.getnDeliveryID()));
-        //TODO: Set Delivery fee for total fee
-        String str = "$" + String.valueOf(delivery.getnDeliveryFee());
-        holder.mInvoiceTextView.setText(str);
+        if (delivery.getnOrderID() > 0){
+            holder.mDeliveryIDTextView.setText(String.valueOf(delivery.getnDeliveryID()));
+            String str = "$" + db.GetOrder(delivery.getnOrderID()).getnTotal();
+            holder.mInvoiceTextView.setText(str);
+        }
+        else{
+            holder.mDeliveryIDTextView.setText(String.valueOf(delivery.getnDeliveryID()));
+            String str = "$" + String.valueOf(delivery.getnDeliveryFee());
+            holder.mInvoiceTextView.setText(str);
+        }
     }
 
     public void removeItem(Delivery delivery){

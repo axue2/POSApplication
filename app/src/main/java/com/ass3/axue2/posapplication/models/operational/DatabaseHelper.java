@@ -600,6 +600,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return driver;
     }
 
+    public void UpdateDriver(Driver driver){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(Driver.COLUMN_FIRST_NAME,driver.getnFirstName());
+        values.put(Driver.COLUMN_LAST_NAME, driver.getnLastName());
+        // Update values using table id
+        db.update(Driver.TABLE_NAME, values, Driver.COLUMN_ID + " = " + driver.getnDriverID(), null );
+        db.close();
+    }
+
     public long AddRestaurant(Restaurant restaurant){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();

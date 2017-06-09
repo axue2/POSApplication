@@ -119,5 +119,11 @@
     <string name="location_button">Location Button</string>
     <string name="delete">Delete</string>
     <string name="current_order">Current Order</string>
+    <string name="drivers">Drivers</string>
+    <string name="driver_id">Driver ID:</string>
+    <string name="first_name">First Name:</string>
+    <string name="last_name">Last Name:</string>
+    <string name="first_name_placeholder">John</string>
+    <string name="last_name_placeholder">Smith</string>
 
 </resources>
