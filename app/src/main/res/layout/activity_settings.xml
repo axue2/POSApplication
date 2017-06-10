@@ -84,4 +84,15 @@
         android:text="@string/network"
         android:stateListAnimator="@null"/>
 
+    <Button
+        android:id="@+id/settings_about_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/WHITE"
+        android:gravity="start|center_vertical"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:stateListAnimator="@null"
+        android:text="About" />
+
 </LinearLayout>

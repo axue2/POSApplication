@@ -31,6 +31,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         database.setOnClickListener(this);
         Button networks = (Button) findViewById(R.id.settings_network_button);
         networks.setOnClickListener(this);
+        Button about = (Button) findViewById(R.id.settings_about_button);
+        about.setOnClickListener(this);
 
     }
 
@@ -63,6 +65,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.settings_network_button:
                 Intent networkIntent = new Intent(this, SettingsNetworkActivity.class);
                 startActivity(networkIntent);
+                break;
+            case R.id.settings_about_button:
+                Intent aboutIntent = new Intent(this, SettingsAboutActivity.class);
+                startActivity(aboutIntent);
                 break;
         }
     }
