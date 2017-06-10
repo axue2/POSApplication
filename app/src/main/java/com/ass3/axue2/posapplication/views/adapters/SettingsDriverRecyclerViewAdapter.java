@@ -70,4 +70,14 @@ public class SettingsDriverRecyclerViewAdapter extends RecyclerView.Adapter<Sett
         holder.mName.setText(driver.getnFirstName() + " " + driver.getnLastName());
 
     }
+
+    public void updateItem(Driver driver){
+        for (int i = 0; i < mDrivers.size(); i++){
+            if (mDrivers.get(i).getnDriverID() == driver.getnDriverID()){
+                mDrivers.set(i,driver);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
 }

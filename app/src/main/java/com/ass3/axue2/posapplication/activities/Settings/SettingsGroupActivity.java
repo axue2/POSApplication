@@ -27,7 +27,7 @@ public class SettingsGroupActivity extends AppCompatActivity implements View.OnC
     Context mContext;
     DatabaseHelper mDBHelper;
     List<Group> mGroups;
-
+    SettingsGroupRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class SettingsGroupActivity extends AppCompatActivity implements View.OnC
 
         // Setup RecyclerView
         RecyclerView rv = (RecyclerView) findViewById(R.id.settings_group_rv);
-        SettingsGroupRecyclerViewAdapter adapter = new SettingsGroupRecyclerViewAdapter(this, mGroups);
+        adapter = new SettingsGroupRecyclerViewAdapter(this, mGroups);
         rv.setAdapter(adapter);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
@@ -82,6 +82,8 @@ public class SettingsGroupActivity extends AppCompatActivity implements View.OnC
                     Group group = mDBHelper.GetGroup(groupID);
                     group.setsGroupName(name.getText().toString());
                     mDBHelper.UpdateGroup(group);
+                    adapter.updateItem(group);
+
                     Snackbar.make(v, "Group Settings Updated",
                             Snackbar.LENGTH_SHORT).show();
                 }

@@ -78,4 +78,27 @@ public class SettingsProductRecyclerViewAdapter extends RecyclerView.Adapter<Set
         holder.mProductName.setText(product.getsProductName());
 
     }
+
+    public void updateItem(Product product){
+        for (int i = 0; i < mProducts.size(); i++){
+            if (mProducts.get(i).getnProductID() == product.getnProductID()){
+                mProducts.set(i,product);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    public void removeItem(Product product){
+        System.out.println(mProducts.size());
+        System.out.println(product.getnGroupID());
+        for (int i = 0; i < mProducts.size(); i++){
+            if (mProducts.get(i).getnProductID() == product.getnProductID()){
+                System.out.println(i);
+                mProducts.remove(i);
+                notifyItemRemoved(i);
+                break;
+            }
+        }
+    }
 }

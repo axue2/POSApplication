@@ -25,6 +25,7 @@ public class SettingsTableActivity extends AppCompatActivity implements View.OnC
     Context mContext;
     DatabaseHelper mDBHelper;
     List<Table> mTables;
+    SettingsTableRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,8 @@ public class SettingsTableActivity extends AppCompatActivity implements View.OnC
 
         // Setup RecyclerView
         RecyclerView rv = (RecyclerView) findViewById(R.id.settings_table_rv);
-        SettingsTableRecyclerViewAdapter adapter = new SettingsTableRecyclerViewAdapter(this, mTables);
-        rv.setAdapter(adapter);
+        mAdapter = new SettingsTableRecyclerViewAdapter(this, mTables);
+        rv.setAdapter(mAdapter);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
 
@@ -74,7 +75,9 @@ public class SettingsTableActivity extends AppCompatActivity implements View.OnC
                     Table table = mDBHelper.GetTable(tableID);
                     table.setsTableName(name.getText().toString());
                     mDBHelper.UpdateTable(table);
-                    Snackbar.make(v, "Table Settings Updated",
+                    mAdapter.updateItem(table);
+
+                    Snackbar.make(v, "Table Updated",
                             Snackbar.LENGTH_SHORT).show();
                 }
                 break;

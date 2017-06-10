@@ -80,4 +80,14 @@ public class SettingsTableRecyclerViewAdapter extends RecyclerView.Adapter<Setti
         holder.mTableName.setText(table.getsTableName());
 
     }
+
+    public void updateItem(Table table){
+        for (int i = 0; i < mTables.size(); i++){
+            if (mTables.get(i).getnTableID() == table.getnTableID()){
+                mTables.set(i,table);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
 }

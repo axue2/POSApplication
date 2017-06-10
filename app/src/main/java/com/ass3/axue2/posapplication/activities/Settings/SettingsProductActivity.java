@@ -41,6 +41,7 @@ public class SettingsProductActivity extends AppCompatActivity implements View.O
     DatabaseHelper mDBHelper;
     List<Group> mGroups;
     List<Product> mProducts;
+    long mGroupID;
 
     RecyclerView mRV;
     SettingsProductRecyclerViewAdapter mAdapter;
@@ -98,9 +99,8 @@ public class SettingsProductActivity extends AppCompatActivity implements View.O
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // When the given dropdown item is selected, show its contents in the
                 // container view.
-                System.out.println(String.valueOf(position));
-                System.out.println(mGroups.get(position).getsGroupName());
-                mProducts = new ArrayList<>(mDBHelper.GetProducts(mGroups.get(position).getnGroupID()).values());
+                mGroupID = mGroups.get(position).getnGroupID();
+                mProducts = new ArrayList<>(mDBHelper.GetProducts(mGroupID).values());
                 mAdapter = new SettingsProductRecyclerViewAdapter(mContext, mProducts);
                 mRV.setAdapter(mAdapter);
                 mRV.setLayoutManager(new LinearLayoutManager(mContext));
@@ -154,16 +154,30 @@ public class SettingsProductActivity extends AppCompatActivity implements View.O
                 TextView id = (TextView) findViewById(R.id.settings_product_id_textview);
                 EditText name = (EditText) findViewById(R.id.settings_product_name_editText);
                 EditText price = (EditText) findViewById(R.id.settings_product_price_editText);
+
+                // If Product ID is not empty
                 if (!id.getText().toString().equals("")) {
                     long productID = Long.parseLong(id.getText().toString());
+                    // Get product
                     Product product = mDBHelper.GetProduct(productID);
+                    // Update Values
                     product.setsProductName(name.getText().toString());
                     if (!price.getText().toString().equals("")) {
                         product.setnPrice(Double.parseDouble(price.getText().toString()));
                     }
-                    product.setnGroupID(mGroups.get(mProductSpinner.getSelectedItemPosition()).getnGroupID());
+                    long groupID = mGroups.get(mProductSpinner.getSelectedItemPosition()).getnGroupID();
+                    // If group id has changed then remove it from RV
+                    if (mGroupID != groupID){
+                        product.setnGroupID(groupID);
+                        mAdapter.removeItem(product);
+                    }
+                    // Otherwise update the product in RV
+                    else{
+                        mAdapter.updateItem(product);
+                    }
                     mDBHelper.UpdateProduct(product);
-                    Snackbar.make(v, "Product Settings Updated",
+
+                    Snackbar.make(v, "Product Updated",
                             Snackbar.LENGTH_SHORT).show();
                 }
                 break;

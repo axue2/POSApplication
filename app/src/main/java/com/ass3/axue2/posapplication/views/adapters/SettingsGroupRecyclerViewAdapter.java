@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.Settings.SettingsGroupActivity;
+import com.ass3.axue2.posapplication.models.operational.Driver;
 import com.ass3.axue2.posapplication.models.operational.Group;
 
 import java.util.List;
@@ -77,5 +78,14 @@ public class SettingsGroupRecyclerViewAdapter extends RecyclerView.Adapter<Setti
     private void setTextViewValues(MyViewHolder holder, Group group){
         holder.mGroupName.setText(group.getsGroupName());
 
+    }
+
+    public void updateItem(Group group){
+        for (int i = 0; i < mGroups.size(); i++){
+            if (mGroups.get(i).getnGroupID() == group.getnGroupID()){
+                mGroups.set(i,group);
+                notifyItemChanged(i);
+            }
+        }
     }
 }

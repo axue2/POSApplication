@@ -26,6 +26,7 @@ public class SettingsDriverActivity extends AppCompatActivity implements View.On
     Context mContext;
     DatabaseHelper mDBHelper;
     List<Driver> mDrivers;
+    SettingsDriverRecyclerViewAdapter mAdapter;
 
 
 
@@ -42,8 +43,8 @@ public class SettingsDriverActivity extends AppCompatActivity implements View.On
 
         // Setup RecyclerView
         RecyclerView rv = (RecyclerView) findViewById(R.id.settings_driver_rv);
-        SettingsDriverRecyclerViewAdapter adapter = new SettingsDriverRecyclerViewAdapter(this, mDrivers);
-        rv.setAdapter(adapter);
+        mAdapter = new SettingsDriverRecyclerViewAdapter(this, mDrivers);
+        rv.setAdapter(mAdapter);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setLayoutManager(llm);
 
@@ -86,6 +87,8 @@ public class SettingsDriverActivity extends AppCompatActivity implements View.On
                     driver.setnFirstName(name.getText().toString());
                     driver.setnLastName(surname.getText().toString());
                     mDBHelper.UpdateDriver(driver);
+                    mAdapter.updateItem(driver);
+
                     Snackbar.make(v, "Driver Updated",
                             Snackbar.LENGTH_SHORT).show();
                 }
