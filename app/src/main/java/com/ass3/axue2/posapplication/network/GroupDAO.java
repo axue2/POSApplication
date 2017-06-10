@@ -7,7 +7,6 @@ import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
 import com.ass3.axue2.posapplication.models.operational.Group;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;

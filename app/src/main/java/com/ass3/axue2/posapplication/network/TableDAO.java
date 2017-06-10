@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
 import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
-import com.ass3.axue2.posapplication.models.operational.Group;
 import com.ass3.axue2.posapplication.models.operational.Table;
 
 import java.sql.Connection;

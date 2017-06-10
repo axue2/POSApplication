@@ -33,7 +33,7 @@ public class DriverDAO {
 
     public List<Driver> getDrivers() throws SQLException {
         String query = "SELECT * FROM " + Driver.TABLE_NAME;
-        List<Driver> list = new ArrayList<Driver>();
+        List<Driver> list = new ArrayList<>();
         Driver driver = null;
         ResultSet rs = null;
         try {
