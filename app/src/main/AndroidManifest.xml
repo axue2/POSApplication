@@ -46,9 +46,6 @@
             android:label="@string/title_activity_delivery_manager"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.DeliveryLocationActivity"
-            android:label="@string/title_activity_delivery_location" />
-        <activity
             android:name=".activities.Settings.SettingsActivity"
             android:label="Settings" />
         <activity

@@ -1,5 +1,9 @@
 package com.ass3.axue2.posapplication.network;
 
+import android.content.Context;
+
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
 import com.ass3.axue2.posapplication.models.operational.Group;
 import com.ass3.axue2.posapplication.models.operational.Table;
 
@@ -14,7 +18,19 @@ public class TableDAO {
     private Connection connection;
     private Statement statement;
 
-    public TableDAO() { }
+    private String mIP;
+    private String mDB;
+    private String mUser;
+    private String mPassword;
+
+    public TableDAO(Context context) {
+        ConfigurationDatabaseHelper CDBHelper = new ConfigurationDatabaseHelper(context);
+        NetworkSetting networkSetting = CDBHelper.GetNetworkSetting(1);
+        mIP = networkSetting.getsIPAddress();
+        mDB = networkSetting.getsDBName();
+        mUser = networkSetting.getsUsername();
+        mPassword = networkSetting.getsPassword();
+    }
 
     public List<Table> getTables() throws SQLException {
         String query = "SELECT * FROM " + Table.TABLE_NAME;
@@ -22,7 +38,7 @@ public class TableDAO {
         Table table = null;
         ResultSet rs = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection("192.168.56.1", "posdb", "root", "123");
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -52,7 +68,7 @@ public class TableDAO {
         ResultSet rs = null;
         Table table = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             if (rs.next()){
@@ -81,7 +97,7 @@ public class TableDAO {
                 table.getnGuests() + "' , '" + table.getnOrderID() + "' , '" +
                 table.getnInvSum() + "' , '" + table.getsStatus() + "')";
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -101,7 +117,7 @@ public class TableDAO {
                 + " WHERE " + Table.COLUMN_ID + " = " + table.getnTableID();
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -111,4 +127,27 @@ public class TableDAO {
         }
     }
 
+    public boolean testConnection(){
+        String query = "SELECT 1 FROM " + Table.TABLE_NAME;
+        ResultSet rs = null;
+        try {
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
+            if (connection == null){
+                return false;
+            }
+            statement = connection.createStatement();
+            statement.setQueryTimeout(100);
+            rs = statement.executeQuery(query);
+            return rs.next();
+        }
+        catch (NullPointerException n){
+            return false;
+        }
+        catch (SQLException e){
+            return false;
+        }finally {
+            DbUtil.close(statement);
+            DbUtil.close(connection);
+        }
+    }
 }

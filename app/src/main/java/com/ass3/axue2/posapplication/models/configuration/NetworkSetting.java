@@ -36,10 +36,6 @@ public class NetworkSetting {
     public NetworkSetting(long id, int network_mode){
         nID = id;
         nNetworkMode = network_mode;
-        sIPAddress = "";
-        sDBName = "";
-        sUsername = "";
-        sPassword = "";
     }
 
     public NetworkSetting(long id, int network_mode, String ipAddress,

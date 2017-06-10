@@ -1,6 +1,10 @@
 package com.ass3.axue2.posapplication.network;
 
 
+import android.content.Context;
+
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
 import com.ass3.axue2.posapplication.models.operational.Customer;
 
 import java.sql.Connection;
@@ -14,7 +18,19 @@ public class CustomerDAO {
     private Connection connection;
     private Statement statement;
 
-    public CustomerDAO() { }
+    private String mIP;
+    private String mDB;
+    private String mUser;
+    private String mPassword;
+
+    public CustomerDAO(Context context) {
+        ConfigurationDatabaseHelper CDBHelper = new ConfigurationDatabaseHelper(context);
+        NetworkSetting networkSetting = CDBHelper.GetNetworkSetting(1);
+        mIP = networkSetting.getsIPAddress();
+        mDB = networkSetting.getsDBName();
+        mUser = networkSetting.getsUsername();
+        mPassword = networkSetting.getsPassword();
+    }
 
     public List<Customer> getCustomers() throws SQLException {
         String query = "SELECT * FROM " + Customer.TABLE_NAME;
@@ -22,7 +38,7 @@ public class CustomerDAO {
         Customer customer = null;
         ResultSet rs = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -54,7 +70,7 @@ public class CustomerDAO {
         ResultSet rs = null;
         Customer customer = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             if (rs.next()){
@@ -88,7 +104,7 @@ public class CustomerDAO {
                 customer.getsAddressLine2() + "' , '" + customer.getsAddressLine3() + "' , '" +
                 customer.getnPostCode() + "' , '" + customer.getnPhone() + "')";
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -117,7 +133,7 @@ public class CustomerDAO {
                 + " WHERE " + Customer.COLUMN_ID + " = " + customer.getnCustomerID();
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 

@@ -1,6 +1,7 @@
 package com.ass3.axue2.posapplication.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     public static final String EXTRA_ORDERTYPE = "OrderType";
 
     private DatabaseHelper mDBHelper;
+    private Context mContext;
 
     private TextView mSubtotalTextView;
     private TextView mPaidTextView;
@@ -67,6 +69,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         mDBHelper = new DatabaseHelper(getApplicationContext());
+        mContext = this;
 
         // Setup TextView
         mSubtotalTextView = (TextView) findViewById(R.id.payment_subtotal);
@@ -286,7 +289,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             if (sType.equals(Order.TYPE_TAKEAWAY)) {
                 // Create a new takeaway order
                 Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
-                OrderDAO orderDAO = new OrderDAO();
+                OrderDAO orderDAO = new OrderDAO(mContext);
                 long orderID = 0;
                 // TODO: Insert OrderItems, create another tmp table?
             }
@@ -297,8 +300,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 Table newTable = new Table(nTableID, sTableName,
                         0, -1, 0, Table.STATUS_OPEN);
 
-                TableDAO tableDAO = new TableDAO();
-                OrderDAO orderDAO = new OrderDAO();
+                TableDAO tableDAO = new TableDAO(mContext);
+                OrderDAO orderDAO = new OrderDAO(mContext);
 
                 try{
                     Order currentOrder = orderDAO.getOrder(nOrderID);

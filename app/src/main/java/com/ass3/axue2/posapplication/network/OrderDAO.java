@@ -1,5 +1,9 @@
 package com.ass3.axue2.posapplication.network;
 
+import android.content.Context;
+
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
 import com.ass3.axue2.posapplication.models.operational.Order;
 
 import java.sql.Connection;
@@ -14,7 +18,19 @@ public class OrderDAO {
     private Connection connection;
     private Statement statement;
 
-    public OrderDAO() { }
+    private String mIP;
+    private String mDB;
+    private String mUser;
+    private String mPassword;
+
+    public OrderDAO(Context context) {
+        ConfigurationDatabaseHelper CDBHelper = new ConfigurationDatabaseHelper(context);
+        NetworkSetting networkSetting = CDBHelper.GetNetworkSetting(1);
+        mIP = networkSetting.getsIPAddress();
+        mDB = networkSetting.getsDBName();
+        mUser = networkSetting.getsUsername();
+        mPassword = networkSetting.getsPassword();
+    }
 
     public List<Order> getOrders() throws SQLException {
         String query = "SELECT * FROM " + Order.TABLE_NAME;
@@ -22,7 +38,7 @@ public class OrderDAO {
         Order order = null;
         ResultSet rs = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -51,7 +67,7 @@ public class OrderDAO {
         ResultSet rs = null;
         Order order = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             if (rs.next()){
@@ -80,7 +96,7 @@ public class OrderDAO {
                 order.getsType() + "' , '" + order.getsStatus() + "' , '" +
                 order.getnTotal() + "')";
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -106,7 +122,7 @@ public class OrderDAO {
                 + "', " + Order.COLUMN_TOTAL + " = '" + order.getnTotal() + "'" +
                 " WHERE " + Order.COLUMN_ID + " = " + order.getnOrderID();
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -116,4 +132,27 @@ public class OrderDAO {
         }
     }
 
+    public boolean testConnection(){
+        String query = "SELECT 1 FROM " + Order.TABLE_NAME;
+        ResultSet rs = null;
+        try {
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
+            if (connection == null){
+                return false;
+            }
+            statement = connection.createStatement();
+            statement.setQueryTimeout(100);
+            rs = statement.executeQuery(query);
+            return rs.next();
+        }
+        catch (NullPointerException n){
+            return false;
+        }
+        catch (SQLException e){
+            return false;
+        }finally {
+            DbUtil.close(statement);
+            DbUtil.close(connection);
+        }
+    }
 }

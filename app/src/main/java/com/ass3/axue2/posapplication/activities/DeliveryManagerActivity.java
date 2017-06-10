@@ -267,10 +267,12 @@ public class DeliveryManagerActivity extends AppCompatActivity {
     private class UpdateTask extends AsyncTask<Object, Object, ArrayList<Delivery>> {
         private DatabaseHelper dbHelper;
         private String mStatus;
+        private Context mContext;
 
         UpdateTask(String status, DeliveryManagerActivity activity){
             dbHelper = new DatabaseHelper(activity);
             mStatus = status;
+            mContext = activity;
         }
 
         @Override
@@ -280,7 +282,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<Delivery> doInBackground(Object... params) {
-            DeliveryDAO deliveryDAO = new DeliveryDAO();
+            DeliveryDAO deliveryDAO = new DeliveryDAO(mContext);
             ArrayList<Delivery> deliveries = new ArrayList<>();
             try {
                 for (Delivery del : mDeliveries) {
@@ -296,7 +298,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
                     }
                 }
                 // synchronise with server db
-                synchronise(dbHelper);
+                synchronise(dbHelper, mContext);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -317,10 +319,12 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
     private class SynchroniseTask extends AsyncTask<Void, Void, Void> {
         private DatabaseHelper dbHelper;
+        private Context mContext;
 
 
         SynchroniseTask(DeliveryManagerActivity activity){
             dbHelper = new DatabaseHelper(activity);
+            mContext = activity;
         }
 
         @Override
@@ -330,7 +334,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            synchronise(dbHelper);
+            synchronise(dbHelper, mContext);
             return null;
         }
 
@@ -341,10 +345,10 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         }
     }
 
-    private void synchronise(DatabaseHelper dbHelper){
-        DeliveryDAO deliveryDAO = new DeliveryDAO();
-        DriverDAO driverDAO = new DriverDAO();
-        CustomerDAO customerDAO = new CustomerDAO();
+    private void synchronise(DatabaseHelper dbHelper, Context mContext){
+        DeliveryDAO deliveryDAO = new DeliveryDAO(mContext);
+        DriverDAO driverDAO = new DriverDAO(mContext);
+        CustomerDAO customerDAO = new CustomerDAO(mContext);
         List<Delivery> deliveries;
         List<Driver> drivers;
         List<Customer> customers;

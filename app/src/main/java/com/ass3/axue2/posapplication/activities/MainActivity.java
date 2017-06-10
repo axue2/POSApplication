@@ -1,6 +1,7 @@
 package com.ass3.axue2.posapplication.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.Settings.SettingsActivity;
@@ -51,6 +53,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DatabaseHelper mDBHelper;
+    private Context mContext;
+    private View mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,21 +69,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //this.deleteDatabase(ConfigurationDatabaseHelper.DATABASE_NAME);
 
         // Get database handler
-        mDBHelper = new DatabaseHelper(getApplicationContext());
-        ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
+        mContext = this;
+        mDBHelper = new DatabaseHelper(this);
+        ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(this);
 
 
         // Checks to see if there are Network Settings
         if (mCDBHelper.GetNetworkSettings().size() == 0){
-            mCDBHelper.AddNetworkSetting(new NetworkSetting(1,0));
+            // Set Default Network Values
+            mCDBHelper.AddNetworkSetting(new NetworkSetting(1,0,
+                    "192.168.56.1", "posdb", "root", "123"));
         }
+
+        // Check to see if tables are empty
+        checkTablesEmpty();
 
         // Checks to see if its in network mode
         if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 1){
-            //TODO Create empty tables if tables do not exist
             new SynchroniseTask(MainActivity.this).execute();
         } else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0){
-            checkTablesEmpty();
             createTabLayouts();
         }
 
@@ -154,13 +162,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private class SynchroniseTask extends AsyncTask<Void, Void, Void>{
+    private class SynchroniseTask extends AsyncTask<Object, Object, Boolean> {
         private ProgressDialog mDialog;
         private DatabaseHelper dbHelper;
+        private ConfigurationDatabaseHelper CDBHelper;
 
         SynchroniseTask(MainActivity activity){
             mDialog = new ProgressDialog(activity);
             dbHelper = new DatabaseHelper(activity);
+            CDBHelper = new ConfigurationDatabaseHelper(activity);
         }
 
         @Override
@@ -175,69 +185,80 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            TableDAO tableDAO= new TableDAO();
-            OrderDAO orderDAO = new OrderDAO();
-            OrderItemDAO orderItemDAO = new OrderItemDAO();
-            ProductDAO productDAO = new ProductDAO();
-            GroupDAO groupDAO = new GroupDAO();
+        protected Boolean doInBackground(Object... params) {
+
+            TableDAO tableDAO= new TableDAO(mContext);
+            OrderDAO orderDAO = new OrderDAO(mContext);
+            OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
+            ProductDAO productDAO = new ProductDAO(mContext);
+            GroupDAO groupDAO = new GroupDAO(mContext);
             List<Table> tables;
             List<Order> orders;
             List<OrderItem> orderItems;
             List<Product> products;
             List<Group> groups;
             try {
-                // Sync Tables
-                tables = tableDAO.getTables();
-                dbHelper.dropTable(Table.TABLE_NAME);
-                dbHelper.createTable(Table.CREATE_STATEMENT);
-                for (Table table : tables){
-                    dbHelper.AddTable(table);
+                /*NetworkSetting networkSetting = CDBHelper.GetNetworkSetting(1);
+                Connection connection = ConnectionFactory.getConnection(
+                        networkSetting.getsIPAddress(),networkSetting.getsDBName(),
+                        networkSetting.getsUsername(), networkSetting.getsPassword());*/
+                if (tableDAO.testConnection()) {
+                    System.out.println("Connection Passed");
+                    // Sync Tables
+                    tables = tableDAO.getTables();
+                    dbHelper.dropTable(Table.TABLE_NAME);
+                    dbHelper.createTable(Table.CREATE_STATEMENT);
+                    for (Table table : tables) {
+                        dbHelper.AddTable(table);
+                    }
+                    // Sync Orders
+                    orders = orderDAO.getOrders();
+                    dbHelper.dropTable(Order.TABLE_NAME);
+                    dbHelper.createTable(Order.CREATE_STATEMENT);
+                    for (Order order : orders) {
+                        dbHelper.AddOrder(order);
+                    }
+                    // Sync OrderItems
+                    orderItems = orderItemDAO.getOrderItems();
+                    dbHelper.dropTable(OrderItem.TABLE_NAME);
+                    dbHelper.createTable(OrderItem.CREATE_STATEMENT);
+                    for (OrderItem orderItem : orderItems) {
+                        dbHelper.AddOrderItem(orderItem);
+                    }
+                    // Sync Products
+                    products = productDAO.getProducts();
+                    dbHelper.dropTable(Product.TABLE_NAME);
+                    dbHelper.createTable(Product.CREATE_STATEMENT);
+                    for (Product product : products) {
+                        dbHelper.AddProduct(product);
+                    }
+                    // Sync Groups
+                    groups = groupDAO.getGroups();
+                    dbHelper.dropTable(Group.TABLE_NAME);
+                    dbHelper.createTable(Group.CREATE_STATEMENT);
+                    for (Group group : groups) {
+                        dbHelper.AddGroup(group);
+                    }
+                } else{
+                    return false;
                 }
-                // Sync Orders
-                orders = orderDAO.getOrders();
-                dbHelper.dropTable(Order.TABLE_NAME);
-                dbHelper.createTable(Order.CREATE_STATEMENT);
-                for (Order order: orders){
-                    dbHelper.AddOrder(order);
-                }
-                // Sync OrderItems
-                orderItems = orderItemDAO.getOrderItems();
-                dbHelper.dropTable(OrderItem.TABLE_NAME);
-                dbHelper.createTable(OrderItem.CREATE_STATEMENT);
-                for (OrderItem orderItem : orderItems){
-                    dbHelper.AddOrderItem(orderItem);
-                }
-                // Sync Products
-                products = productDAO.getProducts();
-                dbHelper.dropTable(Product.TABLE_NAME);
-                dbHelper.createTable(Product.CREATE_STATEMENT);
-                for (Product product : products){
-                    dbHelper.AddProduct(product);
-                }
-                // Sync Groups
-                groups = groupDAO.getGroups();
-                dbHelper.dropTable(Group.TABLE_NAME);
-                dbHelper.createTable(Group.CREATE_STATEMENT);
-                for (Group group : groups){
-                    dbHelper.AddGroup(group);
-                }
-
             } catch (SQLException e) {
                 e.printStackTrace();
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
+                return false;
             }
 
-            return null;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Boolean aVoid) {
             super.onPostExecute(aVoid);
+
+            if (!aVoid){
+                Toast.makeText(mContext, "Error, Could not Connect to Db. " +
+                                "Please make sure your network settings are correct and try again!"
+                        , Toast.LENGTH_LONG).show();
+            }
             createTabLayouts();
             mDialog.dismiss();
         }

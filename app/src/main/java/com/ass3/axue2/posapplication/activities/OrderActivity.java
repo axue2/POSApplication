@@ -93,7 +93,6 @@ public class OrderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_order);
 
         mContext = this;
-
         Intent intent = getIntent();
 
         // Get Order information
@@ -329,10 +328,11 @@ public class OrderActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
             Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
             // If status is not In-use create new order
+
             if (nOrderID <= 0) {
                 try{
                     // Insert Order
-                    OrderDAO orderDAO = new OrderDAO();
+                    OrderDAO orderDAO = new OrderDAO(mContext);
                     nOrderID = orderDAO.insertOrder(order);
 
                 } catch (SQLException e) {
@@ -341,7 +341,7 @@ public class OrderActivity extends AppCompatActivity {
             } else {
                 try{
                     // Update Order
-                    OrderDAO orderDAO = new OrderDAO();
+                    OrderDAO orderDAO = new OrderDAO(mContext);
                     orderDAO.updateOrder(order);
 
                 }catch (SQLException e) {
@@ -352,7 +352,7 @@ public class OrderActivity extends AppCompatActivity {
             if (sType.equals(Order.TYPE_EAT_IN)) {
                 Table table = new Table(nTableID, mTableName, nTableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
                 try {
-                    TableDAO tableDAO = new TableDAO();
+                    TableDAO tableDAO = new TableDAO(mContext);
                     tableDAO.updateTable(table);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -360,8 +360,8 @@ public class OrderActivity extends AppCompatActivity {
             }
             // Otherwise add/update delivery details if delivery order
             else if (sType.equals(Order.TYPE_DELIVERY)) {
-                CustomerDAO customerDAO = new CustomerDAO();
-                DeliveryDAO deliveryDAO = new DeliveryDAO();
+                CustomerDAO customerDAO = new CustomerDAO(mContext);
+                DeliveryDAO deliveryDAO = new DeliveryDAO(mContext);
                 Customer customer = new Customer(sCustomerName, "", sAL1, sAL2, sAL3,
                         nPostcode, nPhone);
                 try {
@@ -391,7 +391,7 @@ public class OrderActivity extends AppCompatActivity {
                 // If OrderItem was not found then delete it from db
                 if (!isFound){
                     try {
-                        OrderItemDAO orderItemDAO = new OrderItemDAO();
+                        OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
                         orderItemDAO.deleteOrderItem(orderItem);
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -400,7 +400,7 @@ public class OrderActivity extends AppCompatActivity {
             }
             // Adds/Updates OrderItems to db
             try {
-                OrderItemDAO orderItemDAO = new OrderItemDAO();
+                OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
                 for (OrderItem orderItem : mOrderItems) {
                     orderItem.setnOrderID(nOrderID);
                     if (orderItem.getnOrderItemID() > 0) {

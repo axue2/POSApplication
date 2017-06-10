@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 
 /**
  * Created by anthony on 5/22/2017.
+ *  Database Strictly for settings local to the machine
  */
 
 public class ConfigurationDatabaseHelper extends SQLiteOpenHelper{
