@@ -15,7 +15,6 @@ import com.ass3.axue2.posapplication.activities.DeliveryManagerActivity;
 import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
-import com.ass3.axue2.posapplication.models.operational.Order;
 
 import java.util.ArrayList;
 
@@ -35,7 +34,8 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
         private CardView mCardView;
         private TextView mDeliveryIDTextView;
         private TextView mCustomerNameTextView;
-        private TextView mStatusTextView;
+        private TextView mAddressTextView;
+        private TextView mPostCodeTextView;
         private TextView mInvoiceTextView;
         private LinearLayout mLinearLayout;
 
@@ -45,7 +45,8 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
             mCardView = (CardView) v.findViewById(R.id.delivery_manager_list_cv);
             mDeliveryIDTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_id_text);
             mCustomerNameTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_customer_text);
-            mStatusTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_status_text);
+            mAddressTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_address_text);
+            mPostCodeTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_postcode_text);
             mInvoiceTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_total_text);
             mLinearLayout = (LinearLayout) v.findViewById(R.id.delivery_manager_ll);
         }
@@ -107,19 +108,20 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
         if(delivery.getnCustomerID() > 0) {
             Customer customer = db.GetCustomer(delivery.getnCustomerID());
             holder.mCustomerNameTextView.setText(customer.getsFirstName() + " " + customer.getsLastName());
-            holder.mStatusTextView.setText(String.valueOf(customer.getnPostCode()));
+            holder.mAddressTextView.setText(customer.getsAddressLine1());
+            holder.mPostCodeTextView.setText(String.valueOf(customer.getnPostCode()));
         }
-
+        // If OrderID valid then set mInvoiceTextView with total invoice
         if (delivery.getnOrderID() > 0){
-            holder.mDeliveryIDTextView.setText(String.valueOf(delivery.getnDeliveryID()));
             String str = "$" + db.GetOrder(delivery.getnOrderID()).getnTotal();
             holder.mInvoiceTextView.setText(str);
         }
+        // Otherwise set with delivery fee
         else{
-            holder.mDeliveryIDTextView.setText(String.valueOf(delivery.getnDeliveryID()));
             String str = "$" + String.valueOf(delivery.getnDeliveryFee());
             holder.mInvoiceTextView.setText(str);
         }
+        holder.mDeliveryIDTextView.setText(String.valueOf(delivery.getnDeliveryID()));
     }
 
     public void removeItem(Delivery delivery){

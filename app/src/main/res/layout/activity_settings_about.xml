@@ -56,4 +56,14 @@
         android:layout_alignStart="@+id/textView5"
         android:layout_below="@+id/textView5"
         android:text="Please note that the majority of settings functionality will NOT work while in network mode. This is an intentional design choice as this may lead to potential issues if all users are able to manipulate the network database in such a manner. As such, this functionality will most likely be implemented if some kind of user privilege functionality is utilised in the application." />
+
+    <TextView
+        android:id="@+id/textView17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Package Architecture follows: https://github.com/futurice/android-best-practices "
+        android:layout_below="@+id/textView16"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="15dp"
+        android:layout_alignStart="@+id/textView16" />
 </RelativeLayout>

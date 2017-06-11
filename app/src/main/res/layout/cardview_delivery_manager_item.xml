@@ -22,7 +22,7 @@
                 android:id="@+id/delivery_manager_list_cv_id_text"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:gravity="fill"
+                android:gravity="center"
                 android:text="@string/delivery_id_placeholder"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -31,30 +31,46 @@
                 android:id="@+id/delivery_manager_list_cv_customer_text"
                 android:layout_width="70dp"
                 android:layout_height="50dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
+                android:layout_alignParentTop="true"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+
                 android:layout_toEndOf="@+id/delivery_manager_list_cv_id_text"
-                android:gravity="fill"
+                android:gravity="center"
                 android:text="@string/name_placeholder" />
 
             <TextView
-                android:id="@+id/delivery_manager_list_cv_status_text"
-                android:layout_width="60dp"
-                android:layout_height="30dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
+                android:id="@+id/delivery_manager_list_cv_address_text"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_alignParentTop="true"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
                 android:layout_toEndOf="@+id/delivery_manager_list_cv_customer_text"
-                android:gravity="fill"
+                android:gravity="center"
                 android:text="@string/delivery_status_placeholder" />
+
+            <TextView
+                android:id="@+id/delivery_manager_list_cv_postcode_text"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:layout_alignBottom="@+id/delivery_manager_list_cv_customer_text"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/delivery_manager_list_cv_address_text"
+                android:gravity="center"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"
+                android:text="@string/postcode_placeholder" />
 
             <TextView
                 android:id="@+id/delivery_manager_list_cv_total_text"
                 android:layout_width="70dp"
-                android:layout_height="30dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
-                android:layout_toEndOf="@+id/delivery_manager_list_cv_status_text"
-                android:gravity="fill"
+                android:layout_height="50dp"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/delivery_manager_list_cv_postcode_text"
+                android:gravity="center"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"
                 android:text="@string/table_total_placeholder" />
 
         </RelativeLayout>

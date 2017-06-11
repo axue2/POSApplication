@@ -126,5 +126,6 @@
     <string name="first_name_placeholder">John</string>
     <string name="last_name_placeholder">Smith</string>
     <string name="network_mode">Network Mode</string>
+    <string name="postcode_placeholder">3333</string>
 
 </resources>
