@@ -48,7 +48,7 @@ public class OrderDAO {
                 order.setnTableID(rs.getInt(Order.COLUMN_TABLE_ID));
                 order.setsType(rs.getString(Order.COLUMN_TYPE));
                 order.setsStatus(rs.getString(Order.COLUMN_STATUS));
-                order.setnTotal(rs.getInt(Order.COLUMN_TOTAL));
+                order.setnTotal(rs.getDouble(Order.COLUMN_TOTAL));
 
                 //add each order to the list
                 list.add(order);
@@ -75,7 +75,7 @@ public class OrderDAO {
                 order.setnTableID(rs.getInt(Order.COLUMN_TABLE_ID));
                 order.setsType(rs.getString(Order.COLUMN_TYPE));
                 order.setsStatus(rs.getString(Order.COLUMN_STATUS));
-                order.setnTotal(rs.getInt(Order.COLUMN_TOTAL));
+                order.setnTotal(rs.getDouble(Order.COLUMN_TOTAL));
             }
         } finally {
             DbUtil.close(rs);

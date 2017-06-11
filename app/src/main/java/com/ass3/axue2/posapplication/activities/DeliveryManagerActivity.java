@@ -285,7 +285,7 @@ public class DeliveryManagerActivity extends AppCompatActivity {
             DeliveryDAO deliveryDAO = new DeliveryDAO(mContext);
             ArrayList<Delivery> deliveries = new ArrayList<>();
             try {
-                for (Delivery del : mDeliveries) {
+                for (Delivery del : mSelectedDeliveries) {
                     // Get delivery from server db
                     Delivery delivery = deliveryDAO.getDelivery(del.getnDeliveryID());
                     // check to see if delivery hasn't already be allocated
@@ -308,12 +308,12 @@ public class DeliveryManagerActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Delivery> deliveries) {
             super.onPostExecute(deliveries);
-            for (Delivery delivery : deliveries){
+            /*for (Delivery delivery : deliveries){
                 mDeliveries.remove(delivery);
-/*                mAdapter.removeItem(delivery);*/
-                refresh();
-            }
+                mAdapter.removeItem(delivery);
 
+            }*/
+            refresh();
         }
     }
 
