@@ -113,12 +113,12 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
         }
         // If OrderID valid then set mInvoiceTextView with total invoice
         if (delivery.getnOrderID() > 0){
-            String str = "$" + db.GetOrder(delivery.getnOrderID()).getnTotal();
+            String str = "$" + String.format("%.2f", db.GetOrder(delivery.getnOrderID()).getnTotal());
             holder.mInvoiceTextView.setText(str);
         }
         // Otherwise set with delivery fee
         else{
-            String str = "$" + String.valueOf(delivery.getnDeliveryFee());
+            String str = "$" + String.format("%.2f", delivery.getnDeliveryFee());
             holder.mInvoiceTextView.setText(str);
         }
         holder.mDeliveryIDTextView.setText(String.valueOf(delivery.getnDeliveryID()));

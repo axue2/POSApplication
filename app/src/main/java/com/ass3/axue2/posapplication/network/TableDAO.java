@@ -37,7 +37,7 @@ public class TableDAO {
         Table table = null;
         ResultSet rs = null;
         try {
-            connection = ConnectionFactory.getConnection("192.168.56.1", "posdb", "root", "123");
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -48,7 +48,7 @@ public class TableDAO {
                 table.setsTableName(rs.getString(Table.COLUMN_NAME));
                 table.setnGuests(rs.getInt(Table.COLUMN_GUESTS));
                 table.setnOrderID(rs.getInt(Table.COLUMN_ORDER_ID));
-                table.setnInvSum(rs.getInt(Table.COLUMN_TOTAL));
+                table.setnInvSum(rs.getDouble(Table.COLUMN_TOTAL));
                 table.setsStatus(rs.getString(Table.COLUMN_STATUS));
 
                 //add each table to the list
@@ -76,7 +76,7 @@ public class TableDAO {
                 table.setsTableName(rs.getString(Table.COLUMN_NAME));
                 table.setnGuests(rs.getInt(Table.COLUMN_GUESTS));
                 table.setnOrderID(rs.getInt(Table.COLUMN_ORDER_ID));
-                table.setnInvSum(rs.getInt(Table.COLUMN_TOTAL));
+                table.setnInvSum(rs.getDouble(Table.COLUMN_TOTAL));
                 table.setsStatus(rs.getString(Table.COLUMN_STATUS));
             }
         } finally {

@@ -75,7 +75,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(1),
                         cursor.getInt(2),
                         cursor.getLong(3),
-                        cursor.getInt(4),
+                        cursor.getDouble(4),
                         cursor.getString(5));
                 tables.put(table.getnTableID(), table);
             } while(cursor.moveToNext());
@@ -97,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(1),
                         cursor.getInt(2),
                         cursor.getLong(3),
-                        cursor.getInt(4),
+                        cursor.getDouble(4),
                         cursor.getString(5));
                 tables.put(table.getnTableID(), table);
             } while(cursor.moveToNext());
@@ -122,7 +122,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getString(1),
                 cursor.getInt(2),
                 cursor.getLong(3),
-                cursor.getInt(4),
+                cursor.getDouble(4),
                 cursor.getString(5));
         cursor.close();
 
@@ -176,7 +176,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Product product = new Product(cursor.getLong(0),
                 cursor.getLong(1),
                 cursor.getString(2),
-                cursor.getInt(3)
+                cursor.getDouble(3)
         );
         cursor.close();
 
@@ -195,7 +195,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Product product = new Product(cursor.getLong(0),
                         cursor.getLong(1),
                         cursor.getString(2),
-                        cursor.getInt(3)
+                        cursor.getDouble(3)
                 );
                 products.put(product.getnProductID(), product);
             } while(cursor.moveToNext());
@@ -246,7 +246,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getLong(1),
                 cursor.getString(2),
                 cursor.getString(3),
-                cursor.getInt(4));
+                cursor.getDouble(4));
         cursor.close();
 
         return order;
@@ -322,6 +322,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void AddGroup(Group group){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        if (group.getnGroupID() > 0)
+            values.put(Group.COLUMN_ID, group.getnGroupID());
         values.put(Group.COLUMN_NAME, group.getsGroupName());
         db.insert(Group.TABLE_NAME, null, values);
         db.close();
@@ -760,6 +762,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         AddProduct(new Product(4, "Orange Blossom Polenta Cake", 10.5));
         AddProduct(new Product(4, "Amalfi Lemon Meringue Cheesecake", 14));
 
+        Product product = new Product(5, "Rossini", 9.95);
+        System.out.println(product.getnPrice());
         AddProduct(new Product(5, "Rossini", 9.95));
         AddProduct(new Product(5, "Belini", 9.95));
         AddProduct(new Product(5, "Aperol Spritz", 11));
@@ -774,6 +778,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         AddProduct(new Product(6, "Classic Super Food Salad", 18));
         AddProduct(new Product(6, "Bresaola Salad", 18));
         AddProduct(new Product(6, "Prosciutto & Pear Salad", 18));
+        System.out.println(GetProduct(36).getnPrice());
+        System.out.println(GetProduct(37).getnPrice());
+        System.out.println(GetProduct(38).getnPrice());
     }
 
     public void CreateDefaultDrivers(){

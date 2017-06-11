@@ -454,7 +454,6 @@ public class OrderActivity extends AppCompatActivity {
             // If found in OrderItems then increase quantity by one
             if(checkItem.getnProductID() == orderItem.getnProductID()){
                 checkItem.setnQuantity(checkItem.getnQuantity() + 1);
-                Log.d("Current Quantity", String.valueOf(checkItem.getnQuantity()));
                 found = true;
                 break;
             }
@@ -463,7 +462,6 @@ public class OrderActivity extends AppCompatActivity {
         if (!found) {
             // if OrderItem could not be found add one into OrderItems
             mOrderItems.add(orderItem);
-            Log.d("Current Number of items", String.valueOf(mOrderItems.size()));
         }
     }
 
@@ -485,7 +483,7 @@ public class OrderActivity extends AppCompatActivity {
         }
 
         mOrderQuantityTextView.setText(String.valueOf(nQuantity));
-        mOrderSubtotalTextView.setText(String.valueOf("$" + nSubtotal));
+        mOrderSubtotalTextView.setText(String.valueOf("$" + String.format("%.2f", nSubtotal)));
     }
 
     public void RemoveOrderItem(OrderItem orderItem){

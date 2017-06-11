@@ -77,7 +77,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         mChangeTextView = (TextView) findViewById(R.id.payment_change_amount);
 
         // Set TextView
-        mSubtotalTextView.setText(String.valueOf(nSubtotal));
+        mSubtotalTextView.setText(String.format("%.2f", nSubtotal));
         mChangeTextView.setText(String.valueOf(nChange));
         mPaidTextView.setText("0");
 
@@ -180,12 +180,12 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                             sPaid = sPaid.substring(0, sPaid.length() - 2);
                             // If sPaid is not empty after removing the decimal
                             if (!sPaid.equals("")){
-
                                 double paid = Double.parseDouble(sPaid);
-                                nChange = (nSubtotal - paid) * -1;
+                                String change = String.format("%.2f" ,(nSubtotal - paid) * -1);
+                                nChange = Double.parseDouble(change);
                                 String newString = sPaid + getString(R.string.decimal);
                                 mPaidTextView.setText(newString);
-                                mChangeTextView.setText(String.valueOf(nChange));
+                                mChangeTextView.setText(String.valueOf(change));
 
                             }else{
                                 sPaid = "";
@@ -197,10 +197,11 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         }else{
                             sPaid = sPaid.substring(0, sPaid.length() - 1);
                             double paid = Double.parseDouble(sPaid);
-                            nChange = (nSubtotal - paid) * -1;
+                            String change = String.format("%.2f" ,(nSubtotal - paid) * -1);
+                            nChange = Double.parseDouble(change);
 
                             mPaidTextView.setText(sPaid);
-                            mChangeTextView.setText(String.valueOf(nChange));
+                            mChangeTextView.setText(String.valueOf(change));
                         }
                     }
                     // If there is only one value
@@ -339,10 +340,11 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
         sPaid += n;
         double paid = Double.parseDouble(sPaid);
-        nChange = (nSubtotal - paid) * -1;
+        String change = String.format("%.2f" ,(nSubtotal - paid) * -1);
+        nChange = Double.parseDouble(change);
 
         mPaidTextView.setText(sPaid);
-        mChangeTextView.setText(String.valueOf(nChange));
+        mChangeTextView.setText(change);
     }
 }
 

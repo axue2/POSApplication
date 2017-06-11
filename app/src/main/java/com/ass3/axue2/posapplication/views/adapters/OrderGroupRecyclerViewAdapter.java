@@ -85,7 +85,7 @@ public class OrderGroupRecyclerViewAdapter extends RecyclerView.Adapter<OrderGro
     private void setTextViewValues(MyViewHolder holder, Product product){
 
         holder.mNameTextView.setText(product.getsProductName());
-        String price = "$" + String.valueOf(product.getnPrice());
+        String price = "$" + String.format("%.2f", product.getnPrice());
         holder.mPriceTextView.setText(price);
 
     }

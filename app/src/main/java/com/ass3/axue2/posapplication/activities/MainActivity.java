@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private DatabaseHelper mDBHelper;
     private Context mContext;
-    private View mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.fab_takeaway:
                 Intent takeawayIntent = new Intent(v.getContext(), OrderActivity.class);
                 takeawayIntent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_TAKEAWAY);
-                takeawayIntent.putExtra(OrderActivity.EXTRA_TABLENAME, Order.TYPE_TAKEAWAY);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_TABLENAME, "Takeaway");
                 takeawayIntent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
                 takeawayIntent.putExtra(OrderActivity.EXTRA_TABLEID, 0);
                 takeawayIntent.putExtra(OrderActivity.EXTRA_ORDERID, 0);
@@ -165,12 +164,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private class SynchroniseTask extends AsyncTask<Object, Object, Boolean> {
         private ProgressDialog mDialog;
         private DatabaseHelper dbHelper;
-        private ConfigurationDatabaseHelper CDBHelper;
 
         SynchroniseTask(MainActivity activity){
             mDialog = new ProgressDialog(activity);
             dbHelper = new DatabaseHelper(activity);
-            CDBHelper = new ConfigurationDatabaseHelper(activity);
         }
 
         @Override
@@ -198,12 +195,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             List<Product> products;
             List<Group> groups;
             try {
-                /*NetworkSetting networkSetting = CDBHelper.GetNetworkSetting(1);
-                Connection connection = ConnectionFactory.getConnection(
-                        networkSetting.getsIPAddress(),networkSetting.getsDBName(),
-                        networkSetting.getsUsername(), networkSetting.getsPassword());*/
+                // Check connection
                 if (tableDAO.testConnection()) {
-                    System.out.println("Connection Passed");
                     // Sync Tables
                     tables = tableDAO.getTables();
                     dbHelper.dropTable(Table.TABLE_NAME);

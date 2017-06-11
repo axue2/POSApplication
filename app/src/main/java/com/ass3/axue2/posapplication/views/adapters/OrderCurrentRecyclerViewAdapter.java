@@ -103,11 +103,12 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
     private void setTextViewValues(MyViewHolder holder, OrderItem item, int position){
 
         holder.mNameTextView.setText(item.getsProductName());
-        String price = "$" + String.valueOf(item.getnPrice());
+        String price = "$" + String.valueOf(String.format("%.2f", item.getnPrice()));
         holder.mPriceTextView.setText(price);
         String quantity = "x" + item.getnQuantity();
         holder.mQuantityTextView.setText(quantity);
-        String subtotal = "$" + String.valueOf(item.getnQuantity() * item.getnPrice());
+        double total = item.getnQuantity() * item.getnPrice();
+        String subtotal = "$" + String.valueOf(String.format("%.2f", total));
         holder.mSubtotalTextView.setText(subtotal);
         holder.mSubtotalTextView.invalidate();
     }
