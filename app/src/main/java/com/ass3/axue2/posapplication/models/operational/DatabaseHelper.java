@@ -51,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void AddTable(Table table){
+    public long AddTable(Table table){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Table.COLUMN_NAME, table.getsTableName());
@@ -59,8 +59,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Table.COLUMN_ORDER_ID, table.getnOrderID());
         values.put(Table.COLUMN_TOTAL, table.getnInvSum());
         values.put(Table.COLUMN_STATUS, table.getsStatus());
-        db.insert(Table.TABLE_NAME, null, values);
+        long id = db.insert(Table.TABLE_NAME, null, values);
         db.close();
+        return id;
     }
 
     public HashMap<Long, Table> GetAllTables(){
@@ -319,14 +320,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void AddGroup(Group group){
+    public long AddGroup(Group group){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         if (group.getnGroupID() > 0)
             values.put(Group.COLUMN_ID, group.getnGroupID());
         values.put(Group.COLUMN_NAME, group.getsGroupName());
-        db.insert(Group.TABLE_NAME, null, values);
+        long id = db.insert(Group.TABLE_NAME, null, values);
         db.close();
+        return id;
     }
 
     public Group GetGroup(long id){
@@ -559,7 +561,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Driver.COLUMN_FIRST_NAME, driver.getnFirstName());
         values.put(Driver.COLUMN_LAST_NAME, driver.getnLastName());
         long id = db.insert(Driver.TABLE_NAME, null, values);
-        Log.d("Driver Added", driver.getnFirstName());
         db.close();
         return id;
     }

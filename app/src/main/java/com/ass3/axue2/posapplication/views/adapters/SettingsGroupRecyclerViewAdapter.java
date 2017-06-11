@@ -88,4 +88,9 @@ public class SettingsGroupRecyclerViewAdapter extends RecyclerView.Adapter<Setti
             }
         }
     }
+
+    public void addItem(Group group){
+        mGroups.add(group);
+        notifyItemInserted(mGroups.size() - 1);
+    }
 }

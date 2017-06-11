@@ -9,12 +9,13 @@
     <Button
         android:id="@+id/settings_restaurant_confirm_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:background="@color/settingsButton"
-        android:text="@string/confirm" />
+        android:background="@color/settingsConfirmButton"
+        android:text="@string/confirm"
+        android:textColor="@color/WHITE" />
 
     <TextView
         android:id="@+id/textView7"

@@ -20,7 +20,7 @@
     <color name="fab_takeaway">#f57c00</color>
     <color name="fab_delivery">#00c853</color>
     <color name="deliverySelected">#cfd8dc</color>
-    <color name="settingsButton">#76ff03</color>
     <color name="settingsConfirmButton">#0091ea</color>
+    <color name="settingsAddButton">#76ff03</color>
     <color name="settingsDeleteDBButton">#f44336</color>
 </resources>

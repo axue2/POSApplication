@@ -49,15 +49,17 @@
             android:name=".activities.Settings.SettingsNetworkActivity"
             android:label="Network Settings" />
 
-        <activity android:name=".activities.Settings.SettingsGroupActivity" />
-        <activity android:name=".activities.Settings.SettingsTableActivity" />
+        <activity android:name=".activities.Settings.SettingsGroupActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activities.Settings.SettingsTableActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activities.Settings.SettingsProductActivity"
-            android:label="@string/title_activity_settings_products"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.Settings.SettingsDatabaseActivity" />
         <activity android:name=".activities.Settings.SettingsRestaurantActivity" />
-        <activity android:name=".activities.Settings.SettingsDriverActivity" />
+        <activity android:name=".activities.Settings.SettingsDriverActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activities.Settings.SettingsAboutActivity"></activity>
     </application>
 

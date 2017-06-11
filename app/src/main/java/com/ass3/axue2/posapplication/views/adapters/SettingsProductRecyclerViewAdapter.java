@@ -101,4 +101,9 @@ public class SettingsProductRecyclerViewAdapter extends RecyclerView.Adapter<Set
             }
         }
     }
+
+    public void addItem(Product product){
+        mProducts.add(product);
+        notifyItemInserted(mProducts.size() - 1);
+    }
 }

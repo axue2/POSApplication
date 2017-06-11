@@ -19,6 +19,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.content.Context;
 import android.support.v7.widget.ThemedSpinnerAdapter;
@@ -77,8 +78,11 @@ public class SettingsProductActivity extends AppCompatActivity implements View.O
                 llm.getOrientation());
         mRV.addItemDecoration(itemDecoration);
 
+        // Setup Buttons
         Button mConfirmButton = (Button) findViewById(R.id.settings_product_confirm_button);
         mConfirmButton.setOnClickListener(this);
+        ImageButton mAddButton = (ImageButton) findViewById(R.id.add_button);
+        mAddButton.setOnClickListener(this);
 
         String[] values = new String[mGroups.size()];
         int count = 0;
@@ -149,12 +153,11 @@ public class SettingsProductActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onClick(View v) {
+        TextView id = (TextView) findViewById(R.id.settings_product_id_textview);
+        EditText name = (EditText) findViewById(R.id.settings_product_name_editText);
+        EditText price = (EditText) findViewById(R.id.settings_product_price_editText);
         switch (v.getId()){
             case R.id.settings_product_confirm_button:
-                TextView id = (TextView) findViewById(R.id.settings_product_id_textview);
-                EditText name = (EditText) findViewById(R.id.settings_product_name_editText);
-                EditText price = (EditText) findViewById(R.id.settings_product_price_editText);
-
                 // If Product ID is not empty
                 if (!id.getText().toString().equals("")) {
                     long productID = Long.parseLong(id.getText().toString());
@@ -180,6 +183,34 @@ public class SettingsProductActivity extends AppCompatActivity implements View.O
                     Snackbar.make(v, "Product Updated",
                             Snackbar.LENGTH_SHORT).show();
                 }
+                // Otherwise create new product
+                else {
+                    long groupID = mGroups.get(mProductSpinner.getSelectedItemPosition()).getnGroupID();
+                    double productPrice = 0;
+
+                    // If there is a price set
+                    if (!price.getText().toString().equals("")) {
+                        productPrice = Double.parseDouble(price.getText().toString());
+                    }
+
+                    Product product = new Product(0, groupID, name.getText().toString(),
+                            productPrice);
+                    long productID = mDBHelper.AddProduct(product);
+                    product.setnProductID(productID);
+                    // If product in current group displayed then add it to RV
+                    if (groupID == mGroupID){
+                        mAdapter.addItem(product);
+                    }
+
+                    Snackbar.make(v, "Product Added",
+                            Snackbar.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.add_button:
+                // Empty All Fields
+                id.setText("");
+                name.setText("");
+                price.setText("");
                 break;
         }
     }
@@ -196,7 +227,6 @@ public class SettingsProductActivity extends AppCompatActivity implements View.O
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
             View view;
-
             if (convertView == null) {
                 // Inflate the drop down using the helper's LayoutInflater
                 LayoutInflater inflater = mDropDownHelper.getDropDownViewInflater();
@@ -204,10 +234,8 @@ public class SettingsProductActivity extends AppCompatActivity implements View.O
             } else {
                 view = convertView;
             }
-
             TextView textView = (TextView) view.findViewById(android.R.id.text1);
             textView.setText(getItem(position));
-
             return view;
         }
 

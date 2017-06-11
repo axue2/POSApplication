@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
@@ -22,7 +24,6 @@ import java.util.List;
 
 public class SettingsDriverActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button mAddButton;
     Context mContext;
     DatabaseHelper mDBHelper;
     List<Driver> mDrivers;
@@ -35,6 +36,10 @@ public class SettingsDriverActivity extends AppCompatActivity implements View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_driver);
         setTitle("Driver Settings");
+
+        // Setup Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mContext = this;
         mDBHelper = new DatabaseHelper(this);
@@ -53,14 +58,14 @@ public class SettingsDriverActivity extends AppCompatActivity implements View.On
                 llm.getOrientation());
         rv.addItemDecoration(itemDecoration);
 
-        // Setup Button
+        // Setup Buttons
         Button mConfirmButton = (Button) findViewById(R.id.settings_driver_confirm_button);
         mConfirmButton.setOnClickListener(this);
-
+        ImageButton mAddButton = (ImageButton) findViewById(R.id.add_button);
+        mAddButton.setOnClickListener(this);
     }
 
     public void updateText(long driverID){
-
         Driver driver = mDBHelper.GetDriver(driverID);
         TextView id = (TextView) findViewById(R.id.settings_driver_id_textview);
         EditText name = (EditText) findViewById(R.id.settings_driver_first_name_editText);
@@ -69,29 +74,45 @@ public class SettingsDriverActivity extends AppCompatActivity implements View.On
         id.setText(String.valueOf(driverID));
         name.setText(driver.getnFirstName());
         surname.setText(driver.getnLastName());
-
-
     }
 
     @Override
     public void onClick(View v) {
+        TextView id = (TextView) findViewById(R.id.settings_driver_id_textview);
+        EditText name = (EditText) findViewById(R.id.settings_driver_first_name_editText);
+        EditText surname = (EditText) findViewById(R.id.settings_driver_last_name_editText);
         switch (v.getId()){
             case R.id.settings_driver_confirm_button:
-                TextView id = (TextView) findViewById(R.id.settings_driver_id_textview);
-                EditText name = (EditText) findViewById(R.id.settings_driver_first_name_editText);
-                EditText surname = (EditText) findViewById(R.id.settings_driver_last_name_editText);
-                // If Driver ID exists then update
-                if (!id.getText().toString().equals("")) {
-                    long driverID = Long.parseLong(id.getText().toString());
-                    Driver driver = mDBHelper.GetDriver(driverID);
-                    driver.setnFirstName(name.getText().toString());
-                    driver.setnLastName(surname.getText().toString());
-                    mDBHelper.UpdateDriver(driver);
-                    mAdapter.updateItem(driver);
-
-                    Snackbar.make(v, "Driver Updated",
-                            Snackbar.LENGTH_SHORT).show();
+                // If name has been filled
+                if (!name.getText().toString().equals("")) {
+                    // If driverID has been set then update driver
+                    if (!id.getText().toString().equals("")){
+                        long driverID = Long.parseLong(id.getText().toString());
+                        Driver driver = mDBHelper.GetDriver(driverID);
+                        driver.setnFirstName(name.getText().toString());
+                        driver.setnLastName(surname.getText().toString());
+                        mDBHelper.UpdateDriver(driver);
+                        mAdapter.updateItem(driver);
+                        Snackbar.make(v, "Driver Updated",
+                                Snackbar.LENGTH_SHORT).show();
+                    }
+                    // Otherwise create new driver
+                    else {
+                        Driver driver = new Driver(0, name.getText().toString(),
+                                surname.getText().toString());
+                        long driverID = mDBHelper.AddDriver(driver);
+                        driver.setnDriverID(driverID);
+                        mAdapter.addItem(driver);
+                        Snackbar.make(v, "Driver Added",
+                                Snackbar.LENGTH_SHORT).show();
+                    }
                 }
+                break;
+            case R.id.add_button:
+                // Empty All Fields
+                id.setText("");
+                name.setText("");
+                surname.setText("");
                 break;
         }
     }

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.Settings.SettingsTableActivity;
+import com.ass3.axue2.posapplication.models.operational.Driver;
 import com.ass3.axue2.posapplication.models.operational.Table;
 
 
@@ -89,5 +90,10 @@ public class SettingsTableRecyclerViewAdapter extends RecyclerView.Adapter<Setti
                 break;
             }
         }
+    }
+
+    public void addItem(Table table){
+        mTables.add(table);
+        notifyItemInserted(mTables.size() - 1);
     }
 }

@@ -80,4 +80,9 @@ public class SettingsDriverRecyclerViewAdapter extends RecyclerView.Adapter<Sett
             }
         }
     }
+
+    public void addItem(Driver driver){
+        mDrivers.add(driver);
+        notifyItemInserted(mDrivers.size() - 1);
+    }
 }
