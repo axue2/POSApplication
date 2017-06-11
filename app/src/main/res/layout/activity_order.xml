@@ -76,6 +76,7 @@
                 android:text="@string/order_order"
                 android:textSize="18sp"
                 android:textColor="@color/BLACK"
+                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"/>
             <TextView
                 android:id="@+id/order_number"
@@ -85,13 +86,6 @@
                 android:textSize="18sp"
                 android:textColor="@color/BLACK"/>
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:text=""
-                android:textSize="18sp" />
         </LinearLayout>
 
         <TextView
@@ -108,14 +102,16 @@
                 android:text="@string/order_quantity"
                 android:textSize="18sp"
                 android:textColor="@color/BLACK"
+                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"/>
+
             <TextView
                 android:id="@+id/order_quantity"
-                android:layout_width="150dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:text="@string/order_quantity_placeholder"
-                android:textSize="18sp"
-                android:textColor="@color/BLACK" />
+                android:textColor="@color/BLACK"
+                android:textSize="18sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
