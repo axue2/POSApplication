@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
+import com.ass3.axue2.posapplication.activities.DeliveryManagerActivity;
 import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryManagerRecyclerViewAdapter.MyViewHolder> {
 
     public ArrayList<Delivery> mDeliveries;
-    public ArrayList<Long> mSelectedDeliveries = new ArrayList<>();
     private Context mContext;
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
@@ -34,31 +34,31 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
         private CardView mCardView;
         private TextView mDeliveryIDTextView;
         private TextView mCustomerNameTextView;
-        private TextView mStatusTextView;
+        private TextView mAddressTextView;
+        private TextView mPostCodeTextView;
         private TextView mInvoiceTextView;
-        public LinearLayout mLinearLayout;
+        private LinearLayout mLinearLayout;
 
-        public MyViewHolder(View v){
+        MyViewHolder(View v){
             super(v);
             mView = v;
             mCardView = (CardView) v.findViewById(R.id.delivery_manager_list_cv);
             mDeliveryIDTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_id_text);
             mCustomerNameTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_customer_text);
-            mStatusTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_status_text);
+            mAddressTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_address_text);
+            mPostCodeTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_postcode_text);
             mInvoiceTextView = (TextView) v.findViewById(R.id.delivery_manager_list_cv_total_text);
             mLinearLayout = (LinearLayout) v.findViewById(R.id.delivery_manager_ll);
         }
     }
 
-    public DeliveryManagerRecyclerViewAdapter(Context context, ArrayList<Delivery> deliveries, ArrayList<Long> selectedDeliveries) {
+    public DeliveryManagerRecyclerViewAdapter(Context context, ArrayList<Delivery> deliveries) {
         this.mDeliveries = deliveries;
         this.mContext = context;
-        this.mSelectedDeliveries = selectedDeliveries;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        // Select CardView to be used
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_delivery_manager_item, parent, false);
 
         return new MyViewHolder(v);
@@ -71,12 +71,32 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
         // Set values in the CardView
         setTextViewValues(holder, currentDelivery);
 
-        if(mSelectedDeliveries.contains(mDeliveries.get(position).getnDeliveryID())){
-            holder.mCardView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.deliverySelected));
-        } else{
-            holder.mCardView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.WHITE));
-        }
+        holder.mCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mContext instanceof DeliveryManagerActivity) {
+                    ArrayList<Delivery> selectedDeliveries = ((DeliveryManagerActivity) mContext).getmSelectedDeliveries();
+                    System.out.println("Selected Deliveries: " + selectedDeliveries.size());
+                    if (selectedDeliveries.contains(currentDelivery)) {
+                        ((DeliveryManagerActivity) mContext).removemSelectedDelivery(currentDelivery);
+                    } else {
+                        ((DeliveryManagerActivity) mContext).addmSelectedDelivery(currentDelivery);
+                    }
+                    System.out.println("Selected Deliveries Now: " + selectedDeliveries.size());
+                    notifyDataSetChanged();
+                }
+            }
+        });
 
+        // Set background colour depending on whether or not CardView has been clicked
+        if (mContext instanceof DeliveryManagerActivity) {
+            ArrayList<Delivery> selectedDeliveries = ((DeliveryManagerActivity) mContext).getmSelectedDeliveries();
+            if (selectedDeliveries.contains(mDeliveries.get(position))){
+                holder.mCardView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.deliverySelected));
+            } else{
+                holder.mCardView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.WHITE));
+            }
+        }
     }
 
     @Override
@@ -88,18 +108,25 @@ public class DeliveryManagerRecyclerViewAdapter extends RecyclerView.Adapter<Del
         if(delivery.getnCustomerID() > 0) {
             Customer customer = db.GetCustomer(delivery.getnCustomerID());
             holder.mCustomerNameTextView.setText(customer.getsFirstName() + " " + customer.getsLastName());
+            holder.mAddressTextView.setText(customer.getsAddressLine1());
+            holder.mPostCodeTextView.setText(String.valueOf(customer.getnPostCode()));
         }
-
+        // If OrderID valid then set mInvoiceTextView with total invoice
+        if (delivery.getnOrderID() > 0){
+            String str = "$" + String.format("%.2f", db.GetOrder(delivery.getnOrderID()).getnTotal());
+            holder.mInvoiceTextView.setText(str);
+        }
+        // Otherwise set with delivery fee
+        else{
+            String str = "$" + String.format("%.2f", delivery.getnDeliveryFee());
+            holder.mInvoiceTextView.setText(str);
+        }
         holder.mDeliveryIDTextView.setText(String.valueOf(delivery.getnDeliveryID()));
-        //TODO: Set Delivery fee for total fee
-        holder.mStatusTextView.setText(delivery.getsStatus());
-        String str = "$" + String.valueOf(delivery.getnDeliveryFee());
-        holder.mInvoiceTextView.setText(str);
     }
 
-    public void updateDataset(ArrayList<Delivery> deliveries, ArrayList<Long> selectedDeliveries){
-        mDeliveries = deliveries;
-        mSelectedDeliveries = selectedDeliveries;
-        notifyDataSetChanged();
+    public void removeItem(Delivery delivery){
+        int pos = mDeliveries.indexOf(delivery);
+        mDeliveries.remove(delivery);
+        notifyItemRemoved(pos);
     }
 }

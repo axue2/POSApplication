@@ -1,6 +1,10 @@
 package com.ass3.axue2.posapplication.network;
 
 
+import android.content.Context;
+
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
 import com.ass3.axue2.posapplication.models.operational.Delivery;
 
 import java.sql.Connection;
@@ -14,7 +18,19 @@ public class DeliveryDAO {
     private Connection connection;
     private Statement statement;
 
-    public DeliveryDAO() { }
+    private String mIP;
+    private String mDB;
+    private String mUser;
+    private String mPassword;
+
+    public DeliveryDAO(Context context) {
+        ConfigurationDatabaseHelper CDBHelper = new ConfigurationDatabaseHelper(context);
+        NetworkSetting networkSetting = CDBHelper.GetNetworkSetting(1);
+        mIP = networkSetting.getsIPAddress();
+        mDB = networkSetting.getsDBName();
+        mUser = networkSetting.getsUsername();
+        mPassword = networkSetting.getsPassword();
+    }
 
     public List<Delivery> getDeliveries() throws SQLException {
         String query = "SELECT * FROM " + Delivery.TABLE_NAME;
@@ -22,7 +38,7 @@ public class DeliveryDAO {
         Delivery delivery = null;
         ResultSet rs = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -52,7 +68,7 @@ public class DeliveryDAO {
         ResultSet rs = null;
         Delivery delivery = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             if (rs.next()){
@@ -81,7 +97,7 @@ public class DeliveryDAO {
                 delivery.getnDriverID() + "' , '" + delivery.getnCustomerID() + "' , '" +
                 delivery.getsStatus() + "' , '" + delivery.getnDeliveryFee() + "')";
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -100,7 +116,7 @@ public class DeliveryDAO {
                 + Delivery.COLUMN_DELIVERY_FEE + " = '" + delivery.getnDeliveryFee() + "'"
                 + " WHERE " + Delivery.COLUMN_ID + " = " + delivery.getnDeliveryID();
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -109,5 +125,27 @@ public class DeliveryDAO {
             DbUtil.close(connection);
         }
     }
-
+    public boolean testConnection(){
+        String query = "SELECT 1 FROM " + Delivery.TABLE_NAME;
+        ResultSet rs = null;
+        try {
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
+            if (connection == null){
+                return false;
+            }
+            statement = connection.createStatement();
+            statement.setQueryTimeout(100);
+            rs = statement.executeQuery(query);
+            return rs.next();
+        }
+        catch (NullPointerException n){
+            return false;
+        }
+        catch (SQLException e){
+            return false;
+        }finally {
+            DbUtil.close(statement);
+            DbUtil.close(connection);
+        }
+    }
 }

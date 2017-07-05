@@ -1,5 +1,9 @@
 package com.ass3.axue2.posapplication.network;
 
+import android.content.Context;
+
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
 import com.ass3.axue2.posapplication.models.operational.Product;
 
 import java.sql.Connection;
@@ -13,7 +17,19 @@ public class ProductDAO {
     private Connection connection;
     private Statement statement;
 
-    public ProductDAO() { }
+    private String mIP;
+    private String mDB;
+    private String mUser;
+    private String mPassword;
+
+    public ProductDAO(Context context) {
+        ConfigurationDatabaseHelper CDBHelper = new ConfigurationDatabaseHelper(context);
+        NetworkSetting networkSetting = CDBHelper.GetNetworkSetting(1);
+        mIP = networkSetting.getsIPAddress();
+        mDB = networkSetting.getsDBName();
+        mUser = networkSetting.getsUsername();
+        mPassword = networkSetting.getsPassword();
+    }
 
     public List<Product> getProducts() throws SQLException {
         String query = "SELECT * FROM " + Product.TABLE_NAME;
@@ -21,7 +37,7 @@ public class ProductDAO {
         Product product = null;
         ResultSet rs = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -49,7 +65,7 @@ public class ProductDAO {
         ResultSet rs = null;
         Product product = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             if (rs.next()){
@@ -75,7 +91,7 @@ public class ProductDAO {
                 " VALUES (default, '" + product.getnGroupID() + "' , '" +
                 product.getsProductName() + "' , '" + product.getnPrice() + "')";
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -93,10 +109,34 @@ public class ProductDAO {
                 + "' WHERE " + Product.COLUMN_ID + " = " + String.valueOf(product.getnProductID());
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
+        }finally {
+            DbUtil.close(statement);
+            DbUtil.close(connection);
+        }
+    }
+
+    public boolean testConnection(){
+        String query = "SELECT 1 FROM " + Product.TABLE_NAME;
+        ResultSet rs = null;
+        try {
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
+            if (connection == null){
+                return false;
+            }
+            statement = connection.createStatement();
+            statement.setQueryTimeout(100);
+            rs = statement.executeQuery(query);
+            return rs.next();
+        }
+        catch (NullPointerException n){
+            return false;
+        }
+        catch (SQLException e){
+            return false;
         }finally {
             DbUtil.close(statement);
             DbUtil.close(connection);

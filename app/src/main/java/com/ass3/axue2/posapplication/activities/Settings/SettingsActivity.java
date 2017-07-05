@@ -17,7 +17,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setTitle("Settings");
 
         // Setup buttons
-        Button general = (Button) findViewById(R.id.settings_general_button);
+        Button general = (Button) findViewById(R.id.settings_restaurant_button);
         general.setOnClickListener(this);
         Button tables = (Button) findViewById(R.id.settings_tables_button);
         tables.setOnClickListener(this);
@@ -25,35 +25,50 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         groups.setOnClickListener(this);
         Button products = (Button) findViewById(R.id.settings_products_button);
         products.setOnClickListener(this);
+        Button drivers = (Button) findViewById(R.id.settings_drivers_button);
+        drivers.setOnClickListener(this);
+        Button database = (Button) findViewById(R.id.settings_database_button);
+        database.setOnClickListener(this);
         Button networks = (Button) findViewById(R.id.settings_network_button);
         networks.setOnClickListener(this);
+        Button about = (Button) findViewById(R.id.settings_about_button);
+        about.setOnClickListener(this);
 
     }
 
     public void onClick(View v){
         switch (v.getId()){
-            case R.id.settings_general_button:
-                System.out.println("General Button");
+            case R.id.settings_restaurant_button:
+                Intent generalIntent = new Intent(this, SettingsRestaurantActivity.class);
+                startActivity(generalIntent);
                 break;
             case R.id.settings_tables_button:
-                System.out.println("Tables Button");
                 Intent tableIntent = new Intent(this, SettingsTableActivity.class);
                 startActivity(tableIntent);
                 break;
             case R.id.settings_groups_button:
-                System.out.println("Groups Button");
                 Intent settingIntent = new Intent(this, SettingsGroupActivity.class);
                 startActivity(settingIntent);
                 break;
             case R.id.settings_products_button:
-                System.out.println("Products Button");
                 Intent productIntent = new Intent(this, SettingsProductActivity.class);
                 startActivity(productIntent);
                 break;
+            case R.id.settings_drivers_button:
+                Intent driverIntent = new Intent(this, SettingsDriverActivity.class);
+                startActivity(driverIntent);
+                break;
+            case R.id.settings_database_button:
+                Intent databaseIntent = new Intent(this, SettingsDatabaseActivity.class);
+                startActivity(databaseIntent);
+                break;
             case R.id.settings_network_button:
-                System.out.println("Network Button");
                 Intent networkIntent = new Intent(this, SettingsNetworkActivity.class);
                 startActivity(networkIntent);
+                break;
+            case R.id.settings_about_button:
+                Intent aboutIntent = new Intent(this, SettingsAboutActivity.class);
+                startActivity(aboutIntent);
                 break;
         }
     }

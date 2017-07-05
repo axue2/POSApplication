@@ -1,9 +1,12 @@
 package com.ass3.axue2.posapplication.network;
 
+import android.content.Context;
+
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
 import com.ass3.axue2.posapplication.models.operational.Group;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,7 +17,19 @@ public class GroupDAO {
     private Connection connection;
     private Statement statement;
 
-    public GroupDAO() { }
+    private String mIP;
+    private String mDB;
+    private String mUser;
+    private String mPassword;
+
+    public GroupDAO(Context context) {
+        ConfigurationDatabaseHelper CDBHelper = new ConfigurationDatabaseHelper(context);
+        NetworkSetting networkSetting = CDBHelper.GetNetworkSetting(1);
+        mIP = networkSetting.getsIPAddress();
+        mDB = networkSetting.getsDBName();
+        mUser = networkSetting.getsUsername();
+        mPassword = networkSetting.getsPassword();
+    }
 
     public List<Group> getGroups() throws SQLException {
         String query = "SELECT * FROM " + Group.TABLE_NAME;
@@ -22,7 +37,7 @@ public class GroupDAO {
         Group group = null;
         ResultSet rs = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -48,7 +63,7 @@ public class GroupDAO {
         ResultSet rs = null;
         Group group = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             if (rs.next()){
@@ -69,7 +84,7 @@ public class GroupDAO {
                 Group.COLUMN_ID + ", " + Group.COLUMN_NAME + ")" +
                 " VALUES (default, '" + group.getsGroupName() + "')";
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -84,7 +99,7 @@ public class GroupDAO {
                 group.getsGroupName() + "' WHERE " + Group.COLUMN_ID + " = " + String.valueOf(group.getnGroupID());
 
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -94,4 +109,27 @@ public class GroupDAO {
         }
     }
 
+    public boolean testConnection(){
+        String query = "SELECT 1 FROM " + Group.TABLE_NAME;
+        ResultSet rs = null;
+        try {
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
+            if (connection == null){
+                return false;
+            }
+            statement = connection.createStatement();
+            statement.setQueryTimeout(100);
+            rs = statement.executeQuery(query);
+            return rs.next();
+        }
+        catch (NullPointerException n){
+            return false;
+        }
+        catch (SQLException e){
+            return false;
+        }finally {
+            DbUtil.close(statement);
+            DbUtil.close(connection);
+        }
+    }
 }

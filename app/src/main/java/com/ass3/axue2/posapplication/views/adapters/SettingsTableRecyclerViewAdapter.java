@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.Settings.SettingsTableActivity;
+import com.ass3.axue2.posapplication.models.operational.Driver;
 import com.ass3.axue2.posapplication.models.operational.Table;
 
 
@@ -79,5 +80,20 @@ public class SettingsTableRecyclerViewAdapter extends RecyclerView.Adapter<Setti
     private void setTextViewValues(MyViewHolder holder, Table table){
         holder.mTableName.setText(table.getsTableName());
 
+    }
+
+    public void updateItem(Table table){
+        for (int i = 0; i < mTables.size(); i++){
+            if (mTables.get(i).getnTableID() == table.getnTableID()){
+                mTables.set(i,table);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    public void addItem(Table table){
+        mTables.add(table);
+        notifyItemInserted(mTables.size() - 1);
     }
 }

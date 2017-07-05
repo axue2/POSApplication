@@ -1,6 +1,9 @@
 package com.ass3.axue2.posapplication.network;
 
-import com.ass3.axue2.posapplication.models.operational.Order;
+import android.content.Context;
+
+import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
+import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
 import com.ass3.axue2.posapplication.models.operational.OrderItem;
 
 import java.sql.Connection;
@@ -14,7 +17,19 @@ public class OrderItemDAO {
     private Connection connection;
     private Statement statement;
 
-    public OrderItemDAO() { }
+    private String mIP;
+    private String mDB;
+    private String mUser;
+    private String mPassword;
+
+    public OrderItemDAO(Context context) {
+        ConfigurationDatabaseHelper CDBHelper = new ConfigurationDatabaseHelper(context);
+        NetworkSetting networkSetting = CDBHelper.GetNetworkSetting(1);
+        mIP = networkSetting.getsIPAddress();
+        mDB = networkSetting.getsDBName();
+        mUser = networkSetting.getsUsername();
+        mPassword = networkSetting.getsPassword();
+    }
 
     public List<OrderItem> getOrderItems() throws SQLException {
         String query = "SELECT * FROM " + OrderItem.TABLE_NAME;
@@ -22,7 +37,7 @@ public class OrderItemDAO {
         OrderItem orderItem = null;
         ResultSet rs = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -55,7 +70,7 @@ public class OrderItemDAO {
         OrderItem orderItem = null;
         ResultSet rs = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -86,7 +101,7 @@ public class OrderItemDAO {
         ResultSet rs = null;
         OrderItem orderItem = null;
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             if (rs.next()){
@@ -118,7 +133,7 @@ public class OrderItemDAO {
                 orderItem.getnProductID() + " , '" + orderItem.getsProductName() + "' , " +
                 orderItem.getnPrice() + " , " + orderItem.getnQuantity() + ")";
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -136,13 +151,8 @@ public class OrderItemDAO {
                 + OrderItem.COLUMN_PRODUCT_NAME + " = '" + orderItem.getsProductName() + "', "
                 + OrderItem.COLUMN_QUANTITY + " = '" + orderItem.getnQuantity()
                 + "' WHERE " + OrderItem.COLUMN_ID + " = " + String.valueOf(orderItem.getnOrderItemID());
-/*
-
-        String query = "UPDATE `order_item` SET `ORDER_ID`= 6,`TABLE_ID`= 3,`PRODUCT_ID`= 43,`PRODUCT_NAME`= 'something',`PRODUCT_PRICE`=1,`QUANTITY`=1 WHERE id = 1";
-*/
-
         try {
-            connection = ConnectionFactory.getConnection();
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
             statement = connection.createStatement();
             statement.executeUpdate(query);
 
@@ -152,4 +162,43 @@ public class OrderItemDAO {
         }
     }
 
+    public void deleteOrderItem(OrderItem orderItem) throws SQLException{
+        String query = "DELETE FROM " + OrderItem.TABLE_NAME + " WHERE " +
+                OrderItem.COLUMN_ID + " = " + orderItem.getnOrderItemID();
+        System.out.println(query);
+
+        try {
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
+            statement = connection.createStatement();
+            statement.executeUpdate(query);
+
+        }finally {
+            DbUtil.close(statement);
+            DbUtil.close(connection);
+        }
+    }
+
+    public boolean testConnection(){
+        String query = "SELECT 1 FROM " + OrderItem.TABLE_NAME;
+        ResultSet rs = null;
+        try {
+            connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);
+            if (connection == null){
+                return false;
+            }
+            statement = connection.createStatement();
+            statement.setQueryTimeout(100);
+            rs = statement.executeQuery(query);
+            return rs.next();
+        }
+        catch (NullPointerException n){
+            return false;
+        }
+        catch (SQLException e){
+            return false;
+        }finally {
+            DbUtil.close(statement);
+            DbUtil.close(connection);
+        }
+    }
 }

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ass3.axue2.posapplication.activities.Settings.SettingsRestaurantActivity">
+
+    <Button
+        android:id="@+id/settings_restaurant_confirm_button"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/settingsConfirmButton"
+        android:text="@string/confirm"
+        android:textColor="@color/WHITE" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="28dp"
+        android:text="@string/restaurant_name" />
+
+    <EditText
+        android:id="@+id/settings_restaurant_name_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/settings_restaurant_al1"
+        android:layout_marginTop="17dp"
+        android:layout_toEndOf="@+id/textView7"
+        android:ems="10"
+        android:hint="@string/restaurant_name_hint"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/address_line_1"
+        android:layout_alignBaseline="@+id/settings_restaurant_al1"
+        android:layout_alignBottom="@+id/settings_restaurant_al1"
+        android:layout_alignStart="@+id/textView7" />
+
+    <EditText
+        android:id="@+id/settings_restaurant_al1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/settings_restaurant_name_editText"
+        android:layout_marginTop="56dp"
+        android:ems="10"
+        android:hint="@string/address_line_1_hint"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/settings_restaurant_al2"
+        android:layout_alignBottom="@+id/settings_restaurant_al2"
+        android:layout_alignStart="@+id/textView11"
+        android:text="@string/address_line_2" />
+
+    <EditText
+        android:id="@+id/settings_restaurant_al2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/settings_restaurant_al1"
+        android:ems="10"
+        android:hint="@string/address_line_2_hint"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/settings_restaurant_al3"
+        android:layout_alignBottom="@+id/settings_restaurant_al3"
+        android:layout_alignStart="@+id/textView12"
+        android:text="@string/address_line_3" />
+
+    <EditText
+        android:id="@+id/settings_restaurant_al3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/settings_restaurant_al2"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/settings_restaurant_postcode"
+        android:layout_alignBottom="@+id/settings_restaurant_postcode"
+        android:layout_alignStart="@+id/textView13"
+        android:text="@string/postcode" />
+
+    <EditText
+        android:id="@+id/settings_restaurant_postcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/settings_restaurant_al3"
+        android:ems="10"
+        android:hint="@string/poscode_hint"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/settings_restaurant_phone"
+        android:layout_alignBottom="@+id/settings_restaurant_phone"
+        android:layout_alignStart="@+id/textView14"
+        android:text="@string/phone" />
+
+    <EditText
+        android:id="@+id/settings_restaurant_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/settings_restaurant_postcode"
+        android:ems="10"
+        android:hint="@string/phone_hint"
+        android:inputType="textPersonName" />
+</RelativeLayout>

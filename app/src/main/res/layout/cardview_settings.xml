@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="5dp"
-        app:cardBackgroundColor="@color/MainTableOpen">
+        app:cardBackgroundColor="@color/GREY">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -38,7 +38,7 @@
                 android:layout_marginEnd="12dp"
 
                 android:background="@color/PaymentButtonBackground"
-                android:text="Delete"
+                android:text="@string/delete"
                 android:textColor="@color/PaymentButtonText"
                 android:visibility="invisible" />
 

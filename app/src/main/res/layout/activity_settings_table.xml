@@ -14,6 +14,35 @@
         android:id="@+id/LinearLayout"
         android:orientation="vertical">
 
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/appbar_padding_top"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <ImageButton
+                    android:id="@+id/add_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="10dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/location_button"
+
+                    app:srcCompat="@drawable/ic_action_add" />
+            </android.support.v7.widget.Toolbar>
+
+
+        </android.support.design.widget.AppBarLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/settings_table_rv"
             android:layout_width="match_parent"
@@ -21,14 +50,6 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         </android.support.v7.widget.RecyclerView>
-
-        <Button
-            android:id="@+id/settings_table_add_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/settingsConfirmButton"
-            android:text="Add New Group"
-            android:visibility="gone" />
 
     </LinearLayout>
 
@@ -42,12 +63,13 @@
         <Button
             android:id="@+id/settings_table_confirm_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentStart="true"
-            android:background="@color/settingsButton"
-            android:text="Confirm" />
+            android:background="@color/settingsConfirmButton"
+            android:textColor="@color/WHITE"
+            android:text="@string/confirm" />
 
         <TextView
             android:id="@+id/textView3"
@@ -57,7 +79,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="27dp"
             android:layout_marginTop="25dp"
-            android:text="Table ID:"
+            android:text="@string/table_id"
             android:textColor="@color/BLACK" />
 
         <TextView
@@ -68,7 +90,6 @@
             android:layout_toEndOf="@+id/textView3"
             android:paddingEnd="20dp"
             android:paddingStart="20dp"
-            android:text="1"
             android:textColor="@color/BLACK" />
 
         <TextView
@@ -78,7 +99,7 @@
             android:layout_alignStart="@+id/textView3"
             android:layout_below="@+id/textView3"
             android:layout_marginTop="24dp"
-            android:text="Table Name:"
+            android:text="@string/table_name"
             android:textColor="@color/BLACK" />
 
         <EditText
@@ -90,7 +111,7 @@
             android:layout_marginStart="48dp"
             android:layout_toEndOf="@+id/settings_table_id_textview"
             android:ems="10"
-            android:hint="Table Name"
+            android:hint="@string/table_name_hint"
             android:inputType="text"
             android:textSize="12sp" />
 

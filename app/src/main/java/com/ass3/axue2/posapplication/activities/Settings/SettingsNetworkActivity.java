@@ -2,6 +2,7 @@ package com.ass3.axue2.posapplication.activities.Settings;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,8 +61,9 @@ public class SettingsNetworkActivity extends AppCompatActivity {
                         mUsername.getText().toString(), mPassword.getText().toString());
 
                 mCDBHelper.UpdateNetworkSetting(mNetworkSetting);
-
                 System.out.println(mNetworkSetting.getsDBName() + " " + mNetworkSetting.getsIPAddress());
+                Snackbar.make(v, "Network Settings Updated",
+                        Snackbar.LENGTH_SHORT).show();
 
             }
         });
@@ -69,8 +71,6 @@ public class SettingsNetworkActivity extends AppCompatActivity {
         mNetworkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.v("Switch State=", ""+isChecked);
-
                 if (isChecked){
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                     builder.setTitle("Warning!").setMessage("Setting application to network mode will destroy all current data. Are you Sure?")

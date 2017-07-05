@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3f51b5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
     <color name="colorAccent">#ff4081</color>
     <color name="WHITE">#ffffff</color>
     <color name="GREY">#eeeeee</color>
@@ -9,6 +9,8 @@
     <color name="MainTableOpen">#80deea</color>
     <color name="MainTableInuse">#ffea00</color>
     <color name="MainTableBooked">#7c4dff</color>
+    <color name="OrderCurrentButton">#fb8c00</color>
+    <color name="OrderCurrentButtonClicked">#ef6c00</color>
     <color name="PaymentButtonBackground">#757575</color>
     <color name="PaymentButtonText">#ffffff</color>
     <color name="DeliveryDetailsConfirmButton">#f57c00</color>
@@ -18,6 +20,7 @@
     <color name="fab_takeaway">#f57c00</color>
     <color name="fab_delivery">#00c853</color>
     <color name="deliverySelected">#cfd8dc</color>
-    <color name="settingsButton">#76ff03</color>
     <color name="settingsConfirmButton">#0091ea</color>
+    <color name="settingsAddButton">#76ff03</color>
+    <color name="settingsDeleteDBButton">#f44336</color>
 </resources>

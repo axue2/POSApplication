@@ -35,6 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(Customer.CREATE_STATEMENT);
         db.execSQL(Delivery.CREATE_STATEMENT);
         db.execSQL(Driver.CREATE_STATEMENT);
+        db.execSQL(Restaurant.CREATE_STATEMENT);
     }
 
     public void createTable(String statement){
@@ -50,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void AddTable(Table table){
+    public long AddTable(Table table){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Table.COLUMN_NAME, table.getsTableName());
@@ -58,8 +59,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Table.COLUMN_ORDER_ID, table.getnOrderID());
         values.put(Table.COLUMN_TOTAL, table.getnInvSum());
         values.put(Table.COLUMN_STATUS, table.getsStatus());
-        db.insert(Table.TABLE_NAME, null, values);
+        long id = db.insert(Table.TABLE_NAME, null, values);
         db.close();
+        return id;
     }
 
     public HashMap<Long, Table> GetAllTables(){
@@ -74,7 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(1),
                         cursor.getInt(2),
                         cursor.getLong(3),
-                        cursor.getInt(4),
+                        cursor.getDouble(4),
                         cursor.getString(5));
                 tables.put(table.getnTableID(), table);
             } while(cursor.moveToNext());
@@ -96,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(1),
                         cursor.getInt(2),
                         cursor.getLong(3),
-                        cursor.getInt(4),
+                        cursor.getDouble(4),
                         cursor.getString(5));
                 tables.put(table.getnTableID(), table);
             } while(cursor.moveToNext());
@@ -121,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getString(1),
                 cursor.getInt(2),
                 cursor.getLong(3),
-                cursor.getInt(4),
+                cursor.getDouble(4),
                 cursor.getString(5));
         cursor.close();
 
@@ -175,7 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Product product = new Product(cursor.getLong(0),
                 cursor.getLong(1),
                 cursor.getString(2),
-                cursor.getInt(3)
+                cursor.getDouble(3)
         );
         cursor.close();
 
@@ -194,7 +196,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Product product = new Product(cursor.getLong(0),
                         cursor.getLong(1),
                         cursor.getString(2),
-                        cursor.getInt(3)
+                        cursor.getDouble(3)
                 );
                 products.put(product.getnProductID(), product);
             } while(cursor.moveToNext());
@@ -245,7 +247,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getLong(1),
                 cursor.getString(2),
                 cursor.getString(3),
-                cursor.getInt(4));
+                cursor.getDouble(4));
         cursor.close();
 
         return order;
@@ -254,6 +256,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddOrderItem(OrderItem orderItem){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        if (orderItem.getnOrderItemID() > 0)
+            values.put(OrderItem.COLUMN_ID, orderItem.getnOrderItemID());
         values.put(OrderItem.COLUMN_ORDER_ID, orderItem.getnOrderID());
         values.put(OrderItem.COLUMN_TABLE_ID, orderItem.getnTableID());
         values.put(OrderItem.COLUMN_PRODUCT_ID, orderItem.getnProductID());
@@ -305,12 +309,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return orderItems;
     }
 
-    public void AddGroup(Group group){
+    public void DeleteOrderItem(OrderItem orderItem){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("DELETE FROM " + OrderItem.TABLE_NAME + " WHERE "
+                + OrderItem.COLUMN_ID + " = '" + orderItem.getnOrderItemID() + "'"
+                + " AND " + OrderItem.COLUMN_ORDER_ID + " = '" + orderItem.getnOrderID() + "'"
+        );
+        db.close();
+    }
+
+    public long AddGroup(Group group){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        if (group.getnGroupID() > 0)
+            values.put(Group.COLUMN_ID, group.getnGroupID());
         values.put(Group.COLUMN_NAME, group.getsGroupName());
-        db.insert(Group.TABLE_NAME, null, values);
+        long id = db.insert(Group.TABLE_NAME, null, values);
         db.close();
+        return id;
     }
 
     public Group GetGroup(long id){
@@ -543,7 +561,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Driver.COLUMN_FIRST_NAME, driver.getnFirstName());
         values.put(Driver.COLUMN_LAST_NAME, driver.getnLastName());
         long id = db.insert(Driver.TABLE_NAME, null, values);
-        Log.d("Driver Added", driver.getnFirstName());
         db.close();
         return id;
     }
@@ -585,6 +602,102 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return driver;
     }
+
+    public void UpdateDriver(Driver driver){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(Driver.COLUMN_FIRST_NAME,driver.getnFirstName());
+        values.put(Driver.COLUMN_LAST_NAME, driver.getnLastName());
+        // Update values using table id
+        db.update(Driver.TABLE_NAME, values, Driver.COLUMN_ID + " = " + driver.getnDriverID(), null );
+        db.close();
+    }
+
+    public long AddRestaurant(Restaurant restaurant){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Restaurant.COLUMN_NAME,restaurant.getsRestaurantName());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_1, restaurant.getsAddressLine1());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_2, restaurant.getsAddressLine2());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_3, restaurant.getsAddressLine3());
+        values.put(Restaurant.COLUMN_STATE, restaurant.getsState());
+        values.put(Restaurant.COLUMN_POST_CODE, restaurant.getnPostCode());
+        values.put(Restaurant.COLUMN_PHONE, restaurant.getsPhone());
+        long id = db.insert(Restaurant.TABLE_NAME, null, values);
+        db.close();
+        return id;
+    }
+
+    public Restaurant GetRestaurant(long id){
+        // Access database
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Database query
+        Cursor cursor = db.query(Restaurant.TABLE_NAME, new String[] { Restaurant.COLUMN_ID,
+                        Restaurant.COLUMN_NAME, Restaurant.COLUMN_ADDRESS_LINE_1, Restaurant.COLUMN_ADDRESS_LINE_2,
+                        Restaurant.COLUMN_ADDRESS_LINE_3, Restaurant.COLUMN_STATE,
+                        Restaurant.COLUMN_POST_CODE, Restaurant.COLUMN_PHONE},
+                Restaurant.COLUMN_ID + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
+        // Checks query
+        if (cursor != null)
+            cursor.moveToFirst();
+        // Creates new restaurant with query values
+        Restaurant restaurant = new Restaurant(cursor.getLong(0),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getString(5),
+                cursor.getInt(6),
+                cursor.getString(7)
+        );
+        cursor.close();
+
+        return restaurant;
+    }
+
+    public HashMap<Long, Restaurant> GetAllRestaurants(){
+        HashMap<Long, Restaurant> restaurants = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Restaurant.TABLE_NAME, null);
+
+        // Add all products in db to hashmap
+        if(cursor.moveToFirst()) {
+            do {
+                Restaurant restaurant = new Restaurant(cursor.getLong(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        cursor.getInt(6),
+                        cursor.getString(7)
+                );
+                restaurants.put(restaurant.getnRestaurantID(), restaurant);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return restaurants;
+    }
+
+    public void UpdateRestaurant(Restaurant restaurant){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(Restaurant.COLUMN_NAME,restaurant.getsRestaurantName());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_1, restaurant.getsAddressLine1());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_2, restaurant.getsAddressLine2());
+        values.put(Restaurant.COLUMN_ADDRESS_LINE_3, restaurant.getsAddressLine3());
+        values.put(Restaurant.COLUMN_STATE, restaurant.getsState());
+        values.put(Restaurant.COLUMN_POST_CODE, restaurant.getnPostCode());
+        values.put(Restaurant.COLUMN_PHONE, restaurant.getsPhone());
+        // Update values using table id
+        db.update(Restaurant.TABLE_NAME, values, Restaurant.COLUMN_ID + " = " + restaurant.getnRestaurantID(), null );
+        db.close();
+    }
+
 
     public void CreateDefaultTables(){
         AddTable(new Table("Table 1"));
@@ -650,6 +763,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         AddProduct(new Product(4, "Orange Blossom Polenta Cake", 10.5));
         AddProduct(new Product(4, "Amalfi Lemon Meringue Cheesecake", 14));
 
+        Product product = new Product(5, "Rossini", 9.95);
+        System.out.println(product.getnPrice());
         AddProduct(new Product(5, "Rossini", 9.95));
         AddProduct(new Product(5, "Belini", 9.95));
         AddProduct(new Product(5, "Aperol Spritz", 11));
@@ -664,6 +779,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         AddProduct(new Product(6, "Classic Super Food Salad", 18));
         AddProduct(new Product(6, "Bresaola Salad", 18));
         AddProduct(new Product(6, "Prosciutto & Pear Salad", 18));
+        System.out.println(GetProduct(36).getnPrice());
+        System.out.println(GetProduct(37).getnPrice());
+        System.out.println(GetProduct(38).getnPrice());
     }
 
     public void CreateDefaultDrivers(){
@@ -712,6 +830,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         AddCustomer(new Customer("Sally","Kite","47 Ursa St","Balwyn North","",3104,33333));
         AddCustomer(new Customer("Samuel","Sanders","3 Euroka St","Chadstone","",3148,33333));
         AddCustomer(new Customer("Ronald","Light","20 Boyd St","Nagambie","",3608,33333));
+    }
+
+    public void CreateDefaultRestaurant(){
+        AddRestaurant(new Restaurant(0, "My Restaurant", "17 Berry St", "Box Hill North", "", "VICTORIA", 3129, "0430688669"));
     }
 
     public void deleteTable(String tableName){

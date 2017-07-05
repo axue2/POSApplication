@@ -50,16 +50,16 @@ public class Table {
     }
 
     public Table(String name) {
-        nTableID = -1;
+        nTableID = 0;
         sTableName = name;
         nGuests = 0;
-        nOrderID = -1;
+        nOrderID = 0;
         nInvSum = 0;
         sStatus = STATUS_OPEN;
     }
 
     public Table(){
-        nTableID = -1;
+        nTableID = 0;
         sTableName = "tmp";
         nGuests = 1;
         nInvSum = 1;

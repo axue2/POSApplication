@@ -1,6 +1,7 @@
 package com.ass3.axue2.posapplication.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
@@ -13,11 +14,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.activities.Settings.SettingsActivity;
@@ -42,96 +45,127 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by anthony on 4/21/2017.
+ *
+ */
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DatabaseHelper mDBHelper;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Setup Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setTitle(getString(R.string.main_title));
 
         //this.deleteDatabase(mDBHelper.DATABASE_NAME);
         //this.deleteDatabase(ConfigurationDatabaseHelper.DATABASE_NAME);
 
         // Get database handler
-        mDBHelper = new DatabaseHelper(getApplicationContext());
-        ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
+        mContext = this;
+        mDBHelper = new DatabaseHelper(this);
+        ConfigurationDatabaseHelper mCDBHelper = new ConfigurationDatabaseHelper(this);
 
 
+        // Checks to see if there are Network Settings
         if (mCDBHelper.GetNetworkSettings().size() == 0){
-            mCDBHelper.AddNetworkSetting(new NetworkSetting(1,0));
+            // Set Default Network Values
+            mCDBHelper.AddNetworkSetting(new NetworkSetting(1,0,
+                    "192.168.56.1", "posdb", "root", "123"));
         }
+
+        // Check to see if tables are empty
+        checkTablesEmpty();
 
         // Checks to see if its in network mode
         if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 1){
-            //TODO Create empty tables if tables do not exist
             new SynchroniseTask(MainActivity.this).execute();
         } else if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 0){
-            checkTablesEmpty();
             createTabLayouts();
         }
 
-        //TODO: Add animations to floating action buttons
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        // If Restaurant Name has not been set
+        if (mDBHelper.GetRestaurant(1).getsRestaurantName().equals("")){
+            setTitle(getString(R.string.main_title));
+        }
+        // If Restaurant Name has been set
+        else{
+            setTitle(mDBHelper.GetRestaurant(1).getsRestaurantName());
+        }
+
+        // Setup Floating Action Buttons
+        FloatingActionButton mainFAB = (FloatingActionButton) findViewById(R.id.fab);
+        mainFAB.setOnClickListener(this);
         FloatingActionButton fabTakeaway = (FloatingActionButton) findViewById(R.id.fab_takeaway);
+        fabTakeaway.setOnClickListener(this);
         FloatingActionButton fabDelivery = (FloatingActionButton) findViewById(R.id.fab_delivery);
-        final LinearLayout takeawayLayout = (LinearLayout) findViewById(R.id.main_takeaway_layout);
-        final LinearLayout deliveryLayout = (LinearLayout) findViewById(R.id.main_delivery_layout);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fabDelivery.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            // If main fab clicked
+            case R.id.fab:
+                // Setup FAB
+                final FloatingActionButton mainFAB = (FloatingActionButton) findViewById(R.id.fab);
+                // Setup Animations
+                final Animation showAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.show_button);
+                final Animation hideAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.hide_button);
+                final Animation showLayout = AnimationUtils.loadAnimation(MainActivity.this, R.anim.show_layout);
+                final Animation hideLayout = AnimationUtils.loadAnimation(MainActivity.this, R.anim.hide_layout);
+                // Setup LinearLayouts
+                final LinearLayout takeawayLayout = (LinearLayout) findViewById(R.id.main_takeaway_layout);
+                final LinearLayout deliveryLayout = (LinearLayout) findViewById(R.id.main_delivery_layout);
+
+                // If main fab has been clicked then hide the other fabs
                 if(takeawayLayout.getVisibility() == View.VISIBLE &&
                         deliveryLayout.getVisibility() == View.VISIBLE){
                     takeawayLayout.setVisibility(View.GONE);
                     deliveryLayout.setVisibility(View.GONE);
-                } else{
+                    takeawayLayout.startAnimation(hideLayout);
+                    deliveryLayout.startAnimation(hideLayout);
+                    mainFAB.startAnimation(hideAnimation);
+                }
+                // Otherwise show the other fabs
+                else{
                     takeawayLayout.setVisibility(View.VISIBLE);
                     deliveryLayout.setVisibility(View.VISIBLE);
+                    takeawayLayout.startAnimation(showLayout);
+                    deliveryLayout.startAnimation(showLayout);
+                    mainFAB.startAnimation(showAnimation);
                 }
-            }
-        });
-
-        fabTakeaway.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(view.getContext(), OrderActivity.class);
-                intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_TAKEAWAY);
-                intent.putExtra(OrderActivity.EXTRA_TABLENAME, Order.TYPE_TAKEAWAY);
-                intent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
-
-                intent.putExtra(OrderActivity.EXTRA_TABLEID, -1);
-                intent.putExtra(OrderActivity.EXTRA_ORDERID, -1);
-
-                intent.putExtra(OrderActivity.EXTRA_FROM, "MainActivity");
-
-                startActivity(intent);
-
-            }
-        });
-
-        fabDelivery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(view.getContext(), DeliveryDetailsActivity.class);
-
-                startActivity(intent);
-            }
-        });
-
+                break;
+            // If takeaway fab clicked
+            case R.id.fab_takeaway:
+                Intent takeawayIntent = new Intent(v.getContext(), OrderActivity.class);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_TAKEAWAY);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_TABLENAME, "Takeaway");
+                takeawayIntent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_TABLEID, 0);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_ORDERID, 0);
+                takeawayIntent.putExtra(OrderActivity.EXTRA_FROM, "MainActivity");
+                startActivity(takeawayIntent);
+                break;
+            // If delivery fab clicked
+            case R.id.fab_delivery:
+                Intent deliveryIntent = new Intent(v.getContext(), DeliveryDetailsActivity.class);
+                startActivity(deliveryIntent);
+                break;
+        }
     }
 
-    private class SynchroniseTask extends AsyncTask<Void, Void, Void>{
+    private class SynchroniseTask extends AsyncTask<Object, Object, Boolean> {
         private ProgressDialog mDialog;
         private DatabaseHelper dbHelper;
 
-        public SynchroniseTask(MainActivity activity){
+        SynchroniseTask(MainActivity activity){
             mDialog = new ProgressDialog(activity);
             dbHelper = new DatabaseHelper(activity);
         }
@@ -148,86 +182,76 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            TableDAO tableDAO= new TableDAO();
-            OrderDAO orderDAO = new OrderDAO();
-            OrderItemDAO orderItemDAO = new OrderItemDAO();
-            ProductDAO productDAO = new ProductDAO();
-            GroupDAO groupDAO = new GroupDAO();
+        protected Boolean doInBackground(Object... params) {
+
+            TableDAO tableDAO= new TableDAO(mContext);
+            OrderDAO orderDAO = new OrderDAO(mContext);
+            OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
+            ProductDAO productDAO = new ProductDAO(mContext);
+            GroupDAO groupDAO = new GroupDAO(mContext);
             List<Table> tables;
             List<Order> orders;
             List<OrderItem> orderItems;
             List<Product> products;
             List<Group> groups;
             try {
-                // Sync Tables
-                tables = tableDAO.getTables();
-                dbHelper.dropTable(Table.TABLE_NAME);
-                dbHelper.createTable(Table.CREATE_STATEMENT);
-                for (Table table : tables){
-                    dbHelper.AddTable(table);
-//                    System.out.println("Table ID: " + String.valueOf(table.getnTableID()));
-//                    System.out.println("Table Name: " + table.getsTableName());
-//                    System.out.println();
+                // Check connection
+                if (tableDAO.testConnection()) {
+                    // Sync Tables
+                    tables = tableDAO.getTables();
+                    dbHelper.dropTable(Table.TABLE_NAME);
+                    dbHelper.createTable(Table.CREATE_STATEMENT);
+                    for (Table table : tables) {
+                        dbHelper.AddTable(table);
+                    }
+                    // Sync Orders
+                    orders = orderDAO.getOrders();
+                    dbHelper.dropTable(Order.TABLE_NAME);
+                    dbHelper.createTable(Order.CREATE_STATEMENT);
+                    for (Order order : orders) {
+                        dbHelper.AddOrder(order);
+                    }
+                    // Sync OrderItems
+                    orderItems = orderItemDAO.getOrderItems();
+                    dbHelper.dropTable(OrderItem.TABLE_NAME);
+                    dbHelper.createTable(OrderItem.CREATE_STATEMENT);
+                    for (OrderItem orderItem : orderItems) {
+                        dbHelper.AddOrderItem(orderItem);
+                    }
+                    // Sync Products
+                    products = productDAO.getProducts();
+                    dbHelper.dropTable(Product.TABLE_NAME);
+                    dbHelper.createTable(Product.CREATE_STATEMENT);
+                    for (Product product : products) {
+                        dbHelper.AddProduct(product);
+                    }
+                    // Sync Groups
+                    groups = groupDAO.getGroups();
+                    dbHelper.dropTable(Group.TABLE_NAME);
+                    dbHelper.createTable(Group.CREATE_STATEMENT);
+                    for (Group group : groups) {
+                        dbHelper.AddGroup(group);
+                    }
+                } else{
+                    return false;
                 }
-                // Sync Orders
-                orders = orderDAO.getOrders();
-                dbHelper.dropTable(Order.TABLE_NAME);
-                dbHelper.createTable(Order.CREATE_STATEMENT);
-                for (Order order: orders){
-                    dbHelper.AddOrder(order);
-//                    System.out.println("Order ID: " + String.valueOf(order.getnOrderID()));
-//                    System.out.println("Order Status: " + order.getsStatus());
-//                    System.out.println();
-                }
-                // Sync OrderItems
-                orderItems = orderItemDAO.getOrderItems();
-                dbHelper.dropTable(OrderItem.TABLE_NAME);
-                dbHelper.createTable(OrderItem.CREATE_STATEMENT);
-                for (OrderItem orderItem : orderItems){
-                    dbHelper.AddOrderItem(orderItem);
-//                    System.out.println("OrderItem ID: " + String.valueOf(orderItem.getnOrderItemID()));
-//                    System.out.println("Order Status: " + orderItem.getsProductName());
-//                    System.out.println("OrderITEM PRICE: " + orderItem.getnPrice());
-//                    System.out.println("OrderITEM QUANTITY: " + orderItem.getnQuantity());
-
-                }
-                // Sync Products
-                products = productDAO.getProducts();
-                dbHelper.dropTable(Product.TABLE_NAME);
-                dbHelper.createTable(Product.CREATE_STATEMENT);
-                for (Product product : products){
-                    dbHelper.AddProduct(product);
-//                    System.out.println("Product ID: " + String.valueOf(product.getnProductID()));
-//                    System.out.println("Product Name: " + product.getsProductName());
-//                    System.out.println();
-                }
-                // Sync Groups
-                groups = groupDAO.getGroups();
-                dbHelper.dropTable(Group.TABLE_NAME);
-                dbHelper.createTable(Group.CREATE_STATEMENT);
-                for (Group group : groups){
-                    dbHelper.AddGroup(group);
-//                    System.out.println("Group ID: " + String.valueOf(group.getnGroupID()));
-//                    System.out.println("Group Name: " + group.getsGroupName());
-//                    System.out.println();
-                }
-
             } catch (SQLException e) {
                 e.printStackTrace();
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
+                return false;
             }
 
-            return null;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Boolean aVoid) {
             super.onPostExecute(aVoid);
+
+            if (!aVoid){
+                Toast.makeText(mContext, "Error, Could not Connect to Db. " +
+                                "Please make sure your network settings are correct and try again!"
+                        , Toast.LENGTH_LONG).show();
+            }
             createTabLayouts();
             mDialog.dismiss();
         }
@@ -243,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
 
         assert mViewPager != null;
         mSectionsPagerAdapter.addFragment(new MainOrdersFragment(), "Orders");
-        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Table");
+        mSectionsPagerAdapter.addFragment(new MainTableFragment(), "Tables");
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
@@ -306,7 +330,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkTablesEmpty(){
-        Log.d("Checking tables", "checkTablesEmpty: ");
         // If tables are empty add default values
         if(mDBHelper.GetAllTables().size() == 0)
             mDBHelper.CreateDefaultTables();
@@ -325,5 +348,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(mDBHelper.GetAllCustomers().size() == 0)
             mDBHelper.CreateTestCustomers();
+
+        if (mDBHelper.GetAllRestaurants().size() == 0)
+            mDBHelper.CreateDefaultRestaurant();
     }
 }

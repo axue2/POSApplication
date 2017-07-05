@@ -1,6 +1,7 @@
 package com.ass3.axue2.posapplication.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     public static final String EXTRA_ORDERTYPE = "OrderType";
 
     private DatabaseHelper mDBHelper;
+    private Context mContext;
 
     private TextView mSubtotalTextView;
     private TextView mPaidTextView;
@@ -67,6 +69,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         mDBHelper = new DatabaseHelper(getApplicationContext());
+        mContext = this;
 
         // Setup TextView
         mSubtotalTextView = (TextView) findViewById(R.id.payment_subtotal);
@@ -74,7 +77,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         mChangeTextView = (TextView) findViewById(R.id.payment_change_amount);
 
         // Set TextView
-        mSubtotalTextView.setText(String.valueOf(nSubtotal));
+        mSubtotalTextView.setText(String.format("%.2f", nSubtotal));
         mChangeTextView.setText(String.valueOf(nChange));
         mPaidTextView.setText("0");
 
@@ -177,12 +180,12 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                             sPaid = sPaid.substring(0, sPaid.length() - 2);
                             // If sPaid is not empty after removing the decimal
                             if (!sPaid.equals("")){
-
                                 double paid = Double.parseDouble(sPaid);
-                                nChange = (nSubtotal - paid) * -1;
+                                String change = String.format("%.2f" ,(nSubtotal - paid) * -1);
+                                nChange = Double.parseDouble(change);
                                 String newString = sPaid + getString(R.string.decimal);
                                 mPaidTextView.setText(newString);
-                                mChangeTextView.setText(String.valueOf(nChange));
+                                mChangeTextView.setText(String.valueOf(change));
 
                             }else{
                                 sPaid = "";
@@ -194,10 +197,11 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         }else{
                             sPaid = sPaid.substring(0, sPaid.length() - 1);
                             double paid = Double.parseDouble(sPaid);
-                            nChange = (nSubtotal - paid) * -1;
+                            String change = String.format("%.2f" ,(nSubtotal - paid) * -1);
+                            nChange = Double.parseDouble(change);
 
                             mPaidTextView.setText(sPaid);
-                            mChangeTextView.setText(String.valueOf(nChange));
+                            mChangeTextView.setText(String.valueOf(change));
                         }
                     }
                     // If there is only one value
@@ -263,22 +267,22 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public class PaymentTask extends AsyncTask<Void, Void, Void>{
-        private ProgressDialog mDialog;
+    private class PaymentTask extends AsyncTask<Void, Void, Void>{
+        /*private ProgressDialog mDialog;*/
 
-        public PaymentTask(PaymentActivity activity){
-            mDialog = new ProgressDialog(activity);
+        PaymentTask(PaymentActivity activity){
+            /*mDialog = new ProgressDialog(activity);*/
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+/*            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mDialog.setTitle("Sending Data");
             mDialog.setMessage("Sending data to server. Please Wait...");
             mDialog.setIndeterminate(true);
             mDialog.setCanceledOnTouchOutside(false);
-            mDialog.show();
+            mDialog.show();*/
         }
 
         @Override
@@ -286,7 +290,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
             if (sType.equals(Order.TYPE_TAKEAWAY)) {
                 // Create a new takeaway order
                 Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
-                OrderDAO orderDAO = new OrderDAO();
+                OrderDAO orderDAO = new OrderDAO(mContext);
                 long orderID = 0;
                 // TODO: Insert OrderItems, create another tmp table?
             }
@@ -297,8 +301,8 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                 Table newTable = new Table(nTableID, sTableName,
                         0, -1, 0, Table.STATUS_OPEN);
 
-                TableDAO tableDAO = new TableDAO();
-                OrderDAO orderDAO = new OrderDAO();
+                TableDAO tableDAO = new TableDAO(mContext);
+                OrderDAO orderDAO = new OrderDAO(mContext);
 
                 try{
                     Order currentOrder = orderDAO.getOrder(nOrderID);
@@ -319,7 +323,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            mDialog.dismiss();
+ /*           mDialog.dismiss();*/
             // Return to MainActivity
             Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -336,10 +340,11 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
         sPaid += n;
         double paid = Double.parseDouble(sPaid);
-        nChange = (nSubtotal - paid) * -1;
+        String change = String.format("%.2f" ,(nSubtotal - paid) * -1);
+        nChange = Double.parseDouble(change);
 
         mPaidTextView.setText(sPaid);
-        mChangeTextView.setText(String.valueOf(nChange));
+        mChangeTextView.setText(change);
     }
 }
 

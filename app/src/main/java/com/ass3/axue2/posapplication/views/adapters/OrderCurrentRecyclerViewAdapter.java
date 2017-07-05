@@ -38,8 +38,6 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
         private Button mMinusButton;
         private Button mPlusButton;
 
-
-
         public MyViewHolder(View v){
             super(v);
             mView = v;
@@ -68,8 +66,8 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position){
         final OrderItem orderItem = mOrderItems.get(position);
-        // Set values in the CardView
-        setTextViewValues(holder, orderItem);
+
+
 
         holder.mMinusButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +75,8 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
                 if(orderItem.getnQuantity() > 0) {
                     if (mContext instanceof OrderActivity) {
                         ((OrderActivity) mContext).RemoveOrderItem(orderItem);
+                        mOrderItems = ((OrderActivity) mContext).getmOrderItems();
+                        notifyDataSetChanged();
                     }
                 }
             }
@@ -87,25 +87,30 @@ public class OrderCurrentRecyclerViewAdapter extends RecyclerView.Adapter<OrderC
             public void onClick(View v) {
                 if(mContext instanceof OrderActivity){
                     ((OrderActivity) mContext).AddOrderItem(orderItem);
+                    mOrderItems = ((OrderActivity) mContext).getmOrderItems();
+                    notifyDataSetChanged();
+
                 }
             }
         });
-
+        // Set values in the CardView
+        setTextViewValues(holder, orderItem, position);
     }
 
     @Override
     public int getItemCount(){return mOrderItems.size();}
 
-    private void setTextViewValues(MyViewHolder holder, OrderItem item){
+    private void setTextViewValues(MyViewHolder holder, OrderItem item, int position){
 
         holder.mNameTextView.setText(item.getsProductName());
-        String price = "$" + String.valueOf(item.getnPrice());
+        String price = "$" + String.valueOf(String.format("%.2f", item.getnPrice()));
         holder.mPriceTextView.setText(price);
         String quantity = "x" + item.getnQuantity();
         holder.mQuantityTextView.setText(quantity);
-        String subtotal = "$" + String.valueOf(item.getnQuantity() * item.getnPrice());
+        double total = item.getnQuantity() * item.getnPrice();
+        String subtotal = "$" + String.valueOf(String.format("%.2f", total));
         holder.mSubtotalTextView.setText(subtotal);
-
+        holder.mSubtotalTextView.invalidate();
     }
 
     public void update(){

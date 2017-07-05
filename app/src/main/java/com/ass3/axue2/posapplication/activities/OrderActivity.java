@@ -1,28 +1,25 @@
 package com.ass3.axue2.posapplication.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.ass3.axue2.posapplication.R;
-import com.ass3.axue2.posapplication.fragments.OrderCurrentFragment;
-import com.ass3.axue2.posapplication.fragments.OrderGroupFragment;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Customer;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
@@ -37,22 +34,22 @@ import com.ass3.axue2.posapplication.network.DeliveryDAO;
 import com.ass3.axue2.posapplication.network.OrderDAO;
 import com.ass3.axue2.posapplication.network.OrderItemDAO;
 import com.ass3.axue2.posapplication.network.TableDAO;
+import com.ass3.axue2.posapplication.views.adapters.OrderCurrentRecyclerViewAdapter;
+import com.ass3.axue2.posapplication.views.adapters.OrderGroupRecyclerViewAdapter;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class OrderActivity extends AppCompatActivity {
 
+    // Extras all previous activities must contain
     public static final String EXTRA_TABLENAME = "Table Name";
     public static final String EXTRA_TABLEID = "Table ID";
     public static final String EXTRA_TABLEGUESTS = "Table Guests";
-
     public static final String EXTRA_ORDERID = "Order ID";
     public static final String EXTRA_ORDERTYPE = "Order Type";
-
     public static final String EXTRA_FROM = "From";
-
+    // Delivery Extras
     public static final String EXTRA_CUSTOMERNAME = "Customer Name";
     public static final String EXTRA_AL1 = "Address Line 1";
     public static final String EXTRA_AL2 = "Address Line 2";
@@ -60,8 +57,7 @@ public class OrderActivity extends AppCompatActivity {
     public static final String EXTRA_POSTCODE = "Postcode";
     public static final String EXTRA_PHONE = "Phone";
     public static final String EXTRA_DELIVERYFEE = "Delivery";
-
-
+    // Order Variables
     private long nTableID;
     private long nOrderID;
     private long nQuantity = 0;
@@ -69,7 +65,7 @@ public class OrderActivity extends AppCompatActivity {
     private String sType;
     private String mTableName;
     private int nTableGuests;
-
+    // Delivery Variables
     private String sCustomerName;
     private String sAL1;
     private String sAL2;
@@ -78,34 +74,34 @@ public class OrderActivity extends AppCompatActivity {
     private int nPhone;
     private double nDeliveryFee;
 
-
-
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    private ViewPager mViewPager;
-
+    private Context mContext;
+    private RecyclerView mRV;
+    private TabLayout mTabLayout;
     private DatabaseHelper mDBHelper;
     private ConfigurationDatabaseHelper mCDBHelper;
-
+    private Button mCurrentOrderButton;
     private TextView mOrderNumberTextView;
     private TextView mOrderQuantityTextView;
     private TextView mOrderSubtotalTextView;
 
     private ArrayList<OrderItem> mOrderItems = new ArrayList<>();
+    private ArrayList<Group> mGroups;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        mContext = this;
         Intent intent = getIntent();
 
+        // Get Order information
         mTableName = intent.getStringExtra(EXTRA_TABLENAME);
         nTableID = intent.getLongExtra(EXTRA_TABLEID, 0);
         nTableGuests = intent.getIntExtra(EXTRA_TABLEGUESTS, 0);
         nOrderID = intent.getLongExtra(EXTRA_ORDERID, 0);
         sType = intent.getStringExtra(EXTRA_ORDERTYPE);
-
+        // if delivery transaction, get customer information
         if (intent.getStringExtra(EXTRA_FROM).equals("DeliveryDetailsActivity")){
             sCustomerName = intent.getStringExtra(EXTRA_CUSTOMERNAME);
             sAL1 = intent.getStringExtra(EXTRA_AL1);
@@ -116,13 +112,21 @@ public class OrderActivity extends AppCompatActivity {
             nDeliveryFee = intent.getDoubleExtra(EXTRA_DELIVERYFEE,0);
         }
 
-        Log.d("EXTRA_TABLENAME VALUE", mTableName);
-        Log.d("EXTRA_TABLEID VALUE", String.valueOf(nTableID));
-
+        // Setup DBs
         mDBHelper = new DatabaseHelper(getApplicationContext());
         mCDBHelper = new ConfigurationDatabaseHelper(getApplicationContext());
 
+        // Setup RecyclerView
+        mRV = (RecyclerView) findViewById(R.id.order_rv);
+        LinearLayoutManager llm = new LinearLayoutManager(mContext);
+        mRV.setLayoutManager(llm);
 
+        // Setup Divider
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(mContext,
+                llm.getOrientation());
+        mRV.addItemDecoration(itemDecoration);
+
+        // If order already exists
         if (nOrderID > 0) {
             // Get all OrderItems
             mOrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
@@ -136,42 +140,43 @@ public class OrderActivity extends AppCompatActivity {
             }
         }
         // Get all the Groups
-        ArrayList<Group> groups = new ArrayList<>(mDBHelper.GetAllGroups().values());
-        
+        mGroups = new ArrayList<>(mDBHelper.GetAllGroups().values());
+
+        // Setup Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Get Buttons
+        mCurrentOrderButton = (Button) findViewById(R.id.order_current_button);
+        Button mConfirmButton = (Button) findViewById(R.id.order_confirm_button);
+
+        // Title is set as table name
+        // if takeaway or delivery transaction then table name is the transaction type
         setTitle(mTableName);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-
-        assert mViewPager != null;
-        mSectionsPagerAdapter.addFragment(new OrderCurrentFragment(), "Current Order");
+        // Setup TabLayout
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         // Create a new tab for each group
-        for (Group group : groups) {
-            OrderGroupFragment f = new OrderGroupFragment();
-
+        for (Group group : mGroups) {
             if(group.getnGroupID() > 0) {
-                // Put GroupID in fragment
-                Bundle args = new Bundle();
-                args.putLong(OrderGroupFragment.BUNDLE_ITEM_GROUPID, group.getnGroupID());
-                f.setArguments(args);
-
-                mSectionsPagerAdapter.addFragment(f, group.getsGroupName());
+                // Add Group to tab
+                mTabLayout.addTab(mTabLayout.newTab().setText(group.getsGroupName()));
             }
         }
 
-
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        tabLayout.setupWithViewPager(mViewPager);
+        // If order exists then show current order
+        if (nOrderID > 0){
+            OrderCurrentRecyclerViewAdapter adapter =
+                    new OrderCurrentRecyclerViewAdapter(mContext, mOrderItems);
+            mRV.setAdapter(adapter);
+            mCurrentOrderButton.setBackgroundColor(ContextCompat.getColor(mContext, R.color.OrderCurrentButtonClicked));
+        }
+        // Otherwise show first group
+        else{
+            updateCurrentOrderRV();
+        }
 
         // Setup TextView
         mOrderNumberTextView = (TextView) findViewById(R.id.order_number);
@@ -179,9 +184,7 @@ public class OrderActivity extends AppCompatActivity {
         mOrderSubtotalTextView = (TextView) findViewById(R.id.order_subtotal);
         setTextViewValues();
 
-        // Get Button
-        Button mConfirmButton = (Button) findViewById(R.id.order_confirm_button);
-
+        // Set Buttons depending on transaction type
         if(this.sType.equals(Order.TYPE_EAT_IN) || this.sType.equals(Order.TYPE_DELIVERY)) {
             mConfirmButton.setText(R.string.order_confirm_order);
         } else {
@@ -191,7 +194,7 @@ public class OrderActivity extends AppCompatActivity {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("OnclickListener", "Click Successful");
+                // If takeaway order go to Payment Activity
                 if (sType.equals(Order.TYPE_TAKEAWAY)) {
 
                     Intent intent = new Intent(OrderActivity.this, PaymentActivity.class);
@@ -226,6 +229,26 @@ public class OrderActivity extends AppCompatActivity {
                             Delivery delivery = new Delivery(nOrderID, customerID, nDeliveryFee);
                             mDBHelper.AddDelivery(delivery);
                         }
+                        // Gets the current OrderItems in DB
+                        ArrayList<OrderItem> OrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
+                        // Checks to see if any OrderItems have been deleted
+                        for (OrderItem orderItem : OrderItems){
+                            boolean isFound = false;
+                            int i = 0;
+                            // Check each OrderItem until it is found
+                            while (i < mOrderItems.size() && !isFound){
+                                OrderItem orderItem1 = mOrderItems.get(i);
+                                // If found set isFound to true
+                                if (orderItem1.getnOrderItemID() == orderItem.getnOrderItemID()){
+                                    isFound = true;
+                                }
+                                i++;
+                            }
+                            // If OrderItem was not found then delete it from db
+                            if (!isFound){
+                                mDBHelper.DeleteOrderItem(orderItem);
+                            }
+                        }
                         // Adds/Updates OrderItems to db
                         for (OrderItem orderItem : mOrderItems) {
                             orderItem.setnOrderID(nOrderID);
@@ -234,8 +257,8 @@ public class OrderActivity extends AppCompatActivity {
                             } else {
                                 mDBHelper.AddOrderItem(orderItem);
                             }
-
                         }
+                        // Return to MainActivity
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         OrderActivity.this.finish();
@@ -248,12 +271,45 @@ public class OrderActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+        mCurrentOrderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Order Current Button Clicked");
+                // Replace Adapter
+                OrderCurrentRecyclerViewAdapter adapter =
+                        new OrderCurrentRecyclerViewAdapter(mContext, mOrderItems);
+                mRV.setAdapter(adapter);
+                mCurrentOrderButton.setBackgroundColor(ContextCompat.getColor(mContext, R.color.OrderCurrentButtonClicked));
+
+            }
+        });
+
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                updateCurrentOrderRV();
+                mCurrentOrderButton.setBackgroundColor(ContextCompat.getColor(mContext, R.color.OrderCurrentButton));
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                updateCurrentOrderRV();
+                mCurrentOrderButton.setBackgroundColor(ContextCompat.getColor(mContext, R.color.OrderCurrentButton));
+            }
+        });
     }
 
     private class ConfirmTask extends AsyncTask<Void, Void, Void>{
         private ProgressDialog mDialog;
 
-        public ConfirmTask(OrderActivity activity){
+        ConfirmTask(OrderActivity activity){
             mDialog = new ProgressDialog(activity);
         }
 
@@ -272,10 +328,11 @@ public class OrderActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
             Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
             // If status is not In-use create new order
+
             if (nOrderID <= 0) {
                 try{
                     // Insert Order
-                    OrderDAO orderDAO = new OrderDAO();
+                    OrderDAO orderDAO = new OrderDAO(mContext);
                     nOrderID = orderDAO.insertOrder(order);
 
                 } catch (SQLException e) {
@@ -284,7 +341,7 @@ public class OrderActivity extends AppCompatActivity {
             } else {
                 try{
                     // Update Order
-                    OrderDAO orderDAO = new OrderDAO();
+                    OrderDAO orderDAO = new OrderDAO(mContext);
                     orderDAO.updateOrder(order);
 
                 }catch (SQLException e) {
@@ -295,7 +352,7 @@ public class OrderActivity extends AppCompatActivity {
             if (sType.equals(Order.TYPE_EAT_IN)) {
                 Table table = new Table(nTableID, mTableName, nTableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
                 try {
-                    TableDAO tableDAO = new TableDAO();
+                    TableDAO tableDAO = new TableDAO(mContext);
                     tableDAO.updateTable(table);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -303,8 +360,8 @@ public class OrderActivity extends AppCompatActivity {
             }
             // Otherwise add/update delivery details if delivery order
             else if (sType.equals(Order.TYPE_DELIVERY)) {
-                CustomerDAO customerDAO = new CustomerDAO();
-                DeliveryDAO deliveryDAO = new DeliveryDAO();
+                CustomerDAO customerDAO = new CustomerDAO(mContext);
+                DeliveryDAO deliveryDAO = new DeliveryDAO(mContext);
                 Customer customer = new Customer(sCustomerName, "", sAL1, sAL2, sAL3,
                         nPostcode, nPhone);
                 try {
@@ -316,9 +373,34 @@ public class OrderActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+            // Gets the current OrderItems in DB
+            ArrayList<OrderItem> OrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
+            // Checks to see if any OrderItems have been deleted
+            for (OrderItem orderItem : OrderItems){
+                boolean isFound = false;
+                int i = 0;
+                // Check each OrderItem until it is found
+                while (i < mOrderItems.size() && !isFound){
+                    OrderItem orderItem1 = mOrderItems.get(i);
+                    // If found set isFound to true
+                    if (orderItem1.getnOrderItemID() == orderItem.getnOrderItemID()){
+                        isFound = true;
+                    }
+                    i++;
+                }
+                // If OrderItem was not found then delete it from db
+                if (!isFound){
+                    try {
+                        OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
+                        orderItemDAO.deleteOrderItem(orderItem);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             // Adds/Updates OrderItems to db
             try {
-                OrderItemDAO orderItemDAO = new OrderItemDAO();
+                OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
                 for (OrderItem orderItem : mOrderItems) {
                     orderItem.setnOrderID(nOrderID);
                     if (orderItem.getnOrderItemID() > 0) {
@@ -343,57 +425,23 @@ public class OrderActivity extends AppCompatActivity {
         }
     }
 
+    private void updateCurrentOrderRV(){
+        Group group = mGroups.get(mTabLayout.getSelectedTabPosition());
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_order, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // Get all products
+        ArrayList<Product> productList = new ArrayList<>();
+        if (group.getnGroupID() > 0){
+            productList = new ArrayList<>(mDBHelper.GetProducts(group.getnGroupID()).values());
         }
 
-        return super.onOptionsItemSelected(item);
+        // Replace Adapter
+        OrderGroupRecyclerViewAdapter adapter =
+                new OrderGroupRecyclerViewAdapter(mContext, productList);
+        mRV.setAdapter(adapter);
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        private List<Fragment> mFragments = new ArrayList<>();
-        private  List<String> mFragmentTitles = new ArrayList<>();
-
-        SectionsPagerAdapter(FragmentManager fm) {super(fm);}
-
-        void addFragment(Fragment fragment, String title){
-            mFragments.add(fragment);
-            mFragmentTitles.add(title);
-        }
-
-        @Override
-        public Fragment getItem(int position) {return mFragments.get(position);}
-
-        @Override
-        public int getCount() {return mFragments.size();}
-
-        @Override
-        public CharSequence getPageTitle(int position) {return mFragmentTitles.get(position);}
-    }
 
     public void AddOrderItem(OrderItem orderItem){
-
         boolean found = false;
 
         // Update Activity
@@ -406,8 +454,6 @@ public class OrderActivity extends AppCompatActivity {
             // If found in OrderItems then increase quantity by one
             if(checkItem.getnProductID() == orderItem.getnProductID()){
                 checkItem.setnQuantity(checkItem.getnQuantity() + 1);
-                Log.d("Current Quantity", String.valueOf(checkItem.getnQuantity()));
-                updateCurrentFragment();
                 found = true;
                 break;
             }
@@ -416,8 +462,6 @@ public class OrderActivity extends AppCompatActivity {
         if (!found) {
             // if OrderItem could not be found add one into OrderItems
             mOrderItems.add(orderItem);
-            updateCurrentFragment();
-            Log.d("Current Number of items", String.valueOf(mOrderItems.size()));
         }
     }
 
@@ -431,14 +475,6 @@ public class OrderActivity extends AppCompatActivity {
         return mOrderItems;
     }
 
-    public void updateCurrentFragment(){
-        // OrderCurrentFragment MUST BE FIRST FRAGMENT
-        Fragment fragment = mSectionsPagerAdapter.getItem(0);
-        if (fragment instanceof OrderCurrentFragment){
-            ((OrderCurrentFragment) fragment).updateRecyclerView();
-        }
-    }
-
     private void setTextViewValues(){
         if (nOrderID > 0){
             mOrderNumberTextView.setText(String.valueOf(nOrderID));
@@ -447,7 +483,7 @@ public class OrderActivity extends AppCompatActivity {
         }
 
         mOrderQuantityTextView.setText(String.valueOf(nQuantity));
-        mOrderSubtotalTextView.setText(String.valueOf("$" + nSubtotal));
+        mOrderSubtotalTextView.setText(String.valueOf("$" + String.format("%.2f", nSubtotal)));
     }
 
     public void RemoveOrderItem(OrderItem orderItem){
@@ -461,7 +497,12 @@ public class OrderActivity extends AppCompatActivity {
                 if (checkItem.getnProductID() == orderItem.getnProductID()) {
                     checkItem.setnQuantity(checkItem.getnQuantity() - 1);
                     Log.d("Current Quantity", String.valueOf(checkItem.getnQuantity()));
-                    updateCurrentFragment();
+
+                    // If the quantity is now zero
+                    if (checkItem.getnQuantity() == 0){
+                        mOrderItems.remove(checkItem);
+                    }
+
                     break;
                 }
             }

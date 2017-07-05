@@ -3,16 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="2dp"
-    android:layout_marginBottom="2dp">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:id="@+id/order_product_list_cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="5dp"
-        app:cardBackgroundColor="@color/MainTableOpen">
+        app:cardBackgroundColor="@color/GREY">
 
         <RelativeLayout
             android:layout_width="match_parent"

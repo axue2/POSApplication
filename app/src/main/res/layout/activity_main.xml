@@ -51,30 +51,30 @@
         android:id="@+id/main_takeaway_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="100dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
         android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/main_fab_takeaway"
-            android:textSize="18sp"
-            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/BLACK"
+            android:text="@string/main_fab_takeaway"
             android:textColor="@color/WHITE"
-            android:background="@color/BLACK"/>
+            android:textSize="18sp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_takeaway"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            app:srcCompat="@drawable/ic_action_takeaway"
             android:backgroundTint="@color/fab_takeaway"
-            app:fabSize="mini"/>
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_action_takeaway" />
 
     </LinearLayout>
 
@@ -82,30 +82,30 @@
         android:id="@+id/main_delivery_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="180dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
         android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/main_fab_delivery"
-            android:textSize="18sp"
-            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/BLACK"
+            android:text="@string/main_fab_delivery"
             android:textColor="@color/WHITE"
-            android:background="@color/BLACK"/>
+            android:textSize="18sp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_delivery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            app:srcCompat="@drawable/ic_action_delivery"
             android:backgroundTint="@color/fab_delivery"
-            app:fabSize="mini"/>
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_action_delivery" />
 
     </LinearLayout>
 
