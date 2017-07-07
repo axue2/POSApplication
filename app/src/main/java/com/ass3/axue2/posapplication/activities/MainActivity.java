@@ -35,10 +35,15 @@ import com.ass3.axue2.posapplication.models.operational.Order;
 import com.ass3.axue2.posapplication.models.operational.OrderItem;
 import com.ass3.axue2.posapplication.models.operational.Product;
 import com.ass3.axue2.posapplication.models.operational.Table;
+import com.ass3.axue2.posapplication.models.saxpos.SaxposAdapter;
+import com.ass3.axue2.posapplication.models.saxpos.Stkcat;
+import com.ass3.axue2.posapplication.models.saxpos.Stkite;
 import com.ass3.axue2.posapplication.network.GroupDAO;
 import com.ass3.axue2.posapplication.network.OrderDAO;
 import com.ass3.axue2.posapplication.network.OrderItemDAO;
 import com.ass3.axue2.posapplication.network.ProductDAO;
+import com.ass3.axue2.posapplication.network.StkcatDAO;
+import com.ass3.axue2.posapplication.network.StkiteDAO;
 import com.ass3.axue2.posapplication.network.TableDAO;
 
 import java.sql.SQLException;
@@ -189,11 +194,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
             ProductDAO productDAO = new ProductDAO(mContext);
             GroupDAO groupDAO = new GroupDAO(mContext);
+            StkcatDAO stkcatDAO = new StkcatDAO(mContext);
+            StkiteDAO stkiteDAO = new StkiteDAO(mContext);
+
             List<Table> tables;
             List<Order> orders;
             List<OrderItem> orderItems;
             List<Product> products;
             List<Group> groups;
+            List<Stkcat> stkcats;
+            List<Stkite> stkites;
+
             try {
                 // Check connection
                 if (tableDAO.testConnection()) {
@@ -219,16 +230,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         dbHelper.AddOrderItem(orderItem);
                     }
                     // Sync Products
-                    products = productDAO.getProducts();
+                    stkites = stkiteDAO.getStkites();
+                    //products = productDAO.getProducts();
                     dbHelper.dropTable(Product.TABLE_NAME);
                     dbHelper.createTable(Product.CREATE_STATEMENT);
+                    products = SaxposAdapter.stkiteToProduct(stkites);
                     for (Product product : products) {
                         dbHelper.AddProduct(product);
                     }
                     // Sync Groups
-                    groups = groupDAO.getGroups();
+                    stkcats = stkcatDAO.getStkcats();
+                    //groups = groupDAO.getGroups();
                     dbHelper.dropTable(Group.TABLE_NAME);
                     dbHelper.createTable(Group.CREATE_STATEMENT);
+                    groups = SaxposAdapter.stkcatToGroup(stkcats);
                     for (Group group : groups) {
                         dbHelper.AddGroup(group);
                     }
