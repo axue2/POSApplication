@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,13 +41,16 @@ public class MainTableFragment extends android.support.v4.app.Fragment {
         rv.setAdapter(adapter);
 
         // Setup Layout Manager
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        rv.setLayoutManager(llm);
+        /*LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        rv.setLayoutManager(llm);*/
 
         // Setup Divider
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),
+        /*DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(),
                 llm.getOrientation());
-        rv.addItemDecoration(itemDecoration);
+        rv.addItemDecoration(itemDecoration);*/
+
+        StaggeredGridLayoutManager llm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        rv.setLayoutManager(llm);
 
         return rv;
     }

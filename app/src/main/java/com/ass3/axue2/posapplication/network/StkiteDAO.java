@@ -37,7 +37,7 @@ public class StkiteDAO {
     }
 
     public List<Stkite> getStkites() throws SQLException {
-        String query = "SELECT * FROM " + Stkite.TABLE_NAME;
+        String query = "SELECT * FROM " + Stkite.TABLE_NAME + " ORDER BY " + Stkite.COLUMN_ID;
         List<Stkite> list = new ArrayList<Stkite>();
         Stkite stkite = null;
         ResultSet rs = null;

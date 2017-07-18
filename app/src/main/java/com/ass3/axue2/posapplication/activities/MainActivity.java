@@ -35,7 +35,7 @@ import com.ass3.axue2.posapplication.models.operational.Order;
 import com.ass3.axue2.posapplication.models.operational.OrderItem;
 import com.ass3.axue2.posapplication.models.operational.Product;
 import com.ass3.axue2.posapplication.models.operational.Table;
-import com.ass3.axue2.posapplication.models.saxpos.SaxposAdapter;
+import com.ass3.axue2.posapplication.models.saxpos.SaxposConverter;
 import com.ass3.axue2.posapplication.models.saxpos.Stkcat;
 import com.ass3.axue2.posapplication.models.saxpos.Stkite;
 import com.ass3.axue2.posapplication.network.GroupDAO;
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //products = productDAO.getProducts();
                     dbHelper.dropTable(Product.TABLE_NAME);
                     dbHelper.createTable(Product.CREATE_STATEMENT);
-                    products = SaxposAdapter.stkiteToProduct(stkites);
+                    products = SaxposConverter.stkiteToProduct(stkites);
                     for (Product product : products) {
                         dbHelper.AddProduct(product);
                     }
@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //groups = groupDAO.getGroups();
                     dbHelper.dropTable(Group.TABLE_NAME);
                     dbHelper.createTable(Group.CREATE_STATEMENT);
-                    groups = SaxposAdapter.stkcatToGroup(stkcats);
+                    groups = SaxposConverter.stkcatToGroup(stkcats);
                     for (Group group : groups) {
                         dbHelper.AddGroup(group);
                     }

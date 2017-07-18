@@ -13,7 +13,7 @@ import java.util.List;
  * Created by anthonyxue on 6/07/2017.
  */
 
-public class SaxposAdapter {
+public class SaxposConverter {
 
     public Customer popcumToCustomer(){
         return new Customer();
@@ -51,7 +51,7 @@ public class SaxposAdapter {
         for (Stkite stkite : stkites ){
             // Check item is valid
             // Checks GroupBy to find misc item
-            if (stkite.getsGroupBy() != null) {
+            if (stkite.getsGroupBy() != null && stkite.getsStatus().equals("Y")) {
                 Product product = new Product();
                 product.setnProductID(Long.parseLong(stkite.getsID()));
                 product.setnGroupID(Long.parseLong(stkite.getsGroupBy()));

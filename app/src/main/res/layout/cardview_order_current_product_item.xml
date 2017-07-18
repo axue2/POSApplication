@@ -5,96 +5,114 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <android.support.v7.widget.CardView
         android:id="@+id/order_current_list_cv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/WHITE">
 
-        <TextView
-            android:id="@+id/border"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="10dp">
 
             <Button
                 android:id="@+id/order_current_minus_button"
-                android:layout_width="80dp"
-                android:layout_height="60dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:background="@color/WHITE"
-                android:textSize="18sp" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <ImageView
+                android:id="@+id/order_current_minus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignLeft="@id/order_current_minus_button"
+                android:layout_alignRight="@id/order_current_minus_button"
+                android:elevation="2dp"
+                android:background="@color/WHITE"
+                android:scaleType="fitCenter"
+                android:padding="10dp"
+                android:contentDescription="minus button"
+                app:srcCompat="@mipmap/remove" />
 
             <Button
                 android:id="@+id/order_current_plus_button"
-                android:layout_width="80dp"
-                android:layout_height="60dp"
-                android:layout_gravity="end"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:background="@color/WHITE"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="12dp">
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true" />
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="30dp"
-                android:contentDescription="@string/order_current_remove_button"
-                android:layout_gravity="center"
-                app:srcCompat="@mipmap/remove" />
-
+                android:id="@+id/order_current_plus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignLeft="@id/order_current_plus_button"
+                android:layout_alignRight="@id/order_current_plus_button"
+                android:elevation="2dp"
+                android:background="@color/WHITE"
+                android:scaleType="fitCenter"
+                android:padding="10dp"
+                android:contentDescription="plus button"
+                app:srcCompat="@mipmap/add" />
 
             <TextView
                 android:id="@+id/order_current_product_quantity"
-                android:layout_width="50dp"
-                android:layout_height="30dp"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:text="@string/order_current_cardview_quantity" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/order_current_minus_button"
+                android:paddingLeft="10dp"
+                android:paddingTop="6dp"
+                android:text="x99"
+                android:textSize="18sp"
+                app:paddingStart="10dp" />
 
             <TextView
                 android:id="@+id/order_current_product_name"
-                android:layout_width="150dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_toEndOf="@id/order_current_product_quantity"
+                android:layout_toLeftOf="@+id/order_current_product_price"
+                android:layout_toRightOf="@id/order_current_minus_button"
+                android:layout_toStartOf="@+id/order_current_product_price"
                 android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingTop="6dp"
+                android:textSize="18dp"
                 android:text="@string/order_current_cardview_name"
-                android:textColor="@color/BLACK" />
+                android:textColor="@color/BLACK"
+                app:paddingStart="10dp" />
 
             <TextView
                 android:id="@+id/order_current_product_price"
-                android:layout_width="72dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:text="@string/order_current_cardview_price"
-                android:textColor="@color/BLACK" />
+                android:layout_toLeftOf="@+id/order_current_product_subtotal"
+                android:layout_toRightOf="@id/order_current_minus_button"
+                android:layout_toStartOf="@+id/order_current_product_subtotal"
+                android:paddingLeft="10dp"
+                android:paddingTop="6dp"
+                android:text="$999.99" />
 
             <TextView
                 android:id="@+id/order_current_product_subtotal"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:text="@string/order_current_cardview_price"
-                android:textColor="@color/BLACK" />
+                android:layout_toLeftOf="@id/order_current_plus_button"
+                android:layout_toRightOf="@id/order_current_minus_button"
+                android:layout_toStartOf="@id/order_current_plus_button"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="6dp"
+                android:text="$999.99"
+                android:textStyle="bold"
+                app:paddingStart="10dp" />
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:contentDescription="@string/order_current_add_button"
-                android:layout_gravity="center"
+        </RelativeLayout>
 
-                app:srcCompat="@mipmap/add" />
-
-        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 

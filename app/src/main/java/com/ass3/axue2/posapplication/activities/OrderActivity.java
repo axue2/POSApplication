@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 
 import android.os.Bundle;
@@ -119,6 +120,7 @@ public class OrderActivity extends AppCompatActivity {
         // Setup RecyclerView
         mRV = (RecyclerView) findViewById(R.id.order_rv);
         LinearLayoutManager llm = new LinearLayoutManager(mContext);
+        //StaggeredGridLayoutManager llm = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mRV.setLayoutManager(llm);
 
         // Setup Divider

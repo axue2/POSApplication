@@ -25,7 +25,8 @@
                 android:gravity="fill"
                 android:text="@string/order_cardview_name"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_alignParentLeft="true" />
 
             <TextView
                 android:id="@+id/order_add_product_price"
@@ -34,7 +35,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:gravity="center"
-                android:text="@string/order_cardview_price" />
+                android:text="@string/order_cardview_price"
+                android:layout_alignParentRight="true" />
 
         </RelativeLayout>
 

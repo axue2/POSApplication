@@ -28,7 +28,10 @@
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:tabMaxWidth="0dp"
+            app:tabGravity="fill"
+            />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -55,7 +58,8 @@
         android:layout_marginBottom="100dp"
         android:layout_marginEnd="16dp"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:layout_marginRight="16dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -65,7 +69,8 @@
             android:background="@color/BLACK"
             android:text="@string/main_fab_takeaway"
             android:textColor="@color/WHITE"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_marginRight="10dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_takeaway"
@@ -86,7 +91,8 @@
         android:layout_marginBottom="180dp"
         android:layout_marginEnd="16dp"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:layout_marginRight="16dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -96,7 +102,8 @@
             android:background="@color/BLACK"
             android:text="@string/main_fab_delivery"
             android:textColor="@color/WHITE"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_marginRight="10dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_delivery"
