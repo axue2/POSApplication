@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
+import com.ass3.axue2.posapplication.models.operational.Order;
 import com.ass3.axue2.posapplication.models.operational.Table;
 import com.ass3.axue2.posapplication.views.adapters.MainRecyclerViewAdapter;
 
@@ -29,7 +30,15 @@ public class MainOrdersFragment extends android.support.v4.app.Fragment {
         mDBHelper = new DatabaseHelper(getActivity());
 
         // Get Tables
-        ArrayList<Table> tableList = new ArrayList<>(mDBHelper.GetInuseTables().values());
+        ArrayList<Order> orders = new ArrayList<>(mDBHelper.GetEatInOrders().values());
+        System.out.println("Number of Eat-In Orders: " + mDBHelper.GetEatInOrders().size());
+        ArrayList<Table> tableList = new ArrayList<>();
+        for (Order order : orders){
+            Table table = new Table(order.getnTableID(),String.valueOf(mDBHelper.GetTable(order.getnTableID()).getsTableName()),
+                    0, order.getnOrderID(), order.getnTotal(), Table.STATUS_INUSE);
+            tableList.add(table);
+        }
+        //ArrayList<Table> tableList = new ArrayList<>(mDBHelper.GetInuseTables().values());
 
         // Setup RecyclerView
         RecyclerView rv = (RecyclerView) inflater.inflate(

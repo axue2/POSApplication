@@ -10,10 +10,10 @@ public class Poqapa {
     // Database Constants for Order
     public static final String TABLE_NAME = "poqapa";
     public static final String COLUMN_ID = "apa_invoice_no";
-    public static final String COLUMN_TABLE_ID = "";
     public static final String COLUMN_CUSTOMER_ID = "apa_cid";
     public static final String COLUMN_CID_LINE = "apa_cid_line";
     public static final String COLUMN_DEPARTMENT_ID = "apa_department_id";
+    // Order No is Table no in the case of eat-in orders
     public static final String COLUMN_ORDER_NO = "apa_order_no";
     public static final String COLUMN_INVOICE_DATE = "apa_invoice_date";
     public static final String COLUMN_TOT_INVOICE_AMT = "apa_tot_invoice_amt";
@@ -31,7 +31,7 @@ public class Poqapa {
 
 
     private String sID;
-    private String sTableID;
+    private String sCID;
     private String sCIDLine;
     private String sDepartmentID;
     private String sOrderNo;
@@ -45,14 +45,14 @@ public class Poqapa {
     private String sAuthorisor;
     private String sAuthorisorDate;
 
-    public Poqapa(String id, String tableID, String orderNo,
+    public Poqapa(String id, String orderNo,
                   String invoiceDate, double totInvoiceAmt,
                   String totDiscountAmt, String totInvoiceBal,
                   String thisPayStatus, String thisPayAmount,
                   String thisPayBalance, String authorisor,
                   String authorisorDate){
         sID = id;
-        sTableID = tableID;
+        sCID = "CASH SALE";
         sCIDLine = "0000";
         sDepartmentID = "0003";
         sOrderNo = orderNo;
@@ -67,6 +67,23 @@ public class Poqapa {
         sAuthorisorDate = authorisorDate;
     }
 
+    public Poqapa(){
+        sID = "";
+        sCID = "CASH SALE";
+        sCIDLine = "0000";
+        sDepartmentID = "0003";
+        sOrderNo = "";
+        sInvoiceDate = "";
+        sTotInvoiceAmt = -1;
+        sTotDiscountAmt = "";
+        sTotInvoiceBal = "";
+        sThisPayStatus = "";
+        sThisPayBalance = "";
+        sAuthorisor = "";
+        sAuthorisorDate = "";
+
+    }
+
 
     public String getsID() {
         return sID;
@@ -74,14 +91,6 @@ public class Poqapa {
 
     public void setsID(String sID) {
         this.sID = sID;
-    }
-
-    public String getsTableID() {
-        return sTableID;
-    }
-
-    public void setsTableID(String sTableID) {
-        this.sTableID = sTableID;
     }
 
     public String getsCIDLine() {
@@ -179,6 +188,15 @@ public class Poqapa {
     public void setsAuthorisorDate(String sAuthorisorDate) {
         this.sAuthorisorDate = sAuthorisorDate;
     }
+
+    public String getsCID() {
+        return sCID;
+    }
+
+    public void setsCID(String sCID) {
+        this.sCID = sCID;
+    }
+
 
 
 }

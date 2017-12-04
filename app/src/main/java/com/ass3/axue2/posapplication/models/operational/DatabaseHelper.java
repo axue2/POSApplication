@@ -253,6 +253,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return order;
     }
 
+    public HashMap<Long, Order> GetEatInOrders(){
+        HashMap<Long, Order> orders = new LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Order.TABLE_NAME + " WHERE " +
+                Order.COLUMN_TYPE + " = '" + Order.TYPE_EAT_IN + "' AND " +
+                Order.COLUMN_STATUS + " = '" + Order.STATUS_UNPAID + "'", null);
+
+        // Add all orders in db to hashmap
+        if(cursor.moveToFirst()) {
+            do {
+                Order order = new Order(cursor.getLong(0),
+                        cursor.getLong(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getDouble(4));
+                orders.put(order.getnTableID(), order);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+        return orders;
+    }
+
     public long AddOrderItem(OrderItem orderItem){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -264,6 +286,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(OrderItem.COLUMN_PRODUCT_NAME, orderItem.getsProductName());
         values.put(OrderItem.COLUMN_PRODUCT_PRICE, orderItem.getnPrice());
         values.put(OrderItem.COLUMN_QUANTITY, orderItem.getnQuantity());
+        values.put(OrderItem.COLUMN_POSITION, orderItem.getnPosition());
         long id = db.insert(OrderItem.TABLE_NAME, null, values);
         db.close();
         return id;
@@ -280,6 +303,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(OrderItem.COLUMN_PRODUCT_NAME, orderItem.getsProductName());
         values.put(OrderItem.COLUMN_PRODUCT_PRICE, orderItem.getnPrice());
         values.put(OrderItem.COLUMN_QUANTITY, orderItem.getnQuantity());
+        values.put(OrderItem.COLUMN_POSITION, orderItem.getnPosition());
         // Update values using table id
         db.update(OrderItem.TABLE_NAME, values, OrderItem.COLUMN_ID + " = " + orderItem.getnOrderItemID(), null );
         db.close();
@@ -300,7 +324,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getLong(3),
                         cursor.getString(4),
                         cursor.getDouble(5),
-                        cursor.getInt(6)
+                        cursor.getInt(6),
+                        cursor.getInt(7)
                 );
                 orderItems.put(orderItem.getnOrderItemID(), orderItem);
             } while(cursor.moveToNext());

@@ -13,6 +13,7 @@ public class OrderItem {
     private String sProductName;
     private double nPrice;
     private int nQuantity;
+    private int nPosition;
 
     // Database Constants
     public static final String TABLE_NAME = "Order_Item";
@@ -23,6 +24,7 @@ public class OrderItem {
     public static final String COLUMN_PRODUCT_NAME = "PRODUCT_NAME";
     public static final String COLUMN_PRODUCT_PRICE = "PRODUCT_PRICE";
     public static final String COLUMN_QUANTITY = "QUANTITY";
+    public static final String COLUMN_POSITION = "POSITION";
 
     // OrderItem Create Statement
     public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
@@ -32,8 +34,21 @@ public class OrderItem {
             COLUMN_PRODUCT_ID + " INTEGER NOT NULL, " +
             COLUMN_PRODUCT_NAME + " TEXT NOT NULL, " +
             COLUMN_PRODUCT_PRICE + " REAL, " +
-            COLUMN_QUANTITY + " INTEGER" +
+            COLUMN_QUANTITY + " INTEGER, " +
+            COLUMN_POSITION + " INTEGER" +
             ")";
+
+    public OrderItem(long orderItemID, long orderID, long tableID, long productID, String name,
+                     double price, int quantity, int position){
+        nOrderItemID = orderItemID;
+        nOrderID = orderID;
+        nTableID = tableID;
+        nProductID = productID;
+        sProductName = name;
+        nPrice = price;
+        nQuantity = quantity;
+        nPosition = position;
+    }
 
     public OrderItem(long orderItemID, long orderID, long tableID, long productID, String name,
               double price, int quantity){
@@ -44,6 +59,7 @@ public class OrderItem {
         sProductName = name;
         nPrice = price;
         nQuantity = quantity;
+        nPosition = -1;
     }
 
     public OrderItem(long orderID, long tableID, long productID, String name,
@@ -55,6 +71,7 @@ public class OrderItem {
         sProductName = name;
         nPrice = price;
         nQuantity = quantity;
+        nPosition = -1;
     }
 
     public OrderItem() {
@@ -65,6 +82,7 @@ public class OrderItem {
         sProductName = "";
         nPrice = 0;
         nQuantity = 0;
+        nPosition = -1;
     }
 
     public void increaseQuantityByOne(){setnQuantity(this.nQuantity + 1);}
@@ -125,5 +143,13 @@ public class OrderItem {
 
     public void setnQuantity(int nQuantity) {
         this.nQuantity = nQuantity;
+    }
+
+    public int getnPosition() {
+        return nPosition;
+    }
+
+    public void setnPosition(int nPosition) {
+        this.nPosition = nPosition;
     }
 }

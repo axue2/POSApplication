@@ -16,6 +16,7 @@ public class Order {
     // Database Constants
     public static final String TABLE_NAME = "Orders";
     public static final String COLUMN_ID = "id";
+    //TODO: Convert Table ID to Table Name or create a Table Name attribute
     public static final String COLUMN_TABLE_ID = "TABLE_ID";
     public static final String COLUMN_TYPE = "TYPE";
     public static final String COLUMN_STATUS = "STATUS";
@@ -25,6 +26,7 @@ public class Order {
     public static final String TYPE_EAT_IN = "EAT-IN";
     public static final String TYPE_TAKEAWAY = "TAKEAWAY";
     public static final String TYPE_DELIVERY = "DELIVERY";
+    public static final String TYPE_BOOKING = "BOOKING";
 
     // Constants for different Order status
     public static final String STATUS_UNPAID = "UNPAID";

@@ -15,7 +15,12 @@ import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseH
 import com.ass3.axue2.posapplication.models.operational.DatabaseHelper;
 import com.ass3.axue2.posapplication.models.operational.Order;
 import com.ass3.axue2.posapplication.models.operational.Table;
+import com.ass3.axue2.posapplication.models.saxpos.Ab5ctl;
+import com.ass3.axue2.posapplication.models.saxpos.Poqapa;
+import com.ass3.axue2.posapplication.models.saxpos.SaxposConverter;
+import com.ass3.axue2.posapplication.network.Ab5ctlDAO;
 import com.ass3.axue2.posapplication.network.OrderDAO;
+import com.ass3.axue2.posapplication.network.PoqapaDAO;
 import com.ass3.axue2.posapplication.network.TableDAO;
 
 import java.sql.SQLException;
@@ -267,6 +272,7 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    // Network Mode Payment
     private class PaymentTask extends AsyncTask<Void, Void, Void>{
         /*private ProgressDialog mDialog;*/
 
@@ -289,9 +295,21 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
         protected Void doInBackground(Void... params) {
             if (sType.equals(Order.TYPE_TAKEAWAY)) {
                 // Create a new takeaway order
-                Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
-                OrderDAO orderDAO = new OrderDAO(mContext);
+                //Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
+                //OrderDAO orderDAO = new OrderDAO(mContext);
                 long orderID = 0;
+
+                Poqapa poqapa = new Poqapa();
+                Ab5ctlDAO ab5ctlDAO = new Ab5ctlDAO(mContext);
+                PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
+
+                try{
+                    poqapa.setsID(String.valueOf(ab5ctlDAO.getItemNo()));
+                    poqapaDAO.insertPoqapa(poqapa);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
                 // TODO: Insert OrderItems, create another tmp table?
             }
             // Assumes that if not takeaway order then it is a table order
@@ -302,15 +320,22 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
                         0, -1, 0, Table.STATUS_OPEN);
 
                 TableDAO tableDAO = new TableDAO(mContext);
-                OrderDAO orderDAO = new OrderDAO(mContext);
+                //OrderDAO orderDAO = new OrderDAO(mContext);
+                PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
+
 
                 try{
-                    Order currentOrder = orderDAO.getOrder(nOrderID);
-                    Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
-                            currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
+                    //Order currentOrder = orderDAO.getOrder(nOrderID);
+                    //Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
+                    //        currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
+
+                    Poqapa poqapa = poqapaDAO.getPoqapa(SaxposConverter.convertToDigits((int) nOrderID, 7));
+                    poqapa.setsThisPayStatus("P");
+                    System.out.println("Order ID: " + poqapa.getsID());
 
                     tableDAO.updateTable(newTable);
-                    orderDAO.updateOrder(newOrder);
+                    poqapaDAO.updatePoqapa(poqapa);
+                    //orderDAO.updateOrder(newOrder);
 
                 } catch (SQLException e) {
                     e.printStackTrace();

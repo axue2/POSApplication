@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 
 import android.os.Bundle;
@@ -30,14 +29,20 @@ import com.ass3.axue2.posapplication.models.operational.Order;
 import com.ass3.axue2.posapplication.models.operational.OrderItem;
 import com.ass3.axue2.posapplication.models.operational.Product;
 import com.ass3.axue2.posapplication.models.operational.Table;
+import com.ass3.axue2.posapplication.models.saxpos.Poqapa;
+import com.ass3.axue2.posapplication.models.saxpos.Poqapd;
+import com.ass3.axue2.posapplication.models.saxpos.SaxposConverter;
+import com.ass3.axue2.posapplication.network.Ab5ctlDAO;
 import com.ass3.axue2.posapplication.network.CustomerDAO;
 import com.ass3.axue2.posapplication.network.DeliveryDAO;
-import com.ass3.axue2.posapplication.network.OrderDAO;
 import com.ass3.axue2.posapplication.network.OrderItemDAO;
+import com.ass3.axue2.posapplication.network.PoqapaDAO;
+import com.ass3.axue2.posapplication.network.PoqapdDAO;
 import com.ass3.axue2.posapplication.network.TableDAO;
 import com.ass3.axue2.posapplication.views.adapters.OrderCurrentRecyclerViewAdapter;
 import com.ass3.axue2.posapplication.views.adapters.OrderGroupRecyclerViewAdapter;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -323,19 +328,31 @@ public class OrderActivity extends AppCompatActivity {
             mDialog.setMessage("Sending database information to server. Please Wait...");
             mDialog.setIndeterminate(true);
             mDialog.setCanceledOnTouchOutside(false);
-            mDialog.show();
+//            mDialog.show();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
+            Poqapa poqapa = SaxposConverter.orderToPoqapa(order);
             // If status is not In-use create new order
 
             if (nOrderID <= 0) {
                 try{
+                    // Generate a new Invoice No
+                    Ab5ctlDAO ab5ctlDAO = new Ab5ctlDAO(mContext);
+                    BigDecimal invoiceNumber = ab5ctlDAO.getItemNo();
+                    poqapa.setsID(SaxposConverter.convertToDigits(invoiceNumber.intValue(),7));
+
+
                     // Insert Order
-                    OrderDAO orderDAO = new OrderDAO(mContext);
-                    nOrderID = orderDAO.insertOrder(order);
+                    //OrderDAO orderDAO = new OrderDAO(mContext);
+                    //nOrderID = orderDAO.insertOrder(order);
+                    PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
+                    System.out.println("Old Order ID: " + nOrderID);
+                    poqapaDAO.insertPoqapa(poqapa);
+                    nOrderID = invoiceNumber.intValue();
+                    System.out.println("New Order ID: " + nOrderID);
 
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -343,8 +360,10 @@ public class OrderActivity extends AppCompatActivity {
             } else {
                 try{
                     // Update Order
-                    OrderDAO orderDAO = new OrderDAO(mContext);
-                    orderDAO.updateOrder(order);
+                    //OrderDAO orderDAO = new OrderDAO(mContext);
+                    //orderDAO.updateOrder(order);
+                    PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
+                    poqapaDAO.updatePoqapa(poqapa);
 
                 }catch (SQLException e) {
                     e.printStackTrace();
@@ -375,10 +394,18 @@ public class OrderActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+
+            // apd_detail_no Used for SAXPOS conversion
+            int nItemPosition = 0;
+
             // Gets the current OrderItems in DB
             ArrayList<OrderItem> OrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
             // Checks to see if any OrderItems have been deleted
             for (OrderItem orderItem : OrderItems){
+                System.out.println("Position: " + orderItem.getnPosition());
+                if (orderItem.getnPosition() > nItemPosition)
+                    nItemPosition = orderItem.getnPosition();
+
                 boolean isFound = false;
                 int i = 0;
                 // Check each OrderItem until it is found
@@ -393,8 +420,14 @@ public class OrderActivity extends AppCompatActivity {
                 // If OrderItem was not found then delete it from db
                 if (!isFound){
                     try {
-                        OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
-                        orderItemDAO.deleteOrderItem(orderItem);
+                        //OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
+                        //orderItemDAO.deleteOrderItem(orderItem);
+
+                        Poqapd poqapd = SaxposConverter.orderItemToPoqapd(orderItem);
+
+                        System.out.println("Delete poqapd: " + poqapd.getsItemName());
+                        PoqapdDAO poqapdDAO = new PoqapdDAO(mContext);
+                        poqapdDAO.deletePoqapd(poqapd);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -403,12 +436,20 @@ public class OrderActivity extends AppCompatActivity {
             // Adds/Updates OrderItems to db
             try {
                 OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
+                PoqapdDAO poqapdDAO = new PoqapdDAO(mContext);
                 for (OrderItem orderItem : mOrderItems) {
                     orderItem.setnOrderID(nOrderID);
+                    System.out.println("Order ID: " + nOrderID);
+                    Poqapd poqapd = SaxposConverter.orderItemToPoqapd(orderItem);
+                    System.out.println("Detail No: " + poqapd.getnDetailNo());
                     if (orderItem.getnOrderItemID() > 0) {
-                        orderItemDAO.updateOrderItem(orderItem);
+                        poqapdDAO.updatePoqapd(poqapd);
+                        //orderItemDAO.updateOrderItem(orderItem);
                     } else {
-                        orderItemDAO.insertOrderItem(orderItem);
+                        nItemPosition += 1;
+                        poqapd.setnDetailNo(nItemPosition);
+                        poqapdDAO.insertPoqapd(poqapd);
+                        //orderItemDAO.insertOrderItem(orderItem);
                     }
                 }
             } catch (SQLException e) {

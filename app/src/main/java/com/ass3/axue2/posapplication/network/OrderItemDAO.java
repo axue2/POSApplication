@@ -51,6 +51,7 @@ public class OrderItemDAO {
                 orderItem.setsProductName(rs.getString(OrderItem.COLUMN_PRODUCT_NAME));
                 orderItem.setnPrice(rs.getDouble(OrderItem.COLUMN_PRODUCT_PRICE));
                 orderItem.setnQuantity(rs.getInt(OrderItem.COLUMN_QUANTITY));
+                orderItem.setnPosition(rs.getInt(OrderItem.COLUMN_POSITION));
 
                 //add each orderItem to the list
                 list.add(orderItem);

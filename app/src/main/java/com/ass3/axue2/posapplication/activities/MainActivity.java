@@ -35,12 +35,16 @@ import com.ass3.axue2.posapplication.models.operational.Order;
 import com.ass3.axue2.posapplication.models.operational.OrderItem;
 import com.ass3.axue2.posapplication.models.operational.Product;
 import com.ass3.axue2.posapplication.models.operational.Table;
+import com.ass3.axue2.posapplication.models.saxpos.Poqapa;
+import com.ass3.axue2.posapplication.models.saxpos.Poqapd;
 import com.ass3.axue2.posapplication.models.saxpos.SaxposConverter;
 import com.ass3.axue2.posapplication.models.saxpos.Stkcat;
 import com.ass3.axue2.posapplication.models.saxpos.Stkite;
 import com.ass3.axue2.posapplication.network.GroupDAO;
 import com.ass3.axue2.posapplication.network.OrderDAO;
 import com.ass3.axue2.posapplication.network.OrderItemDAO;
+import com.ass3.axue2.posapplication.network.PoqapaDAO;
+import com.ass3.axue2.posapplication.network.PoqapdDAO;
 import com.ass3.axue2.posapplication.network.ProductDAO;
 import com.ass3.axue2.posapplication.network.StkcatDAO;
 import com.ass3.axue2.posapplication.network.StkiteDAO;
@@ -194,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
             ProductDAO productDAO = new ProductDAO(mContext);
             GroupDAO groupDAO = new GroupDAO(mContext);
+            PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
+            PoqapdDAO poqapdDAO = new PoqapdDAO(mContext);
             StkcatDAO stkcatDAO = new StkcatDAO(mContext);
             StkiteDAO stkiteDAO = new StkiteDAO(mContext);
 
@@ -202,12 +208,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             List<OrderItem> orderItems;
             List<Product> products;
             List<Group> groups;
+            List<Poqapa> poqapas;
+            List<Poqapd> poqapds;
             List<Stkcat> stkcats;
             List<Stkite> stkites;
 
             try {
                 // Check connection
-                if (tableDAO.testConnection()) {
+                if (poqapaDAO.testConnection()) {
                     // Sync Tables
                     tables = tableDAO.getTables();
                     dbHelper.dropTable(Table.TABLE_NAME);
@@ -216,25 +224,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         dbHelper.AddTable(table);
                     }
                     // Sync Orders
-                    orders = orderDAO.getOrders();
+                    //orders = orderDAO.getOrders();
+                    poqapas = poqapaDAO.getEatInPoqapas();
+                    orders = SaxposConverter.poqapaToOrders(poqapas);
                     dbHelper.dropTable(Order.TABLE_NAME);
                     dbHelper.createTable(Order.CREATE_STATEMENT);
                     for (Order order : orders) {
                         dbHelper.AddOrder(order);
                     }
                     // Sync OrderItems
-                    orderItems = orderItemDAO.getOrderItems();
+                    //orderItems = orderItemDAO.getOrderItems();
+                    poqapds = poqapdDAO.getPoqapds();
+                    orderItems = SaxposConverter.poqapdToOrderItems(poqapds);
                     dbHelper.dropTable(OrderItem.TABLE_NAME);
                     dbHelper.createTable(OrderItem.CREATE_STATEMENT);
                     for (OrderItem orderItem : orderItems) {
-                        dbHelper.AddOrderItem(orderItem);
+                        if (orderItem.getnOrderID() > 0){
+                            dbHelper.AddOrderItem(orderItem);
+                        }
                     }
                     // Sync Products
                     stkites = stkiteDAO.getStkites();
                     //products = productDAO.getProducts();
                     dbHelper.dropTable(Product.TABLE_NAME);
                     dbHelper.createTable(Product.CREATE_STATEMENT);
-                    products = SaxposConverter.stkiteToProduct(stkites);
+                    products = SaxposConverter.stkiteToProducts(stkites);
                     for (Product product : products) {
                         dbHelper.AddProduct(product);
                     }
@@ -243,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //groups = groupDAO.getGroups();
                     dbHelper.dropTable(Group.TABLE_NAME);
                     dbHelper.createTable(Group.CREATE_STATEMENT);
-                    groups = SaxposConverter.stkcatToGroup(stkcats);
+                    groups = SaxposConverter.stkcatToGroups(stkcats);
                     for (Group group : groups) {
                         dbHelper.AddGroup(group);
                     }
