@@ -13,6 +13,9 @@ public class Order {
     private String sStatus;
     private double nTotal;
 
+    private long nTillID;
+    private int nGuests;
+
     // Database Constants
     public static final String TABLE_NAME = "Orders";
     public static final String COLUMN_ID = "id";
@@ -48,6 +51,8 @@ public class Order {
         sType = type;
         sStatus = status;
         nTotal = total;
+        nGuests = 0;
+        nTillID = 0;
     }
 
     public Order(long orderID, String type, String status, double total){
@@ -56,6 +61,8 @@ public class Order {
         sType = type;
         sStatus = status;
         nTotal = total;
+        nGuests = 0;
+        nTillID = 0;
     }
 
     public Order(String type, String status, double total){
@@ -64,6 +71,8 @@ public class Order {
         sType = type;
         sStatus = status;
         nTotal = total;
+        nGuests = 0;
+        nTillID = 0;
     }
 
     public Order() {
@@ -72,6 +81,8 @@ public class Order {
         sType = "";
         sStatus = "";
         nTotal = 0;
+        nGuests = 0;
+        nTillID = 0;
     }
 
     public long getnOrderID() {
@@ -113,4 +124,23 @@ public class Order {
     public void setnTotal(double nTotal) {
         this.nTotal = nTotal;
     }
+
+
+    public long getnTillID() {
+        return nTillID;
+    }
+
+    public void setnTillID(long nTillID) {
+        this.nTillID = nTillID;
+    }
+
+    public int getnGuests() {
+        return nGuests;
+    }
+
+    public void setnGuests(int nGuests) {
+        this.nGuests = nGuests;
+    }
+
+
 }

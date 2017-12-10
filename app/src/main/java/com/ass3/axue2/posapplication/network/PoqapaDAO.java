@@ -4,16 +4,17 @@ import android.content.Context;
 
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
 import com.ass3.axue2.posapplication.models.configuration.NetworkSetting;
-import com.ass3.axue2.posapplication.models.saxpos.Ab5ctl;
 import com.ass3.axue2.posapplication.models.saxpos.Poqapa;
-import com.ass3.axue2.posapplication.models.saxpos.Poqapd;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by anthonyxue on 6/07/2017.
@@ -67,8 +68,15 @@ public class PoqapaDAO {
     }
 
     public List<Poqapa> getEatInPoqapas() throws SQLException {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, - 2);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        df.setTimeZone(TimeZone.getDefault());
+        String timeStamp = df.format(cal.getTime());
+
         String query = "SELECT * FROM " + Poqapa.TABLE_NAME +
-                " WHERE " + Poqapa.COLUMN_THIS_PAY_STATUS + " = '1'";
+                " WHERE " + Poqapa.COLUMN_THIS_PAY_STATUS + " = '1'" +
+                " AND " + Poqapa.COLUMN_INVOICE_DATE + " >= '" + timeStamp + "'";
         List<Poqapa> list = new ArrayList<Poqapa>();
         Poqapa poqapa = null;
         ResultSet rs = null;
@@ -86,6 +94,9 @@ public class PoqapaDAO {
                 poqapa.setsThisPayStatus(rs.getString(Poqapa.COLUMN_THIS_PAY_STATUS));
                 poqapa.setsAuthorisor(rs.getString(Poqapa.COLUMN_AUTHORISOR));
                 poqapa.setsAuthorisorDate(rs.getString(Poqapa.COLUMN_AUTHORISOR_DATE));
+                poqapa.setsInvoiceDate(rs.getString(Poqapa.COLUMN_INVOICE_DATE));
+                poqapa.setsGuestNo(rs.getString(Poqapa.COLUMN_NO_OF_PART_PAY));
+                poqapa.setsTillID(rs.getString(Poqapa.COLUMN_PO_NO));
                 list.add(poqapa);
             }
         } finally {
@@ -116,6 +127,9 @@ public class PoqapaDAO {
                 poqapa.setsThisPayStatus(rs.getString(Poqapa.COLUMN_THIS_PAY_STATUS));
                 poqapa.setsAuthorisor(rs.getString(Poqapa.COLUMN_AUTHORISOR));
                 poqapa.setsAuthorisorDate(rs.getString(Poqapa.COLUMN_AUTHORISOR_DATE));
+                poqapa.setsInvoiceDate(rs.getString(Poqapa.COLUMN_INVOICE_DATE));
+                poqapa.setsGuestNo(rs.getString(Poqapa.COLUMN_NO_OF_PART_PAY));
+                poqapa.setsTillID(rs.getString(Poqapa.COLUMN_PO_NO));
             }
         } finally {
             DbUtil.close(rs);
@@ -132,12 +146,19 @@ public class PoqapaDAO {
                 Poqapa.COLUMN_ID + ", " + Poqapa.COLUMN_ORDER_NO + ", " +
                 Poqapa.COLUMN_INVOICE_DATE + ", " + Poqapa.COLUMN_TOT_INVOICE_AMT + ", " +
                 Poqapa.COLUMN_TOT_INVOICE_BAL + ", " + Poqapa.COLUMN_THIS_PAY_STATUS + ", " +
-                Poqapa.COLUMN_AUTHORISOR + ", " + Poqapa.COLUMN_DEPARTMENT_ID + ", " +
-                Poqapa.COLUMN_CUSTOMER_ID + ", " + Poqapa.COLUMN_CID_LINE + ")" +
+                Poqapa.COLUMN_AUTHORISOR + ", " + Poqapa.COLUMN_AUTHORISOR_DATE + ", " +
+                Poqapa.COLUMN_DEPARTMENT_ID + ", " +
+                Poqapa.COLUMN_NO_OF_PART_PAY + ", " + Poqapa.COLUMN_PO_NO + ", " +
+                Poqapa.COLUMN_NEXT_TRANSACTION + ", " +
+                Poqapa.COLUMN_CUSTOMER_ID + ", " + Poqapa.COLUMN_CID_LINE +
+                ")" +
                 " VALUES ('" + poqapa.getsID() + "' , '" + poqapa.getsOrderNo() + "' , '" +
                 poqapa.getsInvoiceDate() + "' , '" + poqapa.getsTotInvoiceAmt() + "' , '" +
                 poqapa.getsTotInvoiceBal() + "' , '" + poqapa.getsThisPayStatus() + "' , '" +
-                poqapa.getsAuthorisor() + "' , '" + poqapa.getsDepartmentID() + "' , '" +
+                poqapa.getsAuthorisor() + "' , '" + poqapa.getsInvoiceDate() + "' , '" +
+                poqapa.getsDepartmentID() + "' , '" +
+                poqapa.getsTillID() + "' , '" + poqapa.getsGuestNo() + "' , '" +
+                "O" + "' , '" +
                 poqapa.getsCID() + "' , '" + poqapa.getsCIDLine() + "')";
         System.out.println(query);
         try {
@@ -166,6 +187,10 @@ public class PoqapaDAO {
                 + "', " + Poqapa.COLUMN_TOT_INVOICE_AMT + " = '" + poqapa.getsTotInvoiceAmt()
                 + "', " + Poqapa.COLUMN_TOT_INVOICE_BAL + " = '" + poqapa.getsTotInvoiceBal()
                 + "', " + Poqapa.COLUMN_THIS_PAY_STATUS + " = '" + poqapa.getsThisPayStatus()
+                + "', " + Poqapa.COLUMN_INVOICE_DATE + " = '" + poqapa.getsInvoiceDate()
+                + "', " + Poqapa.COLUMN_NO_OF_PART_PAY + " = '" + poqapa.getsGuestNo()
+                + "', " + Poqapa.COLUMN_PO_NO + " = '" + poqapa.getsTillID()
+                + "', " + Poqapa.COLUMN_NEXT_TRANSACTION + " = '" + poqapa.getsNextTransaction()
                 + "', " + Poqapa.COLUMN_AUTHORISOR + " = '" + poqapa.getsAuthorisor() + "'" +
                 " WHERE " + Poqapa.COLUMN_ID + " = " + poqapa.getsID();
         try {

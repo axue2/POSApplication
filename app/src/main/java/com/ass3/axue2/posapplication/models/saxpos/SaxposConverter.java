@@ -45,7 +45,12 @@ public class SaxposConverter {
                 try {
                     order.setnTableID(Long.parseLong(poqapa.getsOrderNo()));
                 }catch (NumberFormatException e) {
-                    System.out.println("poqapaToOrder: " + poqapa.getsOrderNo());
+                    order.setnTableID(-1);
+                }
+                try {
+                    order.setnTillID(Long.parseLong(poqapa.getsTillID()));
+                }catch (NumberFormatException e) {
+                    order.setnTillID(0);
                 }
             } else if (poqapa.getsThisPayStatus().equals("2")) {
                 order.setsType(Order.TYPE_BOOKING);
@@ -61,47 +66,10 @@ public class SaxposConverter {
                 order.setsStatus(Order.STATUS_PAID);
             }
 
-/*
-            switch (poqapa.getsThisPayStatus()){
-
-                // Paid
-                case "P":
-                    order.setsType(Order.TYPE_EAT_IN);
-                    order.setsStatus(Order.STATUS_PAID);
-                    // Eat-in Order
-                case "1":
-                    order.setsType(Order.TYPE_EAT_IN);
-                    order.setsStatus(Order.STATUS_UNPAID);
-                    try {
-                        order.setnTableID(Long.parseLong(poqapa.getsOrderNo()));
-                    }catch (NumberFormatException e){
-                        System.out.println("poqapaToOrder: " + poqapa.getsOrderNo());
-                    }
-
-                    // Booking
-                case "2":
-                    order.setsType(Order.TYPE_BOOKING);
-                    order.setsStatus(Order.STATUS_UNPAID);
-
-                    // Takeaway
-                case "3":
-                    order.setsType(Order.TYPE_TAKEAWAY);
-                    order.setsStatus(Order.STATUS_UNPAID);
-
-                    // Delivery
-                case "4":
-                    order.setsType(Order.TYPE_DELIVERY);
-                    order.setsStatus(Order.STATUS_UNPAID);
-
-                default:
-                    order.setsType(Order.TYPE_EAT_IN);
-                    order.setsStatus(Order.STATUS_PAID);
-            }
-*/
             order.setnTotal(poqapa.getsTotInvoiceAmt());
         }
 
-        return new Order();
+        return order;
     }
 
     public static List<Order> poqapaToOrders(List<Poqapa> poqapas){
@@ -119,6 +87,9 @@ public class SaxposConverter {
         poqapa.setsID(convertToDigits((int) order.getnOrderID(), 7));
         poqapa.setsOrderNo(String.valueOf(order.getnTableID()));
         poqapa.setsThisPayStatus(order.getsStatus());
+        poqapa.setsTillID(String.valueOf(order.getnTillID()));
+        poqapa.setsGuestNo(String.valueOf(order.getnGuests()));
+        poqapa.setsNextTransaction(String.valueOf(0));
 
         if (order.getsStatus().equals(Order.STATUS_PAID)){
             poqapa.setsThisPayStatus("P");
@@ -139,6 +110,7 @@ public class SaxposConverter {
         df.setTimeZone(TimeZone.getDefault());
         String timeStamp = df.format(Calendar.getInstance().getTime());
         poqapa.setsInvoiceDate(String.valueOf(timeStamp));
+        poqapa.setsAuthorisorDate(String.valueOf(timeStamp));
         poqapa.setsTotInvoiceAmt(order.getnTotal());
         //TODO: Add Discounts
         poqapa.setsTotDiscountAmt("0");
@@ -155,20 +127,41 @@ public class SaxposConverter {
 
         try {
             orderItem.setnOrderID(Long.parseLong(poqapd.getsInvoiceNo()));
-            //orderItem.setnOrderItemID(Long.parseLong(poqapd.getsInvoiceNo() + String.valueOf(poqapd.getnDetailNo())));
         }catch (NumberFormatException e){
             orderItem.setnOrderID(-1);
             orderItem.setnOrderItemID(-1);
         }
-
-        //System.out.println(poqapd.getsInvoiceNo() + ", " + poqapd.getnDetailNo());
-        //System.out.println("poqapdToOrderItem: " + orderItem.getnOrderItemID());
-        //System.out.println("orderItem: " + poqapd.getsInvoiceNo() + ", Position: " + poqapd.getnDetailNo());
+        try {
+            orderItem.setnPrinterID(Long.parseLong(poqapd.getsPrinterID()));
+        }catch (NumberFormatException e){
+            orderItem.setnPrinterID(-1);
+        }
+        try {
+            orderItem.setnPrinter2ID(Long.parseLong(poqapd.getsPrinter2ID()));
+        }catch (NumberFormatException e){
+            orderItem.setnPrinter2ID(-1);
+        }
+        try {
+            orderItem.setnTillID(Long.parseLong(poqapd.getsTillID()));
+        }catch (NumberFormatException e){
+            orderItem.setnTillID(-1);
+        }
+        try {
+            orderItem.setnProductID(Long.valueOf(poqapd.getsItemID()));
+        }catch (NumberFormatException e){
+            orderItem.setnProductID(-1);
+        }
+        try {
+            orderItem.setnDepartmentID(Long.valueOf(poqapd.getsDepartmentID()));
+        }catch (NumberFormatException e){
+            orderItem.setnDepartmentID(-1);
+        }
+        orderItem.setnQuantityPrinted(poqapd.getnQuantityPrinted());
         orderItem.setnPosition(poqapd.getnDetailNo());
         orderItem.setnPrice(poqapd.getnPrice());
         orderItem.setnQuantity(poqapd.getnInvoiceQty());
-        orderItem.setnProductID(Long.valueOf(poqapd.getsItemID()));
         orderItem.setsProductName(poqapd.getsItemName());
+        orderItem.setnGSTPercent(poqapd.getnGSTPercent());
 
         return orderItem;
     }
@@ -184,14 +177,39 @@ public class SaxposConverter {
 
     public static Poqapd orderItemToPoqapd(OrderItem orderItem){
         Poqapd poqapd = new Poqapd();
-        //System.out.println("Position: " + orderItem.getnPosition());
         poqapd.setsInvoiceNo(convertToDigits((int) orderItem.getnOrderID(), 7));
         poqapd.setsItemID(convertToDigits((int) orderItem.getnProductID(),6));
         poqapd.setnDetailNo(orderItem.getnPosition());
         poqapd.setnPrice(orderItem.getnPrice());
         poqapd.setnInvoiceQty(orderItem.getnQuantity());
         poqapd.setsItemName(orderItem.getsProductName());
+        poqapd.setsDepartmentID(String.valueOf(orderItem.getnDepartmentID()));
+        poqapd.setsTillID(String.valueOf(orderItem.getnTillID()));
+        poqapd.setnInvoiceAmt(orderItem.getnPrice() * orderItem.getnQuantity());
 
+        // Calculate GST
+        poqapd.setnGSTPercent(orderItem.getnGSTPercent());
+
+        // TODO: Figure out what is causing GST percent to be 1
+        if (poqapd.getnGSTPercent() >= 1) {
+            poqapd.setnGSTPercent(-0.1);
+        }
+        System.out.println("Invoice Amt: " + poqapd.getnInvoiceAmt());
+        System.out.println("GST Percent: " + poqapd.getnGSTPercent());
+        double percent = 1 - poqapd.getnGSTPercent();
+        System.out.println("Calculated Percentage: " + percent);
+        poqapd.setnActualAmount(poqapd.getnInvoiceAmt() / percent);
+        poqapd.setnGSTAmount(poqapd.getnInvoiceAmt() - poqapd.getnActualAmount());
+        System.out.println("Actual Amount: " + poqapd.getnActualAmount());
+        System.out.println("GST Amount: " + poqapd.getnGSTAmount());
+
+        if (orderItem.getnPrinterID() > 0){
+            poqapd.setsPrinterID(convertToDigits((int) orderItem.getnPrinterID(), 3));
+        }
+        if (orderItem.getnPrinter2ID() > 0){
+            poqapd.setsPrinter2ID(convertToDigits((int) orderItem.getnPrinter2ID(), 3));
+        }
+        poqapd.setnQuantityPrinted(orderItem.getnQuantityPrinted());
 
         return poqapd;
     }
@@ -227,6 +245,17 @@ public class SaxposConverter {
         product.setnGroupID(Long.parseLong(stkite.getsGroupBy()));
         product.setsProductName(stkite.getsName());
         product.setnPrice(stkite.getsSalesPrice());
+        product.setnGSTPercent(stkite.getnGST());
+        try {
+            product.setnPrinterID(Long.parseLong(stkite.getsPrinter()));
+        }catch (NumberFormatException e){
+            product.setnPrinterID(0);
+        }
+        try {
+            product.setnPrinter2ID(Long.parseLong(stkite.getsPrinter2()));
+        }catch (NumberFormatException e){
+            product.setnPrinter2ID(0);
+        }
         return product;
     }
 

@@ -9,6 +9,6 @@ public class Ab5ctl {
     public static final String TABLE_NAME = "ab5ctl";
     // Set to AA
     public static final String COLUMN_ID = "ctl_id";
-    public static final String COLUMN_ITEM_NO = "ctl_next_item_no";
+    public static final String COLUMN_NEXT_INVOICE_NO = "ctl_next_invoice_no";
 
 }

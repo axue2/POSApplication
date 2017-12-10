@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
@@ -35,10 +36,8 @@ import com.ass3.axue2.posapplication.models.saxpos.SaxposConverter;
 import com.ass3.axue2.posapplication.network.Ab5ctlDAO;
 import com.ass3.axue2.posapplication.network.CustomerDAO;
 import com.ass3.axue2.posapplication.network.DeliveryDAO;
-import com.ass3.axue2.posapplication.network.OrderItemDAO;
 import com.ass3.axue2.posapplication.network.PoqapaDAO;
 import com.ass3.axue2.posapplication.network.PoqapdDAO;
-import com.ass3.axue2.posapplication.network.TableDAO;
 import com.ass3.axue2.posapplication.views.adapters.OrderCurrentRecyclerViewAdapter;
 import com.ass3.axue2.posapplication.views.adapters.OrderGroupRecyclerViewAdapter;
 
@@ -141,9 +140,6 @@ public class OrderActivity extends AppCompatActivity {
             for (OrderItem orderItem : mOrderItems) {
                 nQuantity += orderItem.getnQuantity();
                 nSubtotal += (orderItem.getnPrice() * orderItem.getnQuantity());
-                System.out.println("ITEM PRICE: " + String.valueOf(orderItem.getnPrice()));
-                System.out.println("ITEM QUANTITY: " + String.valueOf(orderItem.getnPrice()));
-                System.out.println("ORDER SUBTOTAL: " + String.valueOf(nSubtotal));
             }
         }
         // Get all the Groups
@@ -313,7 +309,7 @@ public class OrderActivity extends AppCompatActivity {
         });
     }
 
-    private class ConfirmTask extends AsyncTask<Void, Void, Void>{
+    private class ConfirmTask extends AsyncTask<Void, Void, Boolean>{
         private ProgressDialog mDialog;
 
         ConfirmTask(OrderActivity activity){
@@ -328,143 +324,112 @@ public class OrderActivity extends AppCompatActivity {
             mDialog.setMessage("Sending database information to server. Please Wait...");
             mDialog.setIndeterminate(true);
             mDialog.setCanceledOnTouchOutside(false);
-//            mDialog.show();
+            mDialog.show();
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
             Order order = new Order(nOrderID, nTableID, sType, Order.STATUS_UNPAID, nSubtotal);
             Poqapa poqapa = SaxposConverter.orderToPoqapa(order);
-            // If status is not In-use create new order
 
-            if (nOrderID <= 0) {
-                try{
-                    // Generate a new Invoice No
-                    Ab5ctlDAO ab5ctlDAO = new Ab5ctlDAO(mContext);
-                    BigDecimal invoiceNumber = ab5ctlDAO.getItemNo();
-                    poqapa.setsID(SaxposConverter.convertToDigits(invoiceNumber.intValue(),7));
+            Ab5ctlDAO ab5ctlDAO = new Ab5ctlDAO(mContext);
+            PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
+            PoqapdDAO poqapdDAO = new PoqapdDAO(mContext);
+            CustomerDAO customerDAO = new CustomerDAO(mContext);
+            DeliveryDAO deliveryDAO = new DeliveryDAO(mContext);
 
-
-                    // Insert Order
-                    //OrderDAO orderDAO = new OrderDAO(mContext);
-                    //nOrderID = orderDAO.insertOrder(order);
-                    PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
-                    System.out.println("Old Order ID: " + nOrderID);
-                    poqapaDAO.insertPoqapa(poqapa);
-                    nOrderID = invoiceNumber.intValue();
-                    System.out.println("New Order ID: " + nOrderID);
-
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try{
-                    // Update Order
-                    //OrderDAO orderDAO = new OrderDAO(mContext);
-                    //orderDAO.updateOrder(order);
-                    PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
-                    poqapaDAO.updatePoqapa(poqapa);
-
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            // Update Table details if its an eat-in order
-            if (sType.equals(Order.TYPE_EAT_IN)) {
-                Table table = new Table(nTableID, mTableName, nTableGuests, nOrderID, nSubtotal, Table.STATUS_INUSE);
-                try {
-                    TableDAO tableDAO = new TableDAO(mContext);
-                    tableDAO.updateTable(table);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            // Otherwise add/update delivery details if delivery order
-            else if (sType.equals(Order.TYPE_DELIVERY)) {
-                CustomerDAO customerDAO = new CustomerDAO(mContext);
-                DeliveryDAO deliveryDAO = new DeliveryDAO(mContext);
-                Customer customer = new Customer(sCustomerName, "", sAL1, sAL2, sAL3,
-                        nPostcode, nPhone);
-                try {
-                    long customerID = customerDAO.insertCustomer(customer);
-                    Delivery delivery = new Delivery(nOrderID, customerID, nDeliveryFee);
-                    deliveryDAO.insertDelivery(delivery);
-
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // apd_detail_no Used for SAXPOS conversion
-            int nItemPosition = 0;
-
-            // Gets the current OrderItems in DB
-            ArrayList<OrderItem> OrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
-            // Checks to see if any OrderItems have been deleted
-            for (OrderItem orderItem : OrderItems){
-                System.out.println("Position: " + orderItem.getnPosition());
-                if (orderItem.getnPosition() > nItemPosition)
-                    nItemPosition = orderItem.getnPosition();
-
-                boolean isFound = false;
-                int i = 0;
-                // Check each OrderItem until it is found
-                while (i < mOrderItems.size() && !isFound){
-                    OrderItem orderItem1 = mOrderItems.get(i);
-                    // If found set isFound to true
-                    if (orderItem1.getnOrderItemID() == orderItem.getnOrderItemID()){
-                        isFound = true;
-                    }
-                    i++;
-                }
-                // If OrderItem was not found then delete it from db
-                if (!isFound){
-                    try {
-                        //OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
-                        //orderItemDAO.deleteOrderItem(orderItem);
-
-                        Poqapd poqapd = SaxposConverter.orderItemToPoqapd(orderItem);
-
-                        System.out.println("Delete poqapd: " + poqapd.getsItemName());
-                        PoqapdDAO poqapdDAO = new PoqapdDAO(mContext);
-                        poqapdDAO.deletePoqapd(poqapd);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            // Adds/Updates OrderItems to db
             try {
-                OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
-                PoqapdDAO poqapdDAO = new PoqapdDAO(mContext);
-                for (OrderItem orderItem : mOrderItems) {
-                    orderItem.setnOrderID(nOrderID);
-                    System.out.println("Order ID: " + nOrderID);
-                    Poqapd poqapd = SaxposConverter.orderItemToPoqapd(orderItem);
-                    System.out.println("Detail No: " + poqapd.getnDetailNo());
-                    if (orderItem.getnOrderItemID() > 0) {
-                        poqapdDAO.updatePoqapd(poqapd);
-                        //orderItemDAO.updateOrderItem(orderItem);
+                if (poqapaDAO.testConnection()){
+                    // If status is not In-use create new order
+                    if (nOrderID <= 0) {
+
+                        // Generate a new Invoice No
+                        BigDecimal invoiceNumber = ab5ctlDAO.getItemNo();
+                        System.out.println("Invoice Number: " + invoiceNumber);
+                        poqapa.setsID(SaxposConverter.convertToDigits(invoiceNumber.intValue(),7));
+                        // Insert Order
+                        poqapaDAO.insertPoqapa(poqapa);
+                        nOrderID = invoiceNumber.intValue();
                     } else {
-                        nItemPosition += 1;
-                        poqapd.setnDetailNo(nItemPosition);
-                        poqapdDAO.insertPoqapd(poqapd);
-                        //orderItemDAO.insertOrderItem(orderItem);
+                        // Update Order
+                        poqapaDAO.updatePoqapa(poqapa);
                     }
+                    // Otherwise add/update delivery details if delivery order
+                    if (sType.equals(Order.TYPE_DELIVERY)) {
+                        Customer customer = new Customer(sCustomerName, "", sAL1, sAL2, sAL3,
+                                nPostcode, nPhone);
+                            long customerID = customerDAO.insertCustomer(customer);
+                            Delivery delivery = new Delivery(nOrderID, customerID, nDeliveryFee);
+                            deliveryDAO.insertDelivery(delivery);
+
+                    }
+
+                    // apd_detail_no Used for SAXPOS conversion
+                    int nItemPosition = 0;
+
+                    // Gets the current OrderItems in DB
+                    ArrayList<OrderItem> OrderItems = new ArrayList<>(mDBHelper.GetOrderItems(nOrderID).values());
+                    // Checks to see if any OrderItems have been deleted
+                    for (OrderItem orderItem : OrderItems){
+                        if (orderItem.getnPosition() > nItemPosition)
+                            nItemPosition = orderItem.getnPosition();
+
+                        boolean isFound = false;
+                        int i = 0;
+                        // Check each OrderItem until it is found
+                        while (i < mOrderItems.size() && !isFound){
+                            OrderItem orderItem1 = mOrderItems.get(i);
+                            // If found set isFound to true
+                            if (orderItem1.getnOrderItemID() == orderItem.getnOrderItemID()){
+                                isFound = true;
+                            }
+                            i++;
+                        }
+                        // If OrderItem was not found then delete it from db
+                        if (!isFound){
+                            Poqapd poqapd = SaxposConverter.orderItemToPoqapd(orderItem);
+                            poqapdDAO.deletePoqapd(poqapd);
+                        }
+                    }
+                    //TODO: Get product information to add to orderItem
+                    // Adds/Updates OrderItems to db
+                    for (OrderItem orderItem : mOrderItems) {
+                        orderItem.setnOrderID(nOrderID);
+                        Poqapd poqapd = SaxposConverter.orderItemToPoqapd(orderItem);
+                        if (orderItem.getnOrderItemID() > 0) {
+                            poqapdDAO.updatePoqapd(poqapd);
+                        } else {
+                            nItemPosition += 1;
+                            poqapd.setnDetailNo(nItemPosition);
+                            poqapdDAO.insertPoqapd(poqapd);
+                        }
+                    }
+                } else {
+                    return false;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
+                return false;
             }
-            return null;
+
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Boolean aVoid) {
             super.onPostExecute(aVoid);
             mDialog.dismiss();
-            Intent intent = new Intent(OrderActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            if (aVoid){
+                Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                Toast.makeText(mContext, "Order Successfully Updated"
+                        , Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(mContext, "Error, there was an issue in updating the db. " +
+                                "Please make sure your network is stable and try again!"
+                        , Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -510,8 +475,11 @@ public class OrderActivity extends AppCompatActivity {
 
     public OrderItem ConvertProductToOrderItem(Product product){
         // Convert product into an OrderItem
-        return new OrderItem(nOrderID, nTableID, product.getnProductID(),
-                product.getsProductName(), product.getnPrice(), 1);
+        System.out.println("Product Name: " + product.getsProductName());
+        System.out.println("GST PERCENT: " + product.getnGSTPercent());
+        return new OrderItem(-1, nOrderID, nTableID, product.getnProductID(),
+                product.getsProductName(), product.getnPrice(), 1, 0, 0,
+                product.getnPrinterID(), product.getnPrinter2ID(), 0, product.getnGSTPercent());
     }
 
     public ArrayList<OrderItem> getmOrderItems() {

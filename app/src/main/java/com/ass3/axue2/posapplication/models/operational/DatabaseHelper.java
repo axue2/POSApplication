@@ -152,12 +152,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void ClearTable(Table table){
+        // Access Database
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Add values
+        ContentValues values = new ContentValues();
+        values.put(Table.COLUMN_NAME, table.getsTableName());
+        values.put(Table.COLUMN_GUESTS, 0);
+        values.put(Table.COLUMN_ORDER_ID, 0);
+        values.put(Table.COLUMN_TOTAL, 0);
+        values.put(Table.COLUMN_STATUS, Table.STATUS_OPEN);
+        // Update values using table id
+        db.update(Table.TABLE_NAME, values, Table.COLUMN_ID + " = " + table.getnTableID(), null );
+        db.close();
+    }
+
     public long AddProduct(Product product){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Product.COLUMN_GROUPID, product.getnGroupID());
         values.put(Product.COLUMN_NAME, product.getsProductName());
         values.put(Product.COLUMN_PRICE, product.getnPrice());
+        values.put(Product.COLUMN_GST_PERCENT, product.getnGSTPercent());
+        values.put(Product.COLUMN_PRINTER_ID, product.getnPrinterID());
+        values.put(Product.COLUMN_PRINTER_2_ID, product.getnPrinter2ID());
         long id = db.insert(Product.TABLE_NAME, null, values);
         db.close();
         return id;
@@ -177,7 +195,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Product product = new Product(cursor.getLong(0),
                 cursor.getLong(1),
                 cursor.getString(2),
-                cursor.getDouble(3)
+                cursor.getDouble(3),
+                cursor.getDouble(4),
+                cursor.getLong(5),
+                cursor.getLong(6)
         );
         cursor.close();
 
@@ -196,7 +217,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Product product = new Product(cursor.getLong(0),
                         cursor.getLong(1),
                         cursor.getString(2),
-                        cursor.getDouble(3)
+                        cursor.getDouble(3),
+                        cursor.getDouble(4),
+                        cursor.getLong(5),
+                        cursor.getLong(6)
                 );
                 products.put(product.getnProductID(), product);
             } while(cursor.moveToNext());
@@ -213,6 +237,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Product.COLUMN_GROUPID, product.getnGroupID());
         values.put(Product.COLUMN_NAME, product.getsProductName());
         values.put(Product.COLUMN_PRICE, product.getnPrice());
+        values.put(Product.COLUMN_GST_PERCENT, product.getnGSTPercent());
+        values.put(Product.COLUMN_PRINTER_ID, product.getnPrinterID());
+        values.put(Product.COLUMN_PRINTER_2_ID, product.getnPrinter2ID());
         // Update values using table id
         db.update(Product.TABLE_NAME, values, Product.COLUMN_ID + " = " + product.getnProductID(), null );
         db.close();
@@ -287,6 +314,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(OrderItem.COLUMN_PRODUCT_PRICE, orderItem.getnPrice());
         values.put(OrderItem.COLUMN_QUANTITY, orderItem.getnQuantity());
         values.put(OrderItem.COLUMN_POSITION, orderItem.getnPosition());
+        values.put(OrderItem.COLUMN_DEPARTMENT_ID, orderItem.getnPosition());
+        values.put(OrderItem.COLUMN_TILL_ID, orderItem.getnPosition());
+        values.put(OrderItem.COLUMN_PRINTER_ID, orderItem.getnPosition());
+        values.put(OrderItem.COLUMN_PRINTER_2_ID, orderItem.getnPosition());
+        values.put(OrderItem.COLUMN_QUANTITY_PRINTED, orderItem.getnPosition());
+        values.put(OrderItem.COLUMN_GST_PERCENT, orderItem.getnPosition());
+
+
         long id = db.insert(OrderItem.TABLE_NAME, null, values);
         db.close();
         return id;
@@ -325,7 +360,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(4),
                         cursor.getDouble(5),
                         cursor.getInt(6),
-                        cursor.getInt(7)
+                        cursor.getInt(7),
+                        cursor.getInt(8),
+                        cursor.getInt(9),
+                        cursor.getInt(10),
+                        cursor.getInt(11),
+                        cursor.getDouble(12)
                 );
                 orderItems.put(orderItem.getnOrderItemID(), orderItem);
             } while(cursor.moveToNext());
@@ -406,6 +446,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long AddOrder(Order order){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        if (order.getnOrderID() > 0) {
+            values.put(Order.COLUMN_ID, order.getnOrderID());
+        }
         values.put(Order.COLUMN_TABLE_ID, order.getnTableID());
         values.put(Order.COLUMN_TYPE, order.getsType());
         values.put(Order.COLUMN_TOTAL, order.getnTotal());

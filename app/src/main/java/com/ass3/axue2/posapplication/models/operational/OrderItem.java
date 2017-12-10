@@ -13,7 +13,17 @@ public class OrderItem {
     private String sProductName;
     private double nPrice;
     private int nQuantity;
+
+    // OrderItem Variables to be implemented in offline version of app
+    // TODO: Item Position, Multiple Restaurants (chains), Tills, Printers, GST
     private int nPosition;
+    private long nDepartmentID;
+    private long nTillID;
+    private long nPrinterID;
+    private long nPrinter2ID;
+    private int nQuantityPrinted;
+    private double nGSTPercent;
+
 
     // Database Constants
     public static final String TABLE_NAME = "Order_Item";
@@ -25,6 +35,13 @@ public class OrderItem {
     public static final String COLUMN_PRODUCT_PRICE = "PRODUCT_PRICE";
     public static final String COLUMN_QUANTITY = "QUANTITY";
     public static final String COLUMN_POSITION = "POSITION";
+    public static final String COLUMN_DEPARTMENT_ID = "DEPARTMENT_ID";
+    public static final String COLUMN_TILL_ID = "TILL_ID";
+    public static final String COLUMN_PRINTER_ID = "PRINTER_ID";
+    public static final String COLUMN_PRINTER_2_ID = "PRINTER_2_ID";
+    public static final String COLUMN_QUANTITY_PRINTED = "QUANTITY_PRINTED";
+    public static final String COLUMN_GST_PERCENT = "GST_PERCENT";
+
 
     // OrderItem Create Statement
     public static final String CREATE_STATEMENT = "CREATE TABLE " + TABLE_NAME + "(" +
@@ -35,11 +52,18 @@ public class OrderItem {
             COLUMN_PRODUCT_NAME + " TEXT NOT NULL, " +
             COLUMN_PRODUCT_PRICE + " REAL, " +
             COLUMN_QUANTITY + " INTEGER, " +
-            COLUMN_POSITION + " INTEGER" +
+            COLUMN_POSITION + " INTEGER, " +
+            COLUMN_DEPARTMENT_ID + " INTEGER, " +
+            COLUMN_TILL_ID + " INTEGER, " +
+            COLUMN_PRINTER_ID + " INTEGER, " +
+            COLUMN_PRINTER_2_ID + " INTEGER, " +
+            COLUMN_QUANTITY_PRINTED + " INTEGER, " +
+            COLUMN_GST_PERCENT + " REAL" +
             ")";
 
     public OrderItem(long orderItemID, long orderID, long tableID, long productID, String name,
-                     double price, int quantity, int position){
+                     double price, int quantity, int position, int tillID, long printerID,
+                     long printer2ID, int quantityPrinted, double gstPercent){
         nOrderItemID = orderItemID;
         nOrderID = orderID;
         nTableID = tableID;
@@ -48,18 +72,11 @@ public class OrderItem {
         nPrice = price;
         nQuantity = quantity;
         nPosition = position;
-    }
-
-    public OrderItem(long orderItemID, long orderID, long tableID, long productID, String name,
-              double price, int quantity){
-        nOrderItemID = orderItemID;
-        nOrderID = orderID;
-        nTableID = tableID;
-        nProductID = productID;
-        sProductName = name;
-        nPrice = price;
-        nQuantity = quantity;
-        nPosition = -1;
+        nTillID = tillID;
+        nPrinterID = printerID;
+        nPrinter2ID = printer2ID;
+        nQuantityPrinted = quantityPrinted;
+        nGSTPercent = gstPercent;
     }
 
     public OrderItem(long orderID, long tableID, long productID, String name,
@@ -72,6 +89,12 @@ public class OrderItem {
         nPrice = price;
         nQuantity = quantity;
         nPosition = -1;
+        nDepartmentID = 0;
+        nTillID = 0;
+        nPrinterID = 0;
+        nPrinter2ID = 0;
+        nQuantityPrinted = 0;
+        nGSTPercent = -0.1;
     }
 
     public OrderItem() {
@@ -83,6 +106,12 @@ public class OrderItem {
         nPrice = 0;
         nQuantity = 0;
         nPosition = -1;
+        nDepartmentID = 0;
+        nTillID = 0;
+        nPrinterID = 0;
+        nPrinter2ID = 0;
+        nQuantityPrinted = 0;
+        nGSTPercent = -0.1;
     }
 
     public void increaseQuantityByOne(){setnQuantity(this.nQuantity + 1);}
@@ -152,4 +181,55 @@ public class OrderItem {
     public void setnPosition(int nPosition) {
         this.nPosition = nPosition;
     }
+
+    public long getnDepartmentID() {
+        return nDepartmentID;
+    }
+
+    public void setnDepartmentID(long nDepartmentID) {
+        this.nDepartmentID = nDepartmentID;
+    }
+
+    public long getnTillID() {
+        return nTillID;
+    }
+
+    public void setnTillID(long nTillID) {
+        this.nTillID = nTillID;
+    }
+
+    public long getnPrinterID() {
+        return nPrinterID;
+    }
+
+    public void setnPrinterID(long nPrinterID) {
+        this.nPrinterID = nPrinterID;
+    }
+
+    public long getnPrinter2ID() {
+        return nPrinter2ID;
+    }
+
+    public void setnPrinter2ID(long nPrinter2ID) {
+        this.nPrinter2ID = nPrinter2ID;
+    }
+
+    public int getnQuantityPrinted() {
+        return nQuantityPrinted;
+    }
+
+    public void setnQuantityPrinted(int nQuantityPrinted) {
+        this.nQuantityPrinted = nQuantityPrinted;
+    }
+
+    public double getnGSTPercent() {
+        return nGSTPercent;
+    }
+
+    public void setnGSTPercent(double nGSTPercent) {
+        this.nGSTPercent = nGSTPercent;
+    }
+
+
+
 }

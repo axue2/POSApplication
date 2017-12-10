@@ -52,6 +52,9 @@ public class StkiteDAO {
                 stkite.setsStatus(rs.getString(Stkite.COLUMN_STATUS));
                 stkite.setsGroupBy(rs.getString(Stkite.COLUMN_GROUP_BY));
                 stkite.setsSalesPrice(rs.getDouble(Stkite.COLUMN_SALES_PRICE));
+                stkite.setnGST(rs.getDouble(Stkite.COLUMN_SALES_PRICE_GST));
+                stkite.setsPrinter(rs.getString(Stkite.COLUMN_PRE_CODE));
+                stkite.setsPrinter2(rs.getString(Stkite.COLUMN_ITE_ORDER_PRINTER2));
                 list.add(stkite);
             }
         } finally {

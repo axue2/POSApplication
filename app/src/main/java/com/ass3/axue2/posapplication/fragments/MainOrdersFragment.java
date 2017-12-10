@@ -1,5 +1,6 @@
 package com.ass3.axue2.posapplication.fragments;
 
+import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
@@ -31,11 +32,20 @@ public class MainOrdersFragment extends android.support.v4.app.Fragment {
 
         // Get Tables
         ArrayList<Order> orders = new ArrayList<>(mDBHelper.GetEatInOrders().values());
-        System.out.println("Number of Eat-In Orders: " + mDBHelper.GetEatInOrders().size());
         ArrayList<Table> tableList = new ArrayList<>();
+        //TODO: GET MAIN ORDERS FRAGMENT WORKING
+
         for (Order order : orders){
-            Table table = new Table(order.getnTableID(),String.valueOf(mDBHelper.GetTable(order.getnTableID()).getsTableName()),
-                    0, order.getnOrderID(), order.getnTotal(), Table.STATUS_INUSE);
+            Table table;
+            try{
+                mDBHelper.GetTable(order.getnTableID());
+                table = new Table(order.getnTableID(),String.valueOf(mDBHelper.GetTable(order.getnTableID()).getsTableName()),
+                        0, order.getnOrderID(), order.getnTotal(), Table.STATUS_INUSE);
+            } catch (CursorIndexOutOfBoundsException e) {
+                table = new Table(order.getnTableID(),String.valueOf(order.getnTableID()),
+                        0, order.getnOrderID(), order.getnTotal(), Table.STATUS_INUSE);
+            }
+
             tableList.add(table);
         }
         //ArrayList<Table> tableList = new ArrayList<>(mDBHelper.GetInuseTables().values());

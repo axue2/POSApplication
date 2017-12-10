@@ -40,18 +40,14 @@ import com.ass3.axue2.posapplication.models.saxpos.Poqapd;
 import com.ass3.axue2.posapplication.models.saxpos.SaxposConverter;
 import com.ass3.axue2.posapplication.models.saxpos.Stkcat;
 import com.ass3.axue2.posapplication.models.saxpos.Stkite;
-import com.ass3.axue2.posapplication.network.GroupDAO;
-import com.ass3.axue2.posapplication.network.OrderDAO;
-import com.ass3.axue2.posapplication.network.OrderItemDAO;
 import com.ass3.axue2.posapplication.network.PoqapaDAO;
 import com.ass3.axue2.posapplication.network.PoqapdDAO;
-import com.ass3.axue2.posapplication.network.ProductDAO;
 import com.ass3.axue2.posapplication.network.StkcatDAO;
 import com.ass3.axue2.posapplication.network.StkiteDAO;
-import com.ass3.axue2.posapplication.network.TableDAO;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -193,17 +189,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected Boolean doInBackground(Object... params) {
 
-            TableDAO tableDAO= new TableDAO(mContext);
-            OrderDAO orderDAO = new OrderDAO(mContext);
-            OrderItemDAO orderItemDAO = new OrderItemDAO(mContext);
-            ProductDAO productDAO = new ProductDAO(mContext);
-            GroupDAO groupDAO = new GroupDAO(mContext);
             PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
             PoqapdDAO poqapdDAO = new PoqapdDAO(mContext);
             StkcatDAO stkcatDAO = new StkcatDAO(mContext);
             StkiteDAO stkiteDAO = new StkiteDAO(mContext);
 
-            List<Table> tables;
+            Collection<Table> tables;
             List<Order> orders;
             List<OrderItem> orderItems;
             List<Product> products;
@@ -216,36 +207,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 // Check connection
                 if (poqapaDAO.testConnection()) {
-                    // Sync Tables
-                    tables = tableDAO.getTables();
-                    dbHelper.dropTable(Table.TABLE_NAME);
-                    dbHelper.createTable(Table.CREATE_STATEMENT);
-                    for (Table table : tables) {
-                        dbHelper.AddTable(table);
+                    // Reset Tables
+                    tables = dbHelper.GetAllTables().values();
+                    for (Table table:tables) {
+                        dbHelper.ClearTable(table);
                     }
                     // Sync Orders
-                    //orders = orderDAO.getOrders();
                     poqapas = poqapaDAO.getEatInPoqapas();
                     orders = SaxposConverter.poqapaToOrders(poqapas);
                     dbHelper.dropTable(Order.TABLE_NAME);
                     dbHelper.createTable(Order.CREATE_STATEMENT);
-                    for (Order order : orders) {
-                        dbHelper.AddOrder(order);
-                    }
-                    // Sync OrderItems
-                    //orderItems = orderItemDAO.getOrderItems();
-                    poqapds = poqapdDAO.getPoqapds();
-                    orderItems = SaxposConverter.poqapdToOrderItems(poqapds);
                     dbHelper.dropTable(OrderItem.TABLE_NAME);
                     dbHelper.createTable(OrderItem.CREATE_STATEMENT);
-                    for (OrderItem orderItem : orderItems) {
-                        if (orderItem.getnOrderID() > 0){
-                            dbHelper.AddOrderItem(orderItem);
+
+                    for (Order order : orders) {
+                        dbHelper.AddOrder(order);
+                        // Sync OrderItems
+                        poqapds = poqapdDAO.getPoqapdsFromOrderID(order.getnOrderID());
+                        System.out.println(poqapds.size());
+                        orderItems = SaxposConverter.poqapdToOrderItems(poqapds);
+                        for (OrderItem orderItem : orderItems) {
+                                dbHelper.AddOrderItem(orderItem);
+                        }
+                        // Sync Tables
+                        for (Table table : tables) {
+                            if (order.getnTableID() == table.getnTableID()) {
+                                table.setsStatus(Table.STATUS_INUSE);
+                                table.setnOrderID(order.getnOrderID());
+                                table.setnTableID(order.getnTableID());
+                                table.setnInvSum(order.getnTotal());
+
+                                dbHelper.UpdateTable(table);
+                            }
                         }
                     }
+
                     // Sync Products
                     stkites = stkiteDAO.getStkites();
-                    //products = productDAO.getProducts();
                     dbHelper.dropTable(Product.TABLE_NAME);
                     dbHelper.createTable(Product.CREATE_STATEMENT);
                     products = SaxposConverter.stkiteToProducts(stkites);
@@ -254,7 +252,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     // Sync Groups
                     stkcats = stkcatDAO.getStkcats();
-                    //groups = groupDAO.getGroups();
                     dbHelper.dropTable(Group.TABLE_NAME);
                     dbHelper.createTable(Group.CREATE_STATEMENT);
                     groups = SaxposConverter.stkcatToGroups(stkcats);

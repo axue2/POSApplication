@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ass3.axue2.posapplication.R;
 import com.ass3.axue2.posapplication.models.configuration.ConfigurationDatabaseHelper;
@@ -273,87 +274,80 @@ public class PaymentActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     // Network Mode Payment
-    private class PaymentTask extends AsyncTask<Void, Void, Void>{
-        /*private ProgressDialog mDialog;*/
+    private class PaymentTask extends AsyncTask<Void, Void, Boolean>{
+        private ProgressDialog mDialog;
 
         PaymentTask(PaymentActivity activity){
-            /*mDialog = new ProgressDialog(activity);*/
+            mDialog = new ProgressDialog(activity);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-/*            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mDialog.setTitle("Sending Data");
             mDialog.setMessage("Sending data to server. Please Wait...");
             mDialog.setIndeterminate(true);
             mDialog.setCanceledOnTouchOutside(false);
-            mDialog.show();*/
+            mDialog.show();
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            if (sType.equals(Order.TYPE_TAKEAWAY)) {
-                // Create a new takeaway order
-                //Order currentOrder = new Order(sType, Order.STATUS_PAID, nSubtotal);
-                //OrderDAO orderDAO = new OrderDAO(mContext);
-                long orderID = 0;
+        protected Boolean doInBackground(Void... params) {
+            Ab5ctlDAO ab5ctlDAO = new Ab5ctlDAO(mContext);
+            PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
 
-                Poqapa poqapa = new Poqapa();
-                Ab5ctlDAO ab5ctlDAO = new Ab5ctlDAO(mContext);
-                PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
+            try{
+                if (poqapaDAO.testConnection()){
+                    if (sType.equals(Order.TYPE_TAKEAWAY)) {
+                        // Create a new takeaway order
+                        Poqapa poqapa = new Poqapa();
+                        poqapa.setsID(String.valueOf(ab5ctlDAO.getItemNo()));
+                        poqapaDAO.insertPoqapa(poqapa);
+                        // TODO: Insert OrderItems, create another tmp table?
+                    }
+                    // Assumes that if not takeaway order then it is a table order
+                    // May be rewritten if additional order types use this payment activity
+                    else {
+                        // Setup Table data as refreshed
+                        Table newTable = new Table(nTableID, sTableName,
+                                0, -1, 0, Table.STATUS_OPEN);
+                        Poqapa poqapa = poqapaDAO.getPoqapa(SaxposConverter.convertToDigits((int) nOrderID, 7));
+                        poqapa.setsThisPayStatus("P");
+                        poqapa.setsNextTransaction("C");
 
-                try{
-                    poqapa.setsID(String.valueOf(ab5ctlDAO.getItemNo()));
-                    poqapaDAO.insertPoqapa(poqapa);
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                        mDBHelper.UpdateTable(newTable);
+                        poqapaDAO.updatePoqapa(poqapa);
+                    }
+                } else{
+                    return false;
                 }
-
-                // TODO: Insert OrderItems, create another tmp table?
+            return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
             }
-            // Assumes that if not takeaway order then it is a table order
-            // May be rewritten if additional order types use this payment activity
-            else {
-                // Setup Table data as refreshed
-                Table newTable = new Table(nTableID, sTableName,
-                        0, -1, 0, Table.STATUS_OPEN);
-
-                TableDAO tableDAO = new TableDAO(mContext);
-                //OrderDAO orderDAO = new OrderDAO(mContext);
-                PoqapaDAO poqapaDAO = new PoqapaDAO(mContext);
-
-
-                try{
-                    //Order currentOrder = orderDAO.getOrder(nOrderID);
-                    //Order newOrder = new Order(currentOrder.getnOrderID(), currentOrder.getnTableID(),
-                    //        currentOrder.getsType(), Order.STATUS_PAID, currentOrder.getnTotal());
-
-                    Poqapa poqapa = poqapaDAO.getPoqapa(SaxposConverter.convertToDigits((int) nOrderID, 7));
-                    poqapa.setsThisPayStatus("P");
-                    System.out.println("Order ID: " + poqapa.getsID());
-
-                    tableDAO.updateTable(newTable);
-                    poqapaDAO.updatePoqapa(poqapa);
-                    //orderDAO.updateOrder(newOrder);
-
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            return null;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Boolean aVoid) {
             super.onPostExecute(aVoid);
- /*           mDialog.dismiss();*/
-            // Return to MainActivity
-            Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            PaymentActivity.this.finish();
+            mDialog.dismiss();
+
+            if (aVoid){
+                // Return to MainActivity
+                Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                PaymentActivity.this.finish();
+                Toast.makeText(mContext, "Payment successful!"
+                        , Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(mContext, "Error, there was an issue in updating the db. " +
+                                "Please make sure your network is stable and try again!"
+                        , Toast.LENGTH_LONG).show();
+            }
+
         }
     }
 

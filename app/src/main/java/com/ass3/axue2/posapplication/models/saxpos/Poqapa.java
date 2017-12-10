@@ -26,9 +26,11 @@ public class Poqapa {
     public static final String COLUMN_AUTHORISOR = "apa_authorisor";
     public static final String COLUMN_AUTHORISOR_DATE = "apa_authorisor_date";
 
-
-    // Database constants for Delivery
-
+    public static final String COLUMN_NEXT_TRANSACTION = "apa_next_transaction";
+    // No of Guests
+    public static final String COLUMN_NO_OF_PART_PAY = "apa_no_of_part_pay";
+    // Till ID
+    public static final String COLUMN_PO_NO = "apa_po_no";
 
     private String sID;
     private String sCID;
@@ -44,6 +46,9 @@ public class Poqapa {
     private String sThisPayBalance;
     private String sAuthorisor;
     private String sAuthorisorDate;
+    private String sNextTransaction;
+    private String sGuestNo;
+    private String sTillID;
 
     public Poqapa(String id, String orderNo,
                   String invoiceDate, double totInvoiceAmt,
@@ -81,9 +86,11 @@ public class Poqapa {
         sThisPayBalance = "";
         sAuthorisor = "";
         sAuthorisorDate = "";
+        sNextTransaction = "";
+        sGuestNo = "";
+        sTillID = "";
 
     }
-
 
     public String getsID() {
         return sID;
@@ -195,6 +202,30 @@ public class Poqapa {
 
     public void setsCID(String sCID) {
         this.sCID = sCID;
+    }
+
+    public String getsNextTransaction() {
+        return sNextTransaction;
+    }
+
+    public void setsNextTransaction(String sNextTransaction) {
+        this.sNextTransaction = sNextTransaction;
+    }
+
+    public String getsGuestNo() {
+        return sGuestNo;
+    }
+
+    public void setsGuestNo(String sGuestNo) {
+        this.sGuestNo = sGuestNo;
+    }
+
+    public String getsTillID() {
+        return sTillID;
+    }
+
+    public void setsTillID(String sTillID) {
+        this.sTillID = sTillID;
     }
 
 

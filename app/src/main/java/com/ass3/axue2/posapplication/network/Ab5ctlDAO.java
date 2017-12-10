@@ -49,7 +49,7 @@ public class Ab5ctlDAO {
             statement = connection.createStatement();
             rs = statement.executeQuery(query);
             if (rs.next()){
-                itemNo = rs.getBigDecimal("ctl_next_item_no");
+                itemNo = rs.getBigDecimal(Ab5ctl.COLUMN_NEXT_INVOICE_NO);
             }
         } finally {
             DbUtil.close(rs);
@@ -67,7 +67,7 @@ public class Ab5ctlDAO {
         itemNo = itemNo.add(new BigDecimal(1));
         System.out.println("UPDATEITEMNO: " + itemNo);
         String query = "UPDATE " + Ab5ctl.TABLE_NAME + " SET "
-                + Ab5ctl.COLUMN_ITEM_NO + " = " + itemNo +
+                + Ab5ctl.COLUMN_NEXT_INVOICE_NO + " = " + itemNo +
                 " WHERE " + Ab5ctl.COLUMN_ID + " = " + "'AA'";
         try {
             connection = ConnectionFactory.getConnection(mIP, mDB, mUser, mPassword);

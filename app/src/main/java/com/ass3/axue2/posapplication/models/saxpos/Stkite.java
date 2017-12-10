@@ -14,6 +14,12 @@ public class Stkite {
     public static final String COLUMN_STATUS = "ite_status";
     public static final String COLUMN_GROUP_BY = "ite_group_by";
     public static final String COLUMN_SALES_PRICE = "ite_sales_price";
+    public static final String COLUMN_SALES_PRICE_GST = "ite_sales_price_gst";
+    //Printers
+    public static final String COLUMN_PRE_CODE = "ite_pre_code";
+    public static final String COLUMN_ITE_ORDER_PRINTER2 = "ite_order_printer2";
+
+
 
 
     private String sID;
@@ -21,6 +27,11 @@ public class Stkite {
     private String sStatus;
     private String sGroupBy;
     private double sSalesPrice;
+
+    private String sPrinter;
+    private String sPrinter2;
+    private double nGST;
+
 
 
     public Stkite(String id, String status, String groupBy, double salesPrice, String name){
@@ -37,6 +48,9 @@ public class Stkite {
         sStatus = "";
         sGroupBy = "";
         sSalesPrice = 0;
+        sPrinter = "";
+        sPrinter2 = "";
+        nGST = -0.1;
     }
 
     public String getsID() {
@@ -77,6 +91,30 @@ public class Stkite {
 
     public void setsName(String sName) {
         this.sName = sName;
+    }
+
+    public String getsPrinter() {
+        return sPrinter;
+    }
+
+    public void setsPrinter(String sPrinter) {
+        this.sPrinter = sPrinter;
+    }
+
+    public String getsPrinter2() {
+        return sPrinter2;
+    }
+
+    public void setsPrinter2(String sPrinter2) {
+        this.sPrinter2 = sPrinter2;
+    }
+
+    public double getnGST() {
+        return nGST;
+    }
+
+    public void setnGST(double nGST) {
+        this.nGST = nGST;
     }
 
 
