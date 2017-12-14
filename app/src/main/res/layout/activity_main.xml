@@ -22,6 +22,49 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay">
+            <ImageButton
+                android:id="@+id/sync_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/sync_button"
+                app:srcCompat="@drawable/ic_action_sync"
+                android:layout_marginEnd="10dp"
+                />
+
+            <ImageButton
+                android:id="@+id/eatin_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/sync_button"
+                app:srcCompat="@drawable/ic_action_add"
+                android:layout_marginEnd="10dp"
+                />
+
+            <ImageButton
+                android:id="@+id/delivery_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/sync_button"
+                app:srcCompat="@drawable/ic_action_delivery"
+                android:layout_marginEnd="10dp"
+                />
+
+            <ImageButton
+                android:id="@+id/takeaway_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/sync_button"
+                app:srcCompat="@drawable/ic_action_takeaway"
+                android:layout_marginEnd="10dp"
+                />
 
         </android.support.v7.widget.Toolbar>
 

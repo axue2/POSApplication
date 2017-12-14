@@ -1,7 +1,9 @@
 package com.ass3.axue2.posapplication.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
@@ -14,11 +16,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -104,6 +109,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setTitle(mDBHelper.GetRestaurant(1).getsRestaurantName());
         }
 
+        // Setup Toolbar Buttons
+        ImageButton sync_button = (ImageButton) findViewById(R.id.sync_button);
+        if (mCDBHelper.GetNetworkSetting(1).getnNetworkMode() == 1) {
+            sync_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new SynchroniseTask(MainActivity.this).execute();
+                }
+            });
+
+        } else {
+            sync_button.setVisibility(View.INVISIBLE);
+        }
+
+        ImageButton delivery_button = (ImageButton) findViewById(R.id.delivery_button);
+        delivery_button.setOnClickListener(this);
+        ImageButton eatin_button = (ImageButton) findViewById(R.id.eatin_button);
+        eatin_button.setOnClickListener(this);
+        ImageButton takeaway_button = (ImageButton) findViewById(R.id.takeaway_button);
+        takeaway_button.setOnClickListener(this);
+
+
         // Setup Floating Action Buttons
         FloatingActionButton mainFAB = (FloatingActionButton) findViewById(R.id.fab);
         mainFAB.setOnClickListener(this);
@@ -148,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             // If takeaway fab clicked
+            case R.id.takeaway_button:
             case R.id.fab_takeaway:
                 Intent takeawayIntent = new Intent(v.getContext(), OrderActivity.class);
                 takeawayIntent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_TAKEAWAY);
@@ -159,9 +187,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(takeawayIntent);
                 break;
             // If delivery fab clicked
+            case R.id.delivery_button:
             case R.id.fab_delivery:
                 Intent deliveryIntent = new Intent(v.getContext(), DeliveryDetailsActivity.class);
                 startActivity(deliveryIntent);
+                break;
+            case R.id.eatin_button:
+                // Eatin order with custom Table Number
+                Toast.makeText(mContext, "TODO: Add Button "
+                        , Toast.LENGTH_LONG).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                LayoutInflater inflater = this.getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.dialog_table_no, null);
+                builder.setView(dialogView);
+
+                final EditText sTableNo = (EditText) dialogView.findViewById(R.id.table_number);
+
+                builder.setTitle("Table Number")
+                        .setMessage("Enter a Table Number: ")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                long nTableNo;
+                                try {
+                                    nTableNo = Long.parseLong(sTableNo.getText().toString());
+                                } catch (NumberFormatException e) {
+                                    nTableNo = 0;
+                                }
+                                System.out.println("Table no: " + nTableNo);
+                                Intent intent = new Intent(mContext, OrderActivity.class);
+                                intent.putExtra(OrderActivity.EXTRA_TABLENAME, String.valueOf(nTableNo));
+                                intent.putExtra(OrderActivity.EXTRA_TABLEGUESTS, 0);
+                                intent.putExtra(OrderActivity.EXTRA_ORDERTYPE, Order.TYPE_EAT_IN);
+                                intent.putExtra(OrderActivity.EXTRA_TABLEID, nTableNo);
+                                intent.putExtra(OrderActivity.EXTRA_ORDERID, 0);
+                                intent.putExtra(OrderActivity.EXTRA_FROM, "MainRecyclerViewAdapter");
+
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        });
+                builder.show();
                 break;
         }
     }

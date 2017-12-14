@@ -117,6 +117,7 @@
     <string name="network">Network</string>
     <string name="delete_database_button">Delete Database</string>
     <string name="location_button">Location Button</string>
+    <string name="sync_button">Sync Button</string>
     <string name="delete">Delete</string>
     <string name="current_order">Current Order</string>
     <string name="drivers">Drivers</string>
@@ -127,5 +128,6 @@
     <string name="last_name_placeholder">Smith</string>
     <string name="network_mode">Network Mode</string>
     <string name="postcode_placeholder">3333</string>
+    <string name="table_number">Table Number</string>
 
 </resources>

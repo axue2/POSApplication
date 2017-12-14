@@ -106,6 +106,7 @@ public class OrderActivity extends AppCompatActivity {
         nTableGuests = intent.getIntExtra(EXTRA_TABLEGUESTS, 0);
         nOrderID = intent.getLongExtra(EXTRA_ORDERID, 0);
         sType = intent.getStringExtra(EXTRA_ORDERTYPE);
+        System.out.println("Table ID: " + nTableID);
         // if delivery transaction, get customer information
         if (intent.getStringExtra(EXTRA_FROM).equals("DeliveryDetailsActivity")){
             sCustomerName = intent.getStringExtra(EXTRA_CUSTOMERNAME);
